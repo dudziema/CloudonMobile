@@ -1,0 +1,10 @@
+@import 'base/reset';
+@import 'globals';
+
+html {
+  font-size: $font-size-base;
+}
+
+a {
+  transition: color 0.5s ease;
+}
