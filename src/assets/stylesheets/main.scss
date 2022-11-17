@@ -1,8 +1,45 @@
 @import 'base/reset';
-@import 'globals';
+@import 'vars/index.scss';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200,400,600&display=swap');
 
 html {
   font-size: $font-size-base;
+  height: 100%;
+}
+* {
+  font-family: 'Poppins', sans-serif;
+}
+body {
+  min-height: 100%;
+  background-color: $color-background-main;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+}
+
+b {
+  font-weight: $font-weight-semi-bold;
+}
+
+i {
+  font-style: italic;
+}
+
+ul {
+  list-style-type: none; 
+}
+
+h1 {
+  font-size: $font-size-title;
+  font-weight: $font-weight-semi-bold;
+  line-height: $line-height-large;
+}
+
+p {
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-base;
 }
 
 a {

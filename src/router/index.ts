@@ -1,10 +1,10 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import LoginPage from "../views/LoginPage.vue";
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import LoginPage from '../views/LoginPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
-    name: "Cloudon Mobile",
+    path: '/',
+    name: 'Cloudon Mobile',
     component: LoginPage,
   },
   // {
@@ -16,11 +16,11 @@ const routes: Array<RouteRecordRaw> = [
   //   component: () =>
   //     import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   // },
-];
+]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
-});
+})
 
-export default router;
+export default router

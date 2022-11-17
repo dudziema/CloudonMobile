@@ -3,13 +3,17 @@ $color-primary: #0C0C0C;
 $color-secondary: #0E70F1;
 $color-accent1: #F5F6F6;
 $color-accent2: #F5FAFF;
+$color-accent3: #0e70f166;
 
 $color-text-default: $color-primary;
+$color-text-buttons: $color-basic;
 $color-text-dark: $color-secondary;
 
 $color-background-main: $color-basic;
 $color-background-special: $color-secondary;
-$color-background-dark: $color-accent1;
+$color-background-inputs: $color-accent1;
+$color-background-divider: $color-accent2;
+$color-background-inactive: $color-accent3;
 
 $color-border-default: $color-secondary;
 
