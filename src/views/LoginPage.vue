@@ -1,114 +1,22 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import { WebSocketConnect } from '@/services/webSocketService'
+import { Ref, ref, onMounted } from 'vue'
+import { WebSocketConnect } from '@/classes/services/WebSocketService'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore'
 import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle'
+import MessageTypes from '@/types/MessageTypes'
+import { useContext } from '@/composables/context'
 
-interface PasscodeInput {
-  id: number
-  focus: boolean
-  autocomplete: string
-  pattern: string
-  inputmode: string
-  maxLength: number
-  type: string
-  setDataAction: (id: PasscodeInput['id'], data: string) => void
-  value: string
-}
+const QUANTITY_INPUTS = 6
+const PASSCODE_INPUTS: Ref<{ id: number, value: string }[]> = ref([])
+const ctx = useContext()
+const { webSocketService } = ctx
 
-const DEFAULT_ORDER_STEP_INDEX = 0
-const dataByStepId = ref()
-
-const currentStepIndex = computed((): number => {
-  const activeStepId = activeStep.value.id
-
-  return (
-    PASSCODE_INPUTS.findIndex(({ id }) => id === activeStepId) ||
-    DEFAULT_ORDER_STEP_INDEX
-  )
-})
-
-const setData = (id: PasscodeInput['id'], data: string) => {
-  dataByStepId.value[id] = data
-  releaseNextStep()
-}
-
-const PASSCODE_INPUTS: PasscodeInput[] = [
-  {
-    id: 0,
-    focus: true,
-    autocomplete: 'nope',
-    pattern: '[0-9]*',
-    inputmode: 'numeric',
-    maxLength: 1,
-    type: 'text',
-    setDataAction: setData,
-    value: '',
-  },
-  {
-    id: 1,
-    focus: false,
-    autocomplete: 'nope',
-    pattern: '[0-9]*',
-    inputmode: 'numeric',
-    maxLength: 1,
-    type: 'text',
-    setDataAction: setData,
-    value: '',
-  },
-  {
-    id: 2,
-    focus: false,
-    autocomplete: 'nope',
-    pattern: '[0-9]*',
-    inputmode: 'numeric',
-    maxLength: 1,
-    type: 'text',
-    setDataAction: setData,
-    value: '',
-  },
-  {
-    id: 3,
-    focus: false,
-    autocomplete: 'nope',
-    pattern: '[0-9]*',
-    inputmode: 'numeric',
-    maxLength: 1,
-    type: 'text',
-    setDataAction: setData,
-    value: '',
-  },
-  {
-    id: 4,
-    focus: false,
-    autocomplete: 'nope',
-    pattern: '[0-9]*',
-    inputmode: 'numeric',
-    maxLength: 1,
-    type: 'text',
-    setDataAction: setData,
-    value: '',
-  },
-  {
-    id: 5,
-    focus: false,
-    autocomplete: 'nope',
-    pattern: '[0-9]*',
-    inputmode: 'numeric',
-    maxLength: 1,
-    type: 'text',
-    setDataAction: setData,
-    value: '',
-  },
-]
-const activeStep = ref(PASSCODE_INPUTS[DEFAULT_ORDER_STEP_INDEX])
-
-const releaseNextStep = () => {
-  if (currentStepIndex.value < PASSCODE_INPUTS.length - 1) {
-    activeStep.value = PASSCODE_INPUTS[currentStepIndex.value + 1]
+onMounted(() => {
+  for (let i = 0; i < QUANTITY_INPUTS; i++ ) {
+    PASSCODE_INPUTS.value.push({ id: i, value: '' })
   }
-}
+})
 
 function next(e: any) {
   if (
@@ -124,25 +32,25 @@ function previous(e: any) {
   e.target?.previousSibling?.focus()
 }
 
-function connect() {
-  let code = getPasscodeInputs()
-  const webSocketConnect = new WebSocketConnect(
-    function () {
-      alert('connected')
-    },
-    function () {
-      alert('Server is closed. Try again later.')
-    }
-  )
-}
-
 function getPasscodeInputs() {
   let code: string[] = []
-  PASSCODE_INPUTS.forEach(codeNumber => {
+  PASSCODE_INPUTS.value.forEach(codeNumber => {
     code.push(codeNumber.value)
   })
 
   return code
+}
+
+function connect() {
+  let passCode: number = parseInt(getPasscodeInputs().join(''))
+  webSocketService.login(passCode)
+
+  // const webSocketConnect = new WebSocketConnect(
+  //   passCode,
+  //   function () {
+  //     alert('Server is closed. Try again later.')
+  //   }
+  // )
 }
 </script>
 
@@ -161,15 +69,14 @@ function getPasscodeInputs() {
       <div>
         <form class="login-page__inputs">
           <input
-            v-for="(input, index) in PASSCODE_INPUTS"
-            :key="index"
+            v-for="input in PASSCODE_INPUTS"
+            :key="input.id"
             v-model="input.value"
-            :v-focus="input.focus"
-            :type="input.type"
-            :autocomplete="input.autocomplete"
-            :pattern="input.pattern"
-            :inputmode="input.inputmode"
-            :maxlength="input.maxLength"
+            type="text"
+            autocomplete="nope"
+            pattern="'[0-9]*"
+            inputmode="numeric"
+            maxlength="1"
             required
             @input="next"
             @keyup.backspace="previous"
@@ -177,6 +84,7 @@ function getPasscodeInputs() {
         </form>
 
         <BaseButton
+        class="login-page__button"
           theme="active"
           @click="connect()"
         >
@@ -202,7 +110,8 @@ function getPasscodeInputs() {
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   gap: 8px 8px;
-  height: 100vh;
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden;
 
   &__divider {
     background-color: $color-background-divider;
@@ -239,6 +148,10 @@ function getPasscodeInputs() {
     text-align: center;
     margin: 60px 0 20px 0;
   }
+  &__button {
+    width: 100%;
+    margin-top: 56px;
+  }
 }
 input {
   height: 64px;
@@ -254,5 +167,15 @@ input {
   &:focus {
     border: 2px solid $color-border-default;
   }
+}
+  /* Hide scrollbar for Chrome, Safari and Opera */
+.login-page::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.login-page {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 </style>

@@ -3,6 +3,7 @@ import { defineProps } from 'vue'
 interface Props {
   theme: string
 }
+
 const { theme = 'active' } = defineProps<Props>()
 </script>
 
@@ -19,10 +20,8 @@ const { theme = 'active' } = defineProps<Props>()
   justify-content: center;
   align-items: center;
   padding: 16px 24px;
-  width: 100%;
   height: 56px;
   border-radius: 12px;
-  margin-top: 56px;
   color: $color-text-buttons;
 
   &--active {
