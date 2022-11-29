@@ -6,25 +6,24 @@ import File from '@/types/File'
 import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
 import isDownloadable from '@/utils/helpers/isDownloadable'
 import { useRouter } from 'vue-router'
+import {Buffer} from 'buffer'
 //Open WebSockets
 
 export class webSocketService {
-
   private ws = {} as WebSocket
   private shouldDisconnect = false
   private readonly router = useRouter()
   listFiles = [] as File[]
   // private readonly wsOnmessageListenersAuth: Array<() => void>
-  private wsOnMessageListenersListFiles: ((listfiles:any) => void) | null = null
+  private wsOnMessageListenersListFiles: ((listfiles: any) => void) | null =
+    null
   constructor() {
-
     console.log('Starting connection to WebSocket Server')
     this.ws = new WebSocket('wss://cloudon.cc:9292/')
     // this.wsOnmessageListenersAuth = []
 
     this.ws.onopen = () => {
       console.log('WS opened')
-
     }
 
     this.ws.onmessage = event => {
@@ -64,21 +63,21 @@ export class webSocketService {
     let decodedBytes = base64ToArrayBuffer(message.payload!.bytes)
     this.saveByteArray(message.payload!.filename, decodedBytes)
   }
-  // private wsUploadFile(filename, size, bytes) {
-  //   var msg = {
-  //     type: MessageTypes.FORWARD,
-  //     command: MessageCommands.UPLOAD,
-  //     payload: { filepath: filename, path: '', size: size, bytes: bytes },
-  //   }
-  //   this.ws!.send(JSON.stringify(msg))
-  // }
   downloadFile(fileName: string) {
-    let msg: Message = { type: MessageTypes.FORWARD, command: MessageCommands.DOWNLOAD, path: fileName }
+    let msg: Message = {
+      type: MessageTypes.FORWARD,
+      command: MessageCommands.DOWNLOAD,
+      path: fileName,
+    }
     this.sendMsgToWs(msg)
   }
-  
+
   deleteFile(fileName: string) {
-    let msg = { type: MessageTypes.FORWARD, command: MessageCommands.REMOVE, path: fileName }
+    let msg = {
+      type: MessageTypes.FORWARD,
+      command: MessageCommands.REMOVE,
+      path: fileName,
+    }
     this.sendMsgToWs(msg)
     this.wsListFiles()
   }
@@ -86,11 +85,10 @@ export class webSocketService {
     this.listFiles = obj.payload
 
     debugger
-    
-    if (this.wsOnMessageListenersListFiles != null){
+
+    if (this.wsOnMessageListenersListFiles != null) {
       this.wsOnMessageListenersListFiles(this.listFiles)
     }
-    
   }
 
   private parseMessage(received_msg: string) {
@@ -110,26 +108,40 @@ export class webSocketService {
       this.onDownloadedFileFromPhone(obj)
       break
     case MessageCommands.UPLOAD:
-      // this.wsListFiles()
+      this.wsListFiles()
       break
     case MessageCommands.LIST_FILES:
       this.parseListFiles(obj)
       break
     }
   }
-  // sendFile(file) {
-  // var reader = new FileReader();
-  // reader.readAsArrayBuffer(file);
-  // reader.file = file;
-  // reader.onloadend = function () {
-  //   var data = reader.result;
-  //   var base64data = Buffer.from(data).toString("base64");
-  //   this.wsUploadFile(this.file.name, this.file.size, base64data);
-  //   console.log("Wyslany pliczek z buttonu");
-  // };
-  // };
-  private wsListFiles(func?:()=>void) {
-    if(func) this.wsOnMessageListenersListFiles = func
+  private wsUploadFile(filename: string, size: number, base64String: string) {
+    let msg = {
+      type: MessageTypes.FORWARD,
+      command: MessageCommands.UPLOAD,
+      payload: { filepath: filename, path: '', size: size, bytes: base64String },
+    }
+    this.ws!.send(JSON.stringify(msg))
+  }
+  sendFile(file: any) {
+    debugger
+    const reader: FileReader = new FileReader()
+    reader.readAsArrayBuffer(file)
+
+    reader.onloadend = () => {
+      console.log(reader.result)
+
+      if(reader.result !== null) {
+        let data = reader.result as string
+        let base64String = Buffer.from(data).toString('base64')
+        debugger
+        this.wsUploadFile(file.name, file.size, base64String)
+      }
+
+    }
+  }
+  private wsListFiles(func?: () => void) {
+    if (func) this.wsOnMessageListenersListFiles = func
     this.ws!.send(
       JSON.stringify({
         type: MessageTypes.FORWARD,

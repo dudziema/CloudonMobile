@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { Ref, ref, onMounted } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.vue'
 import ImageFiles from '@/assets/images/buttons/ImageFiles.vue'
@@ -9,7 +10,7 @@ import { useContext } from '@/composables/context'
 const ctx = useContext()
 const { webSocketService } = ctx
 
-const files = ref(null)
+const files = ref([])
 const tableHeaders = [
   { label: 'image', field: '' },
   { label: 'name', field: 'NAME' },
@@ -19,10 +20,28 @@ const tableHeaders = [
   { label: 'button', field: '' },
 ]
 
-onMounted(async () => {
+async function refreshFilesList() {
   await webSocketService.wsListFiles((listFiles: any) => {
     files.value = listFiles
   })
+}
+
+function onDrop(event: { dataTransfer: { items: any } }) {
+  const items = event.dataTransfer.items
+  let index = items.length - 1
+
+  while(index > -1) {
+    if(items[index].kind === 'file') {
+      webSocketService.sendFile(items[index].getAsFile())
+    } else {
+      alert('This item can not be uploaded.')
+    }
+    index--
+  }
+}
+
+onMounted(() => {
+  refreshFilesList()
 })
 </script>
 
@@ -32,13 +51,7 @@ onMounted(async () => {
       <div>
         <p class="dashboard-files__logo"><ImageLogo />Cloud On Mobile</p>
 
-        <BaseButton
-          class="dashboard-files__button"
-          theme="active"
-          @click="connect()"
-        >
-          + Add New Files
-        </BaseButton>
+        <BaseUpload :max-size="1" />
       </div>
 
       <div class="dashboard-files__log-out">
@@ -50,8 +63,12 @@ onMounted(async () => {
     <h1 class="dashboard-files__title">All files</h1>
 
     <div
-      v-if="files"
+      v-if="files.length !== 0"
       class="dashboard-files__files dashboard-files__files--full"
+      @dragover.prevent
+      @dragenter.prevent
+      @dragleave.prevent="onDrop"
+      @drop.prevent="onDrop"
     >
       <FileTable
         :files="files"
@@ -62,6 +79,10 @@ onMounted(async () => {
     <div
       v-else
       class="dashboard-files__files dashboard-files__files--empty"
+      @dragover.prevent
+      @dragenter.prevent
+      @dragleave.prevent="onDrop"
+      @drop.prevent="onDrop"
     >
       <ImageFiles />
       <p>There are no items here!</p>

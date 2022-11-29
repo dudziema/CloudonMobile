@@ -31,5 +31,9 @@ const { theme = 'active' } = defineProps<Props>()
   &--inactive {
     background-color: $color-background-inactive;
   }
+  &--new-file {
+    background-color: $color-background-special;
+    padding: 0px;
+  }
 }
 </style>

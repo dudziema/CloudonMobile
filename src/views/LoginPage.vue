@@ -44,13 +44,6 @@ function getPasscodeInputs() {
 function connect() {
   let passCode: number = parseInt(getPasscodeInputs().join(''))
   webSocketService.login(passCode)
-
-  // const webSocketConnect = new WebSocketConnect(
-  //   passCode,
-  //   function () {
-  //     alert('Server is closed. Try again later.')
-  //   }
-  // )
 }
 </script>
 
