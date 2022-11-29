@@ -129,8 +129,6 @@ export class webSocketService {
     reader.readAsArrayBuffer(file)
 
     reader.onloadend = () => {
-      console.log(reader.result)
-
       if(reader.result !== null) {
         let data = reader.result as string
         let base64String = Buffer.from(data).toString('base64')

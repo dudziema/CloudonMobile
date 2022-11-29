@@ -105,19 +105,32 @@ function connect() {
   gap: 8px 8px;
   overflow-y: hidden; /* Hide vertical scrollbar */
   overflow-x: hidden;
+  height: 100vh;
 
   &__divider {
     background-color: $color-background-divider;
     grid-column-start: 1;
     grid-column-end: 5;
     grid-row-start: 1;
-    grid-row-end: row10-end;
+    grid-row-end: row11-end;
+
+    @include devices(desktop-small) {
+      display: none;
+    }
   }
   &__content {
     grid-column-start: 6;
     grid-column-end: 10;
     grid-row-start: 2;
     grid-row-end: 10;
+    max-width: 500px;
+    
+    @include devices(desktop-small) {
+      grid-column-start: 3;
+      grid-column-end: 10;
+      grid-row-start: 2;
+      grid-row-end: 10;
+    }
   }
   &__details {
     margin: 16px 0 56px 0;

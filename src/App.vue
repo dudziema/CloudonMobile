@@ -8,7 +8,6 @@
 }
 body {
   overflow-y: hidden;
-  overflow-x: hidden;
-  padding: 15px;
+  margin: 0;
 }
 </style>

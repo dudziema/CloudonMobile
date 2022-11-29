@@ -1,0 +1,33 @@
+@import '../vars/breakpoints';
+
+@mixin devices ($breakpoint) {
+    @if $breakpoint == mobile {    
+    @media only screen and (max-width: $mobile-max) {
+      @content;
+    }
+  }
+ 
+  @if $breakpoint == tablet-min {
+    @media only screen and (max-width: $tablet-max) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == tablet {
+    @media only screen and (max-width: $desktop-min ) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == desktop-small {
+    @media only screen and (max-width: $desktop-max) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == desktop {
+    @media only screen and (min-width: $desktop-max) {
+      @content;
+    }
+  }
+}

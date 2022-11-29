@@ -1,5 +1,6 @@
 @import 'base/reset';
 @import 'vars/index.scss';
+@import 'mixins/devices';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200,400,600&display=swap');
 
 html {
@@ -15,6 +16,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-size: $font-size-base;
   line-height: $line-height-base;
+  margin: 0;
 }
 
 b {
