@@ -79,7 +79,9 @@ function getIcon(ext: string) {
     <td class="file-item-field file-item-field__image">
       <component :is="getIcon(getExtention(file.name))" />
     </td>
-    <td class="file-item-field file-item-field__name">{{ file.name }}</td>
+    <td class="file-item-field file-item-field__name">
+      {{ file.name }}
+    </td>
     <td class="file-item-field file-item-field__size">
       {{ formatBytes(file.size, 0) }}
     </td>

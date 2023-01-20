@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
+
 interface Props {
   theme: string
 }
 
-const { theme = 'active' } = defineProps<Props>()
+const { theme } = defineProps<Props>()
 </script>
 
 <template>

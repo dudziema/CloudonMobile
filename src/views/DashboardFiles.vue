@@ -49,18 +49,24 @@ onMounted(() => {
   <div class="dashboard-files">
     <div class="dashboard-files__left">
       <div>
-        <p class="dashboard-files__logo"><ImageLogo />Cloud On Mobile</p>
+        <p class="dashboard-files__logo">
+          <ImageLogo />Cloud On Mobile
+        </p>
 
         <BaseUpload :max-size="1" />
       </div>
 
       <div class="dashboard-files__log-out">
         <ImageLogOut />
-        <p class="dashboard-files__log-out-text">Disconnect</p>
+        <p class="dashboard-files__log-out-text">
+          Disconnect
+        </p>
       </div>
     </div>
 
-    <h1 class="dashboard-files__title">All files</h1>
+    <h1 class="dashboard-files__title">
+      All files
+    </h1>
 
     <div
       v-if="files.length !== 0"
@@ -88,7 +94,9 @@ onMounted(() => {
       <p>There are no items here!</p>
       <p>Drag & drop your file here to start uploading</p>
       <p>- or -</p>
-      <BaseButton theme="active"> Browse Files </BaseButton>
+      <BaseButton theme="active">
+        Browse Files
+      </BaseButton>
     </div>
   </div>
 </template>

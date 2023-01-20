@@ -77,7 +77,7 @@ function connect() {
         </form>
 
         <BaseButton
-        class="login-page__button"
+          class="login-page__button"
           theme="active"
           @click="connect()"
         >
@@ -85,7 +85,9 @@ function connect() {
         </BaseButton>
       </div>
 
-      <p class="login-page__download">Download the mobile app</p>
+      <p class="login-page__download">
+        Download the mobile app
+      </p>
 
       <div class="login-page__stores">
         <ButtonAppstore class="login-page__store" />
