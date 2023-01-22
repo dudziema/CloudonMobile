@@ -1,7 +1,7 @@
 import { inject } from 'vue'
 import { Context } from '@/classes/Context'
 
-const injectionKey = Symbol('context')
+const injectionKey = 'context'
 
 export function createContext(initialState = {}) {
   const context = new Context(initialState)

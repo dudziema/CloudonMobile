@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BaseUpload renders correctly 1`] = `
+<button
+  class="base-button base-button--new-file dashboard-files__button"
+>
+  
+  <label
+    for="selectFile"
+  >
+    + Add new file
+  </label>
+  <input
+    class="selectFiles"
+    id="selectFile"
+    type="file"
+  />
+  
+</button>
+`;

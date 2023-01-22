@@ -3,15 +3,15 @@ import { ref, Ref } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useContext } from '@/composables/context'
 
-interface Props {
-  maxSize: {
-    type: number
-    default: 1
-    required: true
-  }
-}
+// interface Props {
+//   maxSize: {
+//     type: number
+//     default: 1
+//     required: true
+//   }
+// }
 
-const { maxSize } = defineProps<Props>()
+// const { maxSize } = defineProps<Props>()
 const ctx = useContext()
 const { webSocketService } = ctx
 const MAX_SIZE_FILE_IN_MB = 100
