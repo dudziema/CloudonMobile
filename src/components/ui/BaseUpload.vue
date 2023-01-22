@@ -40,7 +40,6 @@ function isFileValid(file: any) {
 }
 
 function handleFileChange(event: { target: { files: any[] } }) {
-  debugger
 
   if (event.target.files && event.target.files[0]) {
     if (isFileValid(event.target.files[0])) {

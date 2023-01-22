@@ -84,15 +84,12 @@ export class webSocketService {
   parseListFiles(obj: { payload: any }) {
     this.listFiles = obj.payload
 
-    debugger
-
     if (this.wsOnMessageListenersListFiles != null) {
       this.wsOnMessageListenersListFiles(this.listFiles)
     }
   }
 
   private parseMessage(received_msg: string) {
-    debugger
     let obj = JSON.parse(received_msg)
 
     if (obj.type === MessageTypes.LOGGING_WITH_CODE) {
@@ -124,7 +121,6 @@ export class webSocketService {
     this.ws!.send(JSON.stringify(msg))
   }
   sendFile(file: any) {
-    debugger
     const reader: FileReader = new FileReader()
     reader.readAsArrayBuffer(file)
 
@@ -132,7 +128,6 @@ export class webSocketService {
       if(reader.result !== null) {
         let data = reader.result as string
         let base64String = Buffer.from(data).toString('base64')
-        debugger
         this.wsUploadFile(file.name, file.size, base64String)
       }
 
