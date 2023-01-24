@@ -2,7 +2,7 @@
 import { Ref, ref, onMounted } from 'vue'
 import { WebSocketConnect } from '@/classes/services/WebSocketService'
 import BaseButton from '@/components/ui/BaseButton.vue'
-import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore'
+import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
 import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle'
 import MessageTypes from '@/types/MessageTypes'
 import { useContext } from '@/composables/context'
