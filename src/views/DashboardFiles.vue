@@ -1,42 +1,51 @@
 <script lang="ts" setup>
-import { Ref, ref, onMounted } from 'vue'
+import { shallowRef, ShallowRef, onMounted } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
-import ImageLogOut from '@/assets/images/buttons/ImageLogOut.vue'
-import ImageFiles from '@/assets/images/buttons/ImageFiles.vue'
-import ImageLogo from '@/assets/images/buttons/ImageLogo.vue'
+import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
+import ImageFiles from '@/assets/images/buttons/ImageFiles.svg'
+import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
+import File from '@/types/File'
 import { useContext } from '@/composables/context'
+
 const ctx = useContext()
 const { webSocketService } = ctx
 
-const files = ref([])
-const tableHeaders = [
+const files: ShallowRef<File[]> = shallowRef([])
+const tableHeaders: ShallowRef = shallowRef([
   { label: 'image', field: '' },
   { label: 'name', field: 'NAME' },
   { label: 'size', field: 'FILE SIZE' },
   { label: 'time', field: 'UPLOAD DATE' },
   { label: 'button', field: '' },
   { label: 'button', field: '' },
-]
+])
 
 async function refreshFilesList() {
-  await webSocketService.wsListFiles((listFiles: any) => {
+  await webSocketService.wsListFiles((listFiles: File[]) => {
     files.value = listFiles
   })
 }
 
-function onDrop(event: { dataTransfer: { items: any } }) {
-  const items = event.dataTransfer.items
-  let index = items.length - 1
+function onDrop(event: DragEvent) {
+  if(event.dataTransfer) {
+    const items = event.dataTransfer.items
+    let index = items.length - 1
 
-  while(index > -1) {
-    if(items[index].kind === 'file') {
-      webSocketService.sendFile(items[index].getAsFile())
-    } else {
-      alert('This item can not be uploaded.')
+    while(index > -1) {
+      if(items[index].kind === 'file') {
+        const file: globalThis.File | null = items[index].getAsFile()
+        debugger
+
+        if(file) {
+          webSocketService.sendFile(file)
+        }
+      } else {
+        alert('This item can not be uploaded.')
+      }
+      index--
     }
-    index--
   }
 }
 

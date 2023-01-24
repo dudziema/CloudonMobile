@@ -4,23 +4,20 @@ import MessageCommands from '@/types/MessageCommands'
 import MessageTypes from '@/types/MessageTypes'
 import File from '@/types/File'
 import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
-import isDownloadable from '@/utils/helpers/isDownloadable'
 import { useRouter } from 'vue-router'
-import {Buffer} from 'buffer'
-//Open WebSockets
+import { Buffer } from 'buffer'
 
 export class webSocketService {
   private ws = {} as WebSocket
   private shouldDisconnect = false
   private readonly router = useRouter()
   listFiles = [] as File[]
-  // private readonly wsOnmessageListenersAuth: Array<() => void>
-  private wsOnMessageListenersListFiles: ((listfiles: any) => void) | null =
+
+  private wsOnMessageListenersListFiles: ((listfiles: File[]) => void) | null =
     null
   constructor() {
     console.log('Starting connection to WebSocket Server')
     this.ws = new WebSocket('wss://cloudon.cc:9292/')
-    // this.wsOnmessageListenersAuth = []
 
     this.ws.onopen = () => {
       console.log('WS opened')
@@ -42,15 +39,7 @@ export class webSocketService {
   sendMsgToWs(msg: Message) {
     this.ws.send(JSON.stringify(msg))
   }
-  // this.ws.onclose = (event: any) => {
-  //   console.log('socket closed' + JSON.stringify(event))
-  //   failureHandler()
-  // }
 
-  // this.ws.onerror = (error: any) => {
-  //   console.log(error)
-  //   this.ws.close()
-  // }
   private saveByteArray(fileName: string, decodedBytes: Uint8Array) {
     let mimeType = 'application/octet-stream'
     const blob = new Blob([decodedBytes], { type: mimeType })
@@ -60,8 +49,10 @@ export class webSocketService {
     link.click()
   }
   private onDownloadedFileFromPhone(message: Message) {
-    let decodedBytes = base64ToArrayBuffer(message.payload!.bytes)
-    this.saveByteArray(message.payload!.filename, decodedBytes)
+    if(message.payload) {
+      let decodedBytes = base64ToArrayBuffer(message.payload.bytes)
+      this.saveByteArray(message.payload.filename, decodedBytes)
+    }
   }
   downloadFile(fileName: string) {
     let msg: Message = {
@@ -81,10 +72,9 @@ export class webSocketService {
     this.sendMsgToWs(msg)
     this.wsListFiles()
   }
-  parseListFiles(obj: { payload: any }) {
-    this.listFiles = obj.payload
 
-    debugger
+  parseListFiles(obj: { payload: File[] }) {
+    this.listFiles = obj.payload
 
     if (this.wsOnMessageListenersListFiles != null) {
       this.wsOnMessageListenersListFiles(this.listFiles)
@@ -92,7 +82,6 @@ export class webSocketService {
   }
 
   private parseMessage(received_msg: string) {
-    debugger
     let obj = JSON.parse(received_msg)
 
     if (obj.type === MessageTypes.LOGGING_WITH_CODE) {
@@ -121,35 +110,28 @@ export class webSocketService {
       command: MessageCommands.UPLOAD,
       payload: { filepath: filename, path: '', size: size, bytes: base64String },
     }
-    this.ws!.send(JSON.stringify(msg))
+    this.ws.send(JSON.stringify(msg))
   }
-  sendFile(file: any) {
-    debugger
+  sendFile(file: File) {
     const reader: FileReader = new FileReader()
-    reader.readAsArrayBuffer(file)
-
+    const blob = new Blob([file as unknown as BlobPart], { type: 'application/octet-stream' })
+    reader.readAsArrayBuffer(blob)
+        
     reader.onloadend = () => {
-      if(reader.result !== null) {
+      if (reader.readyState === FileReader.DONE) {
         let data = reader.result as string
         let base64String = Buffer.from(data).toString('base64')
-        debugger
         this.wsUploadFile(file.name, file.size, base64String)
       }
-
     }
   }
   private wsListFiles(func?: () => void) {
     if (func) this.wsOnMessageListenersListFiles = func
-    this.ws!.send(
+    this.ws.send(
       JSON.stringify({
         type: MessageTypes.FORWARD,
         command: MessageCommands.LIST_FILES,
       })
     )
   }
-  // webSocketsDisconnect() {
-  //   this.shouldDisconnect = true;
-  //   this.ws!.close();
-
-  // }
 }
