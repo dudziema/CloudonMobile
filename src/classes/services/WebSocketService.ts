@@ -86,7 +86,6 @@ export class webSocketService {
 
     if (obj.type === MessageTypes.LOGGING_WITH_CODE) {
       if (obj.result === 0) {
-        console.log(obj.message)
         router.push('/dashboard')
       }
     }

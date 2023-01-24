@@ -36,7 +36,6 @@ function onDrop(event: DragEvent) {
     while(index > -1) {
       if(items[index].kind === 'file') {
         const file: globalThis.File | null = items[index].getAsFile()
-        debugger
 
         if(file) {
           webSocketService.sendFile(file)
