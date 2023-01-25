@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { Ref, ref, onMounted } from 'vue'
-import { WebSocketConnect } from '@/classes/services/WebSocketService'
 import BaseButton from '@/components/ui/BaseButton.vue'
-import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore'
-import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle'
-import MessageTypes from '@/types/MessageTypes'
+import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
+import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle.svg'
 import { useContext } from '@/composables/context'
 
 const QUANTITY_INPUTS = 6
@@ -18,7 +16,7 @@ onMounted(() => {
   }
 })
 
-function next(e: any) {
+function next(e: { inputType: string; target: { nextSibling: { nodeType: number; focus: () => void } } }) {
   if (
     e.inputType === 'deleteContentBackward' ||
     e.target?.nextSibling?.nodeType !== 1
@@ -27,7 +25,7 @@ function next(e: any) {
   e.target?.nextSibling?.focus()
 }
 
-function previous(e: any) {
+function previous(e: { target: { previousSibling: { nodeType: number; focus: () => void } } }) {
   if (e.target?.previousSibling?.nodeType !== 1) return
   e.target?.previousSibling?.focus()
 }

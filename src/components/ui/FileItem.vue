@@ -1,16 +1,13 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 import { useContext } from '@/composables/context'
-import IconTrash from '@/assets/images/iconsFiles/IconTrash.vue'
-import IconDownload from '@/assets/images/iconsFiles/IconDownload.vue'
-import IconImage from '@/assets/images/iconsFiles/IconImage.vue'
-import IconDoc from '@/assets/images/iconsFiles/IconDoc.vue'
-import IconFilm from '@/assets/images/iconsFiles/IconFilm.vue'
-import IconMusic from '@/assets/images/iconsFiles/IconMusic.vue'
+import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
+import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
+import IconImage from '@/assets/images/iconsFiles/IconImage.svg'
+import IconDoc from '@/assets/images/iconsFiles/IconDoc.svg'
+import IconFilm from '@/assets/images/iconsFiles/IconFilm.svg'
+import IconMusic from '@/assets/images/iconsFiles/IconMusic.svg'
 import File from '@/types/File'
-import Message from '@/types/Message'
-import MessageCommands from '@/types/MessageCommands'
-import MessageTypes from '@/types/MessageTypes'
 
 interface Props {
   file: File
@@ -23,7 +20,7 @@ const ZERO_IN_DATE = '0'
 const ONE_IN_MONTH = 1
 const TWO_DIGIT_VALUE = 10
 const MILISECONDS = 1000
-const extentionsList = ref([
+const extentionsList = shallowRef([
   { icon: IconImage, extention: ['jpg', 'jpeg', 'png', 'gif'] },
   {
     icon: IconDoc,
