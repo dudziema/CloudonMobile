@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
 import FileItem from '@/components/ui/FileItem.vue'
-import { useContext } from '@/composables/context'
 import File from '@/types/File'
 
 interface Props {
@@ -10,9 +8,6 @@ interface Props {
 }
 
 const { files, tableHeaders } = defineProps<Props>()
-
-const ctx = useContext()
-const { webSocketService } = ctx
 </script>
 
 <template>

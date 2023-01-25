@@ -1,47 +1,20 @@
 <script lang="ts" setup>
-import { ref, Ref } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useContext } from '@/composables/context'
+import File from '@/types/File'
 
-interface Props {
-  maxSize: {
-    type: number
-    default: 1
-    required: true
-  }
+const KB = 1024
+const MB = 1024 * KB
+const MAX_SIZE_FILE_IN_BYTES = 100 * MB
+
+function isFileValid(file: File) {
+  return file.size < MAX_SIZE_FILE_IN_BYTES ? true : false
 }
 
-const { maxSize } = defineProps<Props>()
 const ctx = useContext()
 const { webSocketService } = ctx
-const MAX_SIZE_FILE_IN_MB = 100
 
-const isLoading = false
-const uploadReady = true
-
-const errors = []
-
-function isFileSizeValid(fileSize: number) {
-  if (fileSize <= MAX_SIZE_FILE_IN_MB) {
-    console.log('File size is valid')
-  } else {
-    errors.push(`File size should be less than ${MAX_SIZE_FILE_IN_MB} MB`)
-  }
-}
-
-function isFileValid(file: any) {
-  isFileSizeValid(Math.round((file.size / 1024 / 1024) * 100) / 100)
-
-  if (errors.length === 0) {
-    return true
-  } else {
-    return false
-  }
-}
-
-function handleFileChange(event: { target: { files: any[] } }) {
-  debugger
-
+function addNewFile(event: { target: { files: File[] } }) {
   if (event.target.files && event.target.files[0]) {
     if (isFileValid(event.target.files[0])) {
       webSocketService.sendFile(event.target.files[0])
@@ -56,7 +29,7 @@ function handleFileChange(event: { target: { files: any[] } }) {
   <BaseButton
     class="dashboard-files__button"
     theme="new-file"
-    @change="handleFileChange"
+    @change="addNewFile"
   >
     <label for="selectFile">+ Add new file</label>
     <input
