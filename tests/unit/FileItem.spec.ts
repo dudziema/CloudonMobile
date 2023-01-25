@@ -1,4 +1,4 @@
-import { mount, VueWrapper } from '@vue/test-utils'
+import { shallowMount, VueWrapper } from '@vue/test-utils'
 import { createContext } from '@/composables/context'
 import FileItem from '@/components/ui/FileItem.vue'
 import File from '@/types/File'
@@ -10,14 +10,20 @@ describe('FileItem', () => {
   const file: File = { name: 'example.jpg', filename: 'example.jpg', size: 1000000, dateEpoch: 1610733200000 }
 
   beforeEach(() => {
-    wrapper = mount(FileItem, {
-      props: { file },
+    wrapper = shallowMount(FileItem, {
       global: {
         provide: {
           context: context
         }
-      }})
+      },
+      props: { file },
+    })
+
   })
+  it('renders correctly', () => {
+    expect(wrapper.element).toMatchSnapshot()
+  })
+  
   it('should render the correct file name', () => {
     const name = wrapper.find('[data-testid=file-name]')
     expect(name.exists()).toBeTruthy()

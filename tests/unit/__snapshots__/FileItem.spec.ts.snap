@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FileItem renders correctly 1`] = `
+<tr
+  class="file-item-row"
+>
+  <td
+    class="file-item-field file-item-field__image"
+    data-testid="file-icon"
+  >
+    <anonymous-stub />
+  </td>
+  <td
+    class="file-item-field file-item-field__name"
+    data-testid="file-name"
+  >
+    example.jpg
+  </td>
+  <td
+    class="file-item-field file-item-field__size"
+    data-testid="file-size"
+  >
+    977 KB
+  </td>
+  <td
+    class="file-item-field file-item-field__time"
+    data-testid="file-dateEpoch"
+  >
+    15.01.2021
+  </td>
+  <td
+    class="file-item-field file-item-field__button"
+  >
+    <button
+      class="file-item-field__button"
+    >
+      <!---->
+    </button>
+  </td>
+  <td
+    class="file-item-field file-item-field__button"
+  >
+    <button
+      class="file-item-field__button"
+    >
+      <!---->
+    </button>
+  </td>
+</tr>
+`;

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { shallowRef } from 'vue'
+import { ShallowRef, shallowRef } from 'vue'
 import { useContext } from '@/composables/context'
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
@@ -12,6 +12,10 @@ import File from '@/types/File'
 interface Props {
   file: File
 }
+interface ExtentionList {
+  icon: any,
+  extention: string[]
+}
 
 const { file } = defineProps<Props>()
 const ctx = useContext()
@@ -20,7 +24,7 @@ const ZERO_IN_DATE = '0'
 const ONE_IN_MONTH = 1
 const TWO_DIGIT_VALUE = 10
 const MILISECONDS = 1000
-const extentionsList = shallowRef([
+const extentionsList: ShallowRef<ExtentionList[]> = shallowRef([
   { icon: IconImage, extention: ['jpg', 'jpeg', 'png', 'gif'] },
   {
     icon: IconDoc,
@@ -32,11 +36,12 @@ const extentionsList = shallowRef([
 
 function formatBytes(bytes: number) {
   if (bytes === 0) return '0 Bytes'
+  if(!Number.isFinite(bytes) || bytes < 0) return 'Invalid input'
   const sizes = ['Bytes', 'KB', 'MB']
   const k = 1024
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(0)) + ' ' + sizes[i]
+  return `${(bytes / Math.pow(k, i)).toFixed(0)} ${sizes[i]}`
 }
 
 function formatTime(epochTime: number) {
@@ -51,18 +56,8 @@ function getExtention(value: string) {
   return getExtention[1]
 }
 
-function getIcon(ext: string) {
-  let extentionIcon = extentionsList.value.find(item => {
-    let { extention } = item
-
-    if (Array.isArray(extention)) {
-      return extention.includes(ext)
-    } else if (typeof extention === 'string') {
-      return extention === ext
-    }
-  }) || {}
-
-  return extentionIcon.icon || extentionsList.value[1].icon
+function getIcon(extention: string): ExtentionList {
+  return extentionsList.value.find(item => item.extention.includes(extention)) || IconDoc
 }
 </script>
 
@@ -70,7 +65,6 @@ function getIcon(ext: string) {
   <tr class="file-item-row">
     <td class="file-item-field file-item-field__image" data-testid="file-icon">
       <component
-        
         :is="getIcon(getExtention(file.name))" 
       />
     </td>
