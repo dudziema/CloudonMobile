@@ -22,8 +22,8 @@ const tableHeaders: ShallowRef = shallowRef([
   { label: 'button', field: '' },
 ])
 
-async function refreshFilesList() {
-  await webSocketService.wsListFiles((listFiles: File[]) => {
+function refreshFilesList() {
+  webSocketService.wsListFiles((listFiles: File[]) => {
     files.value = listFiles
   })
 }

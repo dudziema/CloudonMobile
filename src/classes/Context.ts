@@ -1,8 +1,8 @@
-import { webSocketService } from '@/classes/services/WebSocketService'
+import { WebSocketService } from '@/classes/services/WebSocketService'
 
 export class Context {
-  webSocketService: webSocketService
+  webSocketService: WebSocketService
   constructor() {
-    this.webSocketService = new webSocketService()
+    this.webSocketService = new WebSocketService()
   }
 }
