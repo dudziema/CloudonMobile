@@ -39,27 +39,27 @@ describe('BaseUpload', () => {
     expect(result).toBe(false)
   })
 
-  it('handleFileChange calls webSocketService.sendFile when file is valid', () => {
+  it('addNewFile calls webSocketService.sendFile when file is valid', () => {
     const file = { size: MAX_SIZE_FILE_IN_BYTES - ONE_MEGABYTE }
     const event = { target: { files: [file] } }
     const spy = jest.spyOn(context.webSocketService, 'sendFile')
-    wrapper.vm.handleFileChange(event)
+    wrapper.vm.addNewFile(event)
     expect(spy).toHaveBeenCalledWith(file)
   })
 
-  it('handleFileChange calls webSocketService.sendFile when file is invalid', () => {
+  it('addNewFile calls webSocketService.sendFile when file is invalid', () => {
     const file = { size: MAX_SIZE_FILE_IN_BYTES + ONE_MEGABYTE }
     const event = { target: { files: [file] } }
     const spy = jest.spyOn(context.webSocketService, 'sendFile')
-    wrapper.vm.handleFileChange(event)
+    wrapper.vm.addNewFile(event)
     expect(spy).not.toHaveBeenCalled()
   })
 
-  test('handleFileChange should not call webSocketService.sendFile when there is no file selected', () => {
+  test('addNewFile should not call webSocketService.sendFile when there is no file selected', () => {
     const mockSendFile = jest.fn()
     context.webSocketService.sendFile = mockSendFile
     const event = { target: { files: [] } }
-    wrapper.vm.handleFileChange(event)
+    wrapper.vm.addNewFile(event)
     expect(mockSendFile).not.toHaveBeenCalled()
   })
 })
