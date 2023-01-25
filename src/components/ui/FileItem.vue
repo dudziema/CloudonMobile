@@ -40,14 +40,9 @@ function formatBytes(bytes: number) {
 }
 
 function formatTime(epochTime: number) {
-  const date: Date = new Date(epochTime * MILISECONDS)
-  const uDay = date.getDate() < TWO_DIGIT_VALUE ? ZERO_IN_DATE + date.getDate() : date.getDate()
-  const uMonth = date.getMonth() + ONE_IN_MONTH < TWO_DIGIT_VALUE ?
-    ZERO_IN_DATE + (date.getMonth() + ONE_IN_MONTH) : date.getMonth() + ONE_IN_MONTH
-  const uYear = date.getFullYear()
-  const uploadDate = uDay + '.' + uMonth + '.' + uYear
-
-  return uploadDate
+  const date = new Date(epochTime);
+  const formattedDate = date.toLocaleDateString()
+  return formattedDate.replace(/\//g, ".")
 }
 
 function getExtention(value: string) {
@@ -73,17 +68,29 @@ function getIcon(ext: string) {
 
 <template>
   <tr class="file-item-row">
-    <td class="file-item-field file-item-field__image">
-      <component :is="getIcon(getExtention(file.name))" />
+    <td class="file-item-field file-item-field__image" data-testid="file-icon">
+      <component
+        
+        :is="getIcon(getExtention(file.name))" 
+      />
     </td>
-    <td class="file-item-field file-item-field__name">
+    <td
+      class="file-item-field file-item-field__name"
+      data-testid="file-name"
+    >
       {{ file.name }}
     </td>
-    <td class="file-item-field file-item-field__size">
+    <td
+      class="file-item-field file-item-field__size"
+      data-testid="file-size"
+    >
       {{ formatBytes(file.size, 0) }}
     </td>
-    <td class="file-item-field file-item-field__time">
-      {{ formatTime(file.date_epoch) }}
+    <td
+      class="file-item-field file-item-field__time"
+      data-testid="file-dateEpoch"
+    >
+      {{ formatTime(file.dateEpoch) }}
     </td>
     <td class="file-item-field file-item-field__button">
       <button class="file-item-field__button">
