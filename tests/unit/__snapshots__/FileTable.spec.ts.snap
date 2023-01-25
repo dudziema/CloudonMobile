@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FileTable renders correctly 1`] = `
+<table
+  class="file-table"
+>
+  <thead
+    class="file-table__header"
+  >
+    <tr
+      class="file-table__header-line"
+    >
+      
+      <th
+        class="file-table__line file-table__line-image"
+        data-testid="table-headers"
+      >
+        Image
+      </th>
+      <th
+        class="file-table__line file-table__line-name"
+        data-testid="table-headers"
+      >
+        Name
+      </th>
+      <th
+        class="file-table__line file-table__line-size"
+        data-testid="table-headers"
+      >
+        Size
+      </th>
+      <th
+        class="file-table__line file-table__line-time"
+        data-testid="table-headers"
+      >
+        Time
+      </th>
+      <th
+        class="file-table__line file-table__line-button"
+        data-testid="table-headers"
+      >
+        Button
+      </th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    
+    <file-item-stub
+      file="[object Object]"
+    />
+    <file-item-stub
+      file="[object Object]"
+    />
+    <file-item-stub
+      file="[object Object]"
+    />
+    
+  </tbody>
+</table>
+`;
