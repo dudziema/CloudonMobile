@@ -45,27 +45,28 @@ function formatBytes(bytes: number) {
 }
 
 function formatTime(epochTime: number) {
-  const date = new Date(epochTime);
+  const date = new Date(epochTime * 1000)
   const formattedDate = date.toLocaleDateString()
-  return formattedDate.replace(/\//g, ".")
+
+  return formattedDate.replace(/\//g, '.')
 }
 
-function getExtention(value: string) {
-  var getExtention = value.split('.')
+function getIcon(fileName: string) {
+  let extention = fileName.split('.').pop().split(/[?#]/)[0]
+  let extentionListItem: ExtentionList = extentionsList.value.find(item => item.extention.includes(extention)) ||
+    extentionsList.value[1]
 
-  return getExtention[1]
-}
-
-function getIcon(extention: string): ExtentionList {
-  return extentionsList.value.find(item => item.extention.includes(extention)) || IconDoc
+  return extentionListItem.icon
 }
 </script>
 
 <template>
   <tr class="file-item-row">
-    <td class="file-item-field file-item-field__image" data-testid="file-icon">
+    <td
+      class="file-item-field file-item-field__image"
+      data-testid="file-icon">
       <component
-        :is="getIcon(getExtention(file.name))" 
+        :is="getIcon(file.name)"
       />
     </td>
     <td
@@ -84,7 +85,7 @@ function getIcon(extention: string): ExtentionList {
       class="file-item-field file-item-field__time"
       data-testid="file-dateEpoch"
     >
-      {{ formatTime(file.dateEpoch) }}
+      {{ formatTime(file.date_epoch) }}
     </td>
     <td class="file-item-field file-item-field__button">
       <button class="file-item-field__button">
