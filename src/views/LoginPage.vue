@@ -4,17 +4,32 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
 import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle.svg'
 import { useContext } from '@/composables/context'
+import { useLoginStore } from '@/stores/main'
+import { useRouter } from 'vue-router'
 
 const QUANTITY_INPUTS = 6
 const PASSCODE_INPUTS: Ref<{ id: number, value: string }[]> = ref([])
 const ctx = useContext()
 const { webSocketService } = ctx
+const router = useRouter()
 
-onMounted(() => {
-  for (let i = 0; i < QUANTITY_INPUTS; i++ ) {
-    PASSCODE_INPUTS.value.push({ id: i, value: '' })
-  }
-})
+onMounted(
+  () => {
+    for (let i = 0; i < QUANTITY_INPUTS; i++ ) {
+      PASSCODE_INPUTS.value.push({ id: i, value: '' })
+    }
+  },
+  webSocketService.addWsOnMessageListener(function (obj) {
+    if(obj.result) {
+      debugger
+      // Wrong passcode provided
+      alert('Wrong pascode!!!')
+    } else if(!obj.result) {
+      // Correct passcode provided
+      router.push('/dashboard')
+    }
+  })
+)
 
 function next(e: { inputType: string; target: { nextSibling: { nodeType: number; focus: () => void } } }) {
   if (
