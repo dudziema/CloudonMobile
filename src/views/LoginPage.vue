@@ -1,31 +1,35 @@
 <script lang="ts" setup>
 import { Ref, ref, onMounted } from 'vue'
+import { useContext } from '@/composables/context'
+import { Router, useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
 import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle.svg'
-import { useContext } from '@/composables/context'
-import { useLoginStore } from '@/stores/main'
-import { useRouter } from 'vue-router'
+import Message from '@/types/Message'
 
-const QUANTITY_INPUTS = 6
 const PASSCODE_INPUTS: Ref<{ id: number, value: string }[]> = ref([])
 const ctx = useContext()
 const { webSocketService } = ctx
-const router = useRouter()
+const router: Router = useRouter()
+const isPasscodeCorrect: Ref<boolean> = ref(true)
 
 onMounted(
   () => {
-    for (let i = 0; i < QUANTITY_INPUTS; i++ ) {
-      PASSCODE_INPUTS.value.push({ id: i, value: '' })
+    let inputsQuantity = 6
+
+    while(inputsQuantity){
+      PASSCODE_INPUTS.value.push({ id: inputsQuantity, value: '' })
+      inputsQuantity --
     }
   },
-  webSocketService.addWsOnMessageListener(function (obj) {
-    if(obj.result) {
-      debugger
-      // Wrong passcode provided
-      alert('Wrong pascode!!!')
-    } else if(!obj.result) {
-      // Correct passcode provided
+
+  webSocketService.addWsOnMessageListener(function (messageFromServer: Message) {
+    if(messageFromServer.result) {
+      // Wrong passcode
+      isPasscodeCorrect.value = false
+    } else if(!messageFromServer.result) {
+      // Correct passcode
+      isPasscodeCorrect.value = true
       router.push('/dashboard')
     }
   })
@@ -55,6 +59,8 @@ function getPasscodeInputs() {
 }
 
 function connect() {
+  isPasscodeCorrect.value = true
+
   if(webSocketService.ws.readyState === WebSocket.OPEN) {
     let passCode: number = parseInt(getPasscodeInputs().join(''))
     webSocketService.login(passCode)
@@ -87,6 +93,8 @@ function connect() {
             inputmode="numeric"
             maxlength="1"
             required
+            :class="isPasscodeCorrect ? `login-page__input login-page__input--correct` :
+            `login-page__input login-page__input--wrong`"
             @input="next"
             @keyup.backspace="previous"
           />
@@ -176,6 +184,12 @@ function connect() {
   &__button {
     width: 100%;
     margin-top: 56px;
+  }
+  &__input {
+    &--wrong{
+      border: solid 2px $color-border-error;
+      animation: shake .5s linear;
+    }
   }
 }
 input {
