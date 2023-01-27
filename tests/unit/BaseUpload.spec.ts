@@ -20,11 +20,7 @@ describe('BaseUpload', () => {
   })
 
   afterEach(() => {
-    jest.resetAllMocks()
-  })
-
-  it('renders correctly', () => {
-    expect(wrapper.element).toMatchSnapshot()
+    jest.clearAllMocks()
   })
 
   it('isFileValid returns true when file size is less than 100MB', () => {

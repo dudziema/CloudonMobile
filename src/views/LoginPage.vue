@@ -40,8 +40,10 @@ function getPasscodeInputs() {
 }
 
 function connect() {
-  let passCode: number = parseInt(getPasscodeInputs().join(''))
-  webSocketService.login(passCode)
+  if(webSocketService.ws.readyState === WebSocket.OPEN) {
+    let passCode: number = parseInt(getPasscodeInputs().join(''))
+    webSocketService.login(passCode)
+  }
 }
 </script>
 
@@ -63,6 +65,7 @@ function connect() {
             v-for="input in PASSCODE_INPUTS"
             :key="input.id"
             v-model="input.value"
+            data-testid="login-input"
             type="text"
             autocomplete="nope"
             pattern="'[0-9]*"
@@ -77,6 +80,7 @@ function connect() {
         <BaseButton
           class="login-page__button"
           theme="active"
+          data-testid="login-button"
           @click="connect()"
         >
           Connect

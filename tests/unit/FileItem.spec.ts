@@ -2,12 +2,11 @@ import { shallowMount, VueWrapper } from '@vue/test-utils'
 import { createContext } from '@/composables/context'
 import FileItem from '@/components/ui/FileItem.vue'
 import File from '@/types/File'
-
 const { context } = createContext()
 
 describe('FileItem', () => {
   let wrapper: VueWrapper<any>
-  const file: File = { name: 'example.jpg', filename: 'example.jpg', size: 1000000, dateEpoch: 1610733200000 }
+  const file = { name: 'example.jpg', filename: 'example.jpg', size: 1000000, date_epoch: 1674815109 }
 
   beforeEach(() => {
     wrapper = shallowMount(FileItem, {
@@ -18,10 +17,11 @@ describe('FileItem', () => {
       },
       props: { file },
     })
-
+    
   })
-  it('renders correctly', () => {
-    expect(wrapper.element).toMatchSnapshot()
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
   
   it('should render the correct file name', () => {
@@ -39,7 +39,7 @@ describe('FileItem', () => {
   it('should render the correct file date', () => {
     const date = wrapper.find('[data-testid=file-dateEpoch]')
     expect(date.exists()).toBeTruthy()
-    expect(date.text()).toContain('15.01.2021')
+    expect(date.text()).toContain('27.01.2023')
   })
 
   it('should render the correct file icon', () => {

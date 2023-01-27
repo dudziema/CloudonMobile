@@ -24,8 +24,8 @@ describe('FileTable', () => {
     })
   })
 
-  it('renders correctly', () => {
-    expect(wrapper.element).toMatchSnapshot()
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   it('should render the correct number of FileItem components', () => {

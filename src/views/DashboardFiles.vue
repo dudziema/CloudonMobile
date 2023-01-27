@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import { shallowRef, ShallowRef, onMounted } from 'vue'
-import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
-import ImageFiles from '@/assets/images/buttons/ImageFiles.svg'
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
+import NoFilesSpace from '@/components/NoFilesSpace.vue'
 import File from '@/types/File'
 import { useContext } from '@/composables/context'
 
@@ -22,30 +21,10 @@ const tableHeaders: ShallowRef = shallowRef([
   { label: 'button', field: '' },
 ])
 
-function refreshFilesList() {
-  webSocketService.wsListFiles((listFiles: File[]) => {
+async function refreshFilesList() {
+  await webSocketService.wsListFiles((listFiles: File[]) => {
     files.value = listFiles
   })
-}
-
-function onDrop(event: DragEvent) {
-  if(event.dataTransfer) {
-    const items = event.dataTransfer.items
-    let index = items.length - 1
-
-    while(index > -1) {
-      if(items[index].kind === 'file') {
-        const file: globalThis.File | null = items[index].getAsFile()
-
-        if(file) {
-          webSocketService.sendFile(file)
-        }
-      } else {
-        alert('This item can not be uploaded.')
-      }
-      index--
-    }
-  }
 }
 
 onMounted(() => {
@@ -90,22 +69,7 @@ onMounted(() => {
       />
     </div>
 
-    <div
-      v-else
-      class="dashboard-files__files dashboard-files__files--empty"
-      @dragover.prevent
-      @dragenter.prevent
-      @dragleave.prevent="onDrop"
-      @drop.prevent="onDrop"
-    >
-      <ImageFiles />
-      <p>There are no items here!</p>
-      <p>Drag & drop your file here to start uploading</p>
-      <p>- or -</p>
-      <BaseButton theme="active">
-        Browse Files
-      </BaseButton>
-    </div>
+    <NoFilesSpace v-else />
   </div>
 </template>
 

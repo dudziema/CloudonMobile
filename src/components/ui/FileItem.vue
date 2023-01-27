@@ -20,10 +20,6 @@ interface ExtentionList {
 const { file } = defineProps<Props>()
 const ctx = useContext()
 const { webSocketService } = ctx
-const ZERO_IN_DATE = '0'
-const ONE_IN_MONTH = 1
-const TWO_DIGIT_VALUE = 10
-const MILISECONDS = 1000
 const extentionsList: ShallowRef<ExtentionList[]> = shallowRef([
   { icon: IconImage, extention: ['jpg', 'jpeg', 'png', 'gif'] },
   {
@@ -64,7 +60,8 @@ function getIcon(fileName: string) {
   <tr class="file-item-row">
     <td
       class="file-item-field file-item-field__image"
-      data-testid="file-icon">
+      data-testid="file-icon"
+    >
       <component
         :is="getIcon(file.name)"
       />
