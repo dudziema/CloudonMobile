@@ -18,6 +18,7 @@ const { files, tableHeaders } = defineProps<Props>()
           v-for="(column, index) in tableHeaders"
           :key="index"
           :class="`file-table__line file-table__line-${column.label}`"
+          data-testid="table-headers"
         >
           {{ column.field }}
         </th>

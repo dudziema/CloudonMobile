@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { shallowRef } from 'vue'
+import { ShallowRef, shallowRef } from 'vue'
 import { useContext } from '@/composables/context'
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
@@ -12,15 +12,15 @@ import File from '@/types/File'
 interface Props {
   file: File
 }
+interface ExtentionList {
+  icon: any,
+  extention: string[]
+}
 
 const { file } = defineProps<Props>()
 const ctx = useContext()
 const { webSocketService } = ctx
-const ZERO_IN_DATE = '0'
-const ONE_IN_MONTH = 1
-const TWO_DIGIT_VALUE = 10
-const MILISECONDS = 1000
-const extentionsList = shallowRef([
+const extentionsList: ShallowRef<ExtentionList[]> = shallowRef([
   { icon: IconImage, extention: ['jpg', 'jpeg', 'png', 'gif'] },
   {
     icon: IconDoc,
@@ -32,57 +32,56 @@ const extentionsList = shallowRef([
 
 function formatBytes(bytes: number) {
   if (bytes === 0) return '0 Bytes'
+  if(!Number.isFinite(bytes) || bytes < 0) return 'Invalid input'
   const sizes = ['Bytes', 'KB', 'MB']
   const k = 1024
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(0)) + ' ' + sizes[i]
+  return `${(bytes / Math.pow(k, i)).toFixed(0)} ${sizes[i]}`
 }
 
 function formatTime(epochTime: number) {
-  const date: Date = new Date(epochTime * MILISECONDS)
-  const uDay = date.getDate() < TWO_DIGIT_VALUE ? ZERO_IN_DATE + date.getDate() : date.getDate()
-  const uMonth = date.getMonth() + ONE_IN_MONTH < TWO_DIGIT_VALUE ?
-    ZERO_IN_DATE + (date.getMonth() + ONE_IN_MONTH) : date.getMonth() + ONE_IN_MONTH
-  const uYear = date.getFullYear()
-  const uploadDate = uDay + '.' + uMonth + '.' + uYear
+  const date = new Date(epochTime * 1000)
+  const formattedDate = date.toLocaleDateString()
 
-  return uploadDate
+  return formattedDate.replace(/\//g, '.')
 }
 
-function getExtention(value: string) {
-  var getExtention = value.split('.')
+function getIcon(fileName: string) {
+  let extention = fileName.split('.').pop().split(/[?#]/)[0]
+  let extentionListItem: ExtentionList = extentionsList.value.find(item => item.extention.includes(extention)) ||
+    extentionsList.value[1]
 
-  return getExtention[1]
-}
-
-function getIcon(ext: string) {
-  let extentionIcon = extentionsList.value.find(item => {
-    let { extention } = item
-
-    if (Array.isArray(extention)) {
-      return extention.includes(ext)
-    } else if (typeof extention === 'string') {
-      return extention === ext
-    }
-  }) || {}
-
-  return extentionIcon.icon || extentionsList.value[1].icon
+  return extentionListItem.icon
 }
 </script>
 
 <template>
   <tr class="file-item-row">
-    <td class="file-item-field file-item-field__image">
-      <component :is="getIcon(getExtention(file.name))" />
+    <td
+      class="file-item-field file-item-field__image"
+      data-testid="file-icon"
+    >
+      <component
+        :is="getIcon(file.name)"
+      />
     </td>
-    <td class="file-item-field file-item-field__name">
+    <td
+      class="file-item-field file-item-field__name"
+      data-testid="file-name"
+    >
       {{ file.name }}
     </td>
-    <td class="file-item-field file-item-field__size">
+    <td
+      class="file-item-field file-item-field__size"
+      data-testid="file-size"
+    >
       {{ formatBytes(file.size, 0) }}
     </td>
-    <td class="file-item-field file-item-field__time">
+    <td
+      class="file-item-field file-item-field__time"
+      data-testid="file-dateEpoch"
+    >
       {{ formatTime(file.date_epoch) }}
     </td>
     <td class="file-item-field file-item-field__button">

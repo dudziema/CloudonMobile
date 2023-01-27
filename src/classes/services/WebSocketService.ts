@@ -127,7 +127,6 @@ export class WebSocketService {
     }
     this.ws.send(JSON.stringify(msg))
   }
-
   private wsListFiles(func?: () => void) {
     if (func) this.wsOnMessageListenersListFiles = func
     this.ws.send(
