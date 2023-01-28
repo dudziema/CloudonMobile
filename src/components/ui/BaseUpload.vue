@@ -3,6 +3,12 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import { useContext } from '@/composables/context'
 import File from '@/types/File'
 
+interface Props {
+  label: string
+}
+
+const { label } = defineProps<Props>()
+
 const KB = 1024
 const MB = 1024 * KB
 const MAX_SIZE_FILE_IN_BYTES = 100 * MB
@@ -27,25 +33,45 @@ function addNewFile(event: { target: { files: File[] } }) {
 
 <template>
   <BaseButton
-    class="dashboard-files__button"
+    class="base-upload__button"
     theme="new-file"
     @change="addNewFile"
   >
-    <label for="selectFile">+ Add new file</label>
+    <label
+      for="selectFile"
+      class="base-upload__label"
+    >
+      {{ label }}
+    </label>
+
     <input
       id="selectFile"
       ref="newFile"
       type="file"
-      class="selectFiles"
+      class="base-upload__input-select-file"
     />
   </BaseButton>
 </template>
 
 <style lang="scss" scoped>
-input {
-  display: none;
-}
-label {
-  padding: 26px calc(100% - 170px)
+.base-upload {
+  &__button {
+    margin: $spacing-vertical-small $spacing-horizontal-default;
+  }
+
+  &__label {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+
+  &__input-select-file {
+    display: none;
+  }
 }
 </style>
