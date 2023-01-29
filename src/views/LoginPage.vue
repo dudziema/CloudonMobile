@@ -52,7 +52,7 @@ function connect() {
     <div class="login-page__divider" />
 
     <div class="login-page__content">
-      <h1>Enter the access code</h1>
+      <h1 class="login-page__title">Enter the access code</h1>
 
       <p class="login-page__details">
         To connect with your device, please enter the access code displayed in
@@ -136,11 +136,24 @@ function connect() {
       grid-row-end: 10;
     }
   }
+  &__title {
+    text-align: left;
+
+    @include devices(desktop-small) {
+      text-align: center;
+    }
+  }
   &__details {
     margin: 16px 0 56px 0;
     max-width: 390px;
     font-weight: 400;
     opacity: 0.8;
+    text-align: left;
+    
+    @include devices(desktop-small) {
+      text-align: center;
+      max-width: 100%;
+    }
   }
   &__inputs {
     display: flex;
