@@ -13,7 +13,9 @@ const description2 = shallowRef('Please try again.')
 <template>
   <div class="not-found">
     <NotFoundImage class="not-found__image" />
+
     <h2 class="not-found__title">{{ title }}</h2>
+
     <p class="not-found__description">
       <span>{{ description }}</span>
       <span>{{ description2 }}</span>
@@ -26,7 +28,6 @@ const description2 = shallowRef('Please try again.')
     >
       Go back
     </BaseButton>
-
   </div>
 </template>
 
@@ -40,30 +41,25 @@ const description2 = shallowRef('Please try again.')
   align-items: center;
 
   &__image {
-    margin: 100px 0 32px 0;
+    margin: calc($spacing-vertical-big * 2) 0 calc($spacing-vertical-small * 4) 0;
   }
 
   &__title {
-    margin: 16px;
-    font-weight: 600;
-    font-size: 32px;
-    line-height: 40px;
-    max-width: 610px;
+    margin: $spacing-vertical-default 0;
+    font-weight: $font-weight-semi-bold;
+    font-size: $font-size-title;
   }
 
   &__description {
     display: flex;
     align-items: center;
     flex-direction: column;
-    font-weight: 200;
-    font-size: 16px;
-    line-height: 24px;
+    font-weight: $font-weight-thin;
     opacity: 0.8;
-    max-height: 48px;
   }
 
   &__button {
-    margin: 80px;
+    margin: calc($spacing-vertical-big * 4);
   }
 }
 </style>

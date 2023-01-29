@@ -37,9 +37,9 @@ const { theme } = defineProps<Props>()
     padding: 0px;
   }
   &--special {
-    background-color: #F5FAFF;
-    color: #0E70F1;
-    font-weight: 200;
+    background-color: $color-background-divider;
+    color: $color-text-dark;
+    font-weight: $font-weight-thin;
   }
 }
 </style>
