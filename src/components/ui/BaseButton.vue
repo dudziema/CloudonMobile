@@ -36,5 +36,10 @@ const { theme } = defineProps<Props>()
     background-color: $color-background-special;
     padding: 0px;
   }
+  &--special {
+    background-color: #F5FAFF;
+    color: #0E70F1;
+    font-weight: 200;
+  }
 }
 </style>
