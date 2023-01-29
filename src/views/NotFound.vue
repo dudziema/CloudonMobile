@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { shallowRef } from 'vue'
+import { useRouter } from 'vue-router'
 import NotFoundImage from '@/assets/images/NotFoundImage.svg'
 import BaseButton from '@/components/ui/BaseButton.vue'
 
+const router = useRouter()
 const title = shallowRef('Ooops!')
 const description = shallowRef('The page you are looking for is not here.')
 const description2 = shallowRef('Please try again.')
@@ -20,6 +22,7 @@ const description2 = shallowRef('Please try again.')
     <BaseButton
       theme="special"
       class="not-found__button"
+      @click="router.push('/')"
     >
       Go back
     </BaseButton>
