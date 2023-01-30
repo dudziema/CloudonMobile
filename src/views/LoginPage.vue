@@ -72,6 +72,8 @@ function connect() {
             inputmode="numeric"
             maxlength="1"
             required
+            :class="input.value ? 'login-page__input login-page__input--focused' :
+              'login-page__input'"
             @input="next"
             @keyup.backspace="previous"
           />
@@ -147,6 +149,26 @@ function connect() {
     justify-content: space-between;
     flex-direction: row;
   }
+
+  &__input {
+    display: flex;
+    text-align: center;
+    height: 64px;
+    width: 61px;
+    border-radius: 8px;
+    background-color: $color-background-inputs;
+    font-size: calc($font-size-base * 2);
+    
+    &:focus {
+      border: 2px solid $color-border-default;
+    }
+
+    &--focused {
+      background-color: $color-background-main;
+      border: 2px solid $color-border-default;
+    }
+  }
+
   &__stores {
     display: flex;
     justify-content: space-around;
@@ -161,21 +183,6 @@ function connect() {
   &__button {
     width: 100%;
     margin-top: 56px;
-  }
-}
-input {
-  height: 64px;
-  width: 61px;
-  left: 0px;
-  top: 0px;
-  border-radius: 8px;
-  background-color: $color-background-inputs;
-  display: flex;
-  text-align: center;
-  font-weight: 500;
-  font-size: 32px;
-  &:focus {
-    border: 2px solid $color-border-default;
   }
 }
   /* Hide scrollbar for Chrome, Safari and Opera */
