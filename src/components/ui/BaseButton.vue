@@ -9,7 +9,10 @@ const { theme } = defineProps<Props>()
 </script>
 
 <template>
-  <button :class="`base-button base-button--${theme}`">
+  <button
+    :class="`base-button base-button--${theme}`"
+    :disabled="theme === 'inactive' ? true : false"
+  >
     <slot />
   </button>
 </template>

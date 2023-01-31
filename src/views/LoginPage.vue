@@ -16,7 +16,14 @@ onMounted(() => {
   }
 })
 
+const isAllValuesFilled = ref(false)
+
+function checkIfAllValuesAreFilled() {
+  isAllValuesFilled.value =PASSCODE_INPUTS.value.every(input => input.value)
+}
+
 function next(e: { inputType: string; target: { nextSibling: { nodeType: number; focus: () => void } } }) {
+  checkIfAllValuesAreFilled()
   if (
     e.inputType === 'deleteContentBackward' ||
     e.target?.nextSibling?.nodeType !== 1
@@ -26,6 +33,7 @@ function next(e: { inputType: string; target: { nextSibling: { nodeType: number;
 }
 
 function previous(e: { target: { previousSibling: { nodeType: number; focus: () => void } } }) {
+  checkIfAllValuesAreFilled()
   if (e.target?.previousSibling?.nodeType !== 1) return
   e.target?.previousSibling?.focus()
 }
@@ -40,9 +48,12 @@ function getPasscodeInputs() {
 }
 
 function connect() {
-  if(webSocketService.ws.readyState === WebSocket.OPEN) {
+  if(isAllValuesFilled.value) {
     let passCode: number = parseInt(getPasscodeInputs().join(''))
     webSocketService.login(passCode)
+  } else {
+    // @CM-31 Handle errors
+    console.log('Fill all inputs')
   }
 }
 </script>
@@ -74,12 +85,13 @@ function connect() {
             required
             @input="next"
             @keyup.backspace="previous"
+            @keyup.enter="connect()"
           />
         </form>
 
         <BaseButton
           class="login-page__button"
-          theme="active"
+          :theme="isAllValuesFilled ? 'active' : 'inactive'"
           data-testid="login-button"
           @click="connect()"
         >
