@@ -40,10 +40,8 @@ function getPasscodeInputs() {
 }
 
 function connect() {
-  if(webSocketService.ws.readyState === WebSocket.OPEN) {
-    let passCode: number = parseInt(getPasscodeInputs().join(''))
-    webSocketService.login(passCode)
-  }
+  let passCode: number = parseInt(getPasscodeInputs().join(''))
+  webSocketService.login(passCode)
 }
 </script>
 
