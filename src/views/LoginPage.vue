@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { Ref, ref, onMounted } from 'vue'
+import { useContext } from '@/composables/context'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
 import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle.svg'
-import { useContext } from '@/composables/context'
+import Theme from '@/types/Theme'
 
 const QUANTITY_INPUTS = 6
 const PASSCODE_INPUTS: Ref<{ id: number, value: string }[]> = ref([])
@@ -91,7 +92,7 @@ function connect() {
 
         <BaseButton
           class="login-page__button"
-          :theme="isAllValuesFilled ? 'active' : 'inactive'"
+          :theme="isAllValuesFilled ? Theme.ACTIVE : Theme.INACTIVE"
           data-testid="login-button"
           @click="connect()"
         >
