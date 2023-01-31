@@ -38,7 +38,6 @@ export class WebSocketService {
   }
   
   login(passCode: number) {
-    //funkcja
     console.log('Starting connection to WebSocket Server')
     this.passCode = passCode
     this.ws = new WebSocket('wss://cloudon.cc:9292/')
