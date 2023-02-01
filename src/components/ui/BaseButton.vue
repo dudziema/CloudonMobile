@@ -32,9 +32,17 @@ const { theme } = defineProps<Props>()
   &--inactive {
     background-color: $color-background-inactive;
   }
+
   &--new-file {
     background-color: $color-background-special;
     padding: 0px;
+  }
+  &--modal-action {
+    background-color: #D1405A;
+  }
+  &--simply {
+    background-color: transparent;
+    color: $color-background-special;
   }
 }
 </style>

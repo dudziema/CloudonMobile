@@ -1,5 +1,10 @@
+<script setup>
+import TheModal from '@/components/TheModal.vue'
+</script>
+
 <template>
   <router-view />
+  <TheModal />
 </template>
 
 <style>
