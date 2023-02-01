@@ -90,12 +90,12 @@ onMounted(() => {
     grid-column-start: 1;
     grid-column-end: 3;
     grid-row-start: 1;
-    grid-row-end: 9;
+    grid-row-end: 10;
     padding-right: 20px;
   }
   &__log-out {
-    grid-row-start: 9;
-    grid-row-end: 10;
+    grid-row-start: 10;
+    margin: 20px;
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
@@ -106,8 +106,6 @@ onMounted(() => {
     &-text {
       margin: 0 11px;
     }
-  }
-  &__right {
   }
   &__files {
     width: 100%;
