@@ -19,6 +19,22 @@ interface ExtentionList {
 
 const { file } = defineProps<Props>()
 const ctx = useContext()
+const { modalService } = ctx
+
+const openModalDeleteFile = () => {
+  modalService.open({
+    title: 'Delete file',
+    description: 'Are you sure? Deleting a file will permamently remove it from your inventory.',
+    buttonAction: {
+      text: 'Delete',
+      callback: () => {
+        webSocketService.deleteFile(file.name)
+        modalService.close()
+      },
+    },
+  })
+}
+
 const { webSocketService } = ctx
 const extentionsList: ShallowRef<ExtentionList[]> = shallowRef([
   { icon: IconImage, extention: ['jpg', 'jpeg', 'png', 'gif'] },
@@ -96,7 +112,7 @@ function getIcon(fileName: string) {
       <button class="file-item-field__button">
         <IconTrash
           class="file-item-field__delete-icon"
-          @click="webSocketService.deleteFile(file.name)"
+          @click="openModalDeleteFile"
         />
       </button>
     </td>

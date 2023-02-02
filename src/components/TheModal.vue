@@ -2,6 +2,7 @@
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ImageTrash from '@/assets/images/modal/ImageTrash.svg'
 import ImageWarning from '@/assets/images/modal/ImageWarning.svg'
+import ImageX from '@/assets/images/modal/x.svg'
 import { useContext } from '@/composables/context'
 import { computed } from 'vue'
 
@@ -29,6 +30,13 @@ function closeModal() {
             <ImageWarning class="modal__header-icon"/>
             {{ modalConfig.title }}
           </p>
+          
+          <button
+            class="modal__close"
+            @click="closeModal()"
+          >
+            <ImageX />
+          </button>
         </div>
         <p class="modal__description">{{ modalConfig.description}}</p>
         <div class="modal__buttons">
@@ -40,12 +48,15 @@ function closeModal() {
             Cancel
           </BaseButton>
           
-          <BaseButton theme="modal-action">
+          <BaseButton
+            theme="modal-action"
+            @click="modalConfig.buttonAction.callback()"
+          >
             <ImageTrash
-              v-if="modalConfig.actionButtonName === 'Delete'"
+              v-if="modalConfig.buttonAction.text === 'Delete'"
               class="modal__button-icon"
             />
-            {{ modalConfig.actionButtonName }}
+            {{ modalConfig.buttonAction.text }}
           </BaseButton>
         </div>
       </div>
@@ -77,7 +88,8 @@ function closeModal() {
     border-radius: 12px;
     padding: 24px;
     width: 546px;
-    height: 256px;
+    height: 232px;
+    margin:12px;
   }
 
   &__header {
@@ -95,7 +107,20 @@ function closeModal() {
     }
   }
   &__title {
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+  }
 
+  &__close {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: sticky;
+    top: 18px;
+    left: calc(100% - 36px);
+    z-index: 1;
   }
   &__description {
     opacity: 0.6;
