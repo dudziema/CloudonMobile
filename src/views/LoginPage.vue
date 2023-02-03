@@ -12,6 +12,7 @@ const ctx = useContext()
 const { webSocketService } = ctx
 const router: Router = useRouter()
 const isPasscodeCorrect: Ref<boolean> = ref(true)
+const passcode: Ref<number> | Ref<null> = ref(null)
 
 onMounted(
   () => {
@@ -30,7 +31,12 @@ onMounted(
     } else if(!messageFromServer.result) {
       // Correct passcode
       isPasscodeCorrect.value = true
-      router.push('/dashboard')
+      router.push({
+        name: 'Dashboard',
+        params: {
+          passcode: passcode.value
+        }
+      })
     }
   })
 )
@@ -62,8 +68,8 @@ function connect() {
   isPasscodeCorrect.value = true
 
   if(webSocketService.ws.readyState === WebSocket.OPEN) {
-    let passCode: number = parseInt(getPasscodeInputs().join(''))
-    webSocketService.login(passCode)
+    passcode.value = parseInt(getPasscodeInputs().join(''))
+    webSocketService.login(passcode.value)
   }
 }
 </script>
