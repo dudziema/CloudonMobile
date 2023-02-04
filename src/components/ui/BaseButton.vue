@@ -1,15 +1,19 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
+import Theme from '@/types/Theme'
 
 interface Props {
-  theme: string
+  theme: Theme
 }
 
 const { theme } = defineProps<Props>()
 </script>
 
 <template>
-  <button :class="`base-button base-button--${theme}`">
+  <button
+    :class="`base-button base-button--${theme}`"
+    :disabled="theme === Theme.INACTIVE ? true : false"
+  >
     <slot />
   </button>
 </template>

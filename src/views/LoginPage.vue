@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { Ref, ref, onMounted } from 'vue'
+import { Ref, ref,onMounted, computed, ComputedRef } from 'vue'
+import { useContext } from '@/composables/context'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
 import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle.svg'
-import { useContext } from '@/composables/context'
+import Theme from '@/types/Theme'
 
 const QUANTITY_INPUTS = 6
 const PASSCODE_INPUTS: Ref<{ id: number, value: string }[]> = ref([])
@@ -16,12 +17,10 @@ onMounted(() => {
   }
 })
 
+const isAllValuesFilled: ComputedRef<boolean> = computed(() => PASSCODE_INPUTS.value.every(input => input.value))
+
 function next(e: { inputType: string; target: { nextSibling: { nodeType: number; focus: () => void } } }) {
-  if (
-    e.inputType === 'deleteContentBackward' ||
-    e.target?.nextSibling?.nodeType !== 1
-  )
-    return
+  if (e.inputType === 'deleteContentBackward' || e.target?.nextSibling?.nodeType !== 1) return
   e.target?.nextSibling?.focus()
 }
 
@@ -40,9 +39,12 @@ function getPasscodeInputs() {
 }
 
 function connect() {
-  if(webSocketService.ws.readyState === WebSocket.OPEN) {
+  if(isAllValuesFilled.value) {
     let passCode: number = parseInt(getPasscodeInputs().join(''))
     webSocketService.login(passCode)
+  } else {
+    // @CM-31 Handle errors
+    console.log('Fill all inputs')
   }
 }
 </script>
@@ -76,12 +78,13 @@ function connect() {
               'login-page__input'"
             @input="next"
             @keyup.backspace="previous"
+            @keyup.enter="connect()"
           />
         </form>
 
         <BaseButton
           class="login-page__button"
-          theme="active"
+          :theme="isAllValuesFilled ? Theme.ACTIVE : Theme.INACTIVE"
           data-testid="login-button"
           @click="connect()"
         >
