@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Ref, ref, onMounted } from 'vue'
+import { Ref, ref,onMounted, computed, ComputedRef } from 'vue'
 import { useContext } from '@/composables/context'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
@@ -17,24 +17,14 @@ onMounted(() => {
   }
 })
 
-const isAllValuesFilled = ref(false)
-
-function checkIfAllValuesAreFilled() {
-  isAllValuesFilled.value =PASSCODE_INPUTS.value.every(input => input.value)
-}
+const isAllValuesFilled: ComputedRef<boolean> = computed(() => PASSCODE_INPUTS.value.every(input => input.value))
 
 function next(e: { inputType: string; target: { nextSibling: { nodeType: number; focus: () => void } } }) {
-  checkIfAllValuesAreFilled()
-  if (
-    e.inputType === 'deleteContentBackward' ||
-    e.target?.nextSibling?.nodeType !== 1
-  )
-    return
+  if (e.inputType === 'deleteContentBackward' || e.target?.nextSibling?.nodeType !== 1) return
   e.target?.nextSibling?.focus()
 }
 
 function previous(e: { target: { previousSibling: { nodeType: number; focus: () => void } } }) {
-  checkIfAllValuesAreFilled()
   if (e.target?.previousSibling?.nodeType !== 1) return
   e.target?.previousSibling?.focus()
 }
