@@ -8,14 +8,21 @@ const routes: Array<RouteRecordRaw> = [
     component: LoginPage,
   },
   {
-    path: '/dashboard',
+    path: '/:passcode',
     name: 'Dashboard',
+    props: true,
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ '../views/DashboardFiles.vue'),
+      import(/* webpackChunkName: "Dashboard" */ '../views/DashboardFiles.vue'),
   },
+  {
+    path: '/:catchAll(.*)',
+    name: 'Not Found',
+    component: () =>
+      import(/* webpackChunkName: "NotFound" */ '../views/NotFound.vue'),
+  }
 ]
 
 const router = createRouter({

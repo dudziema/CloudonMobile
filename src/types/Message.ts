@@ -7,6 +7,7 @@ interface Message {
   payload?: File
   command?: MessageCommands
   path?: string
+  result?: number
 }
 
 export default Message

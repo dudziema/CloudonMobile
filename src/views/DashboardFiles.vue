@@ -48,7 +48,10 @@ onMounted(() => {
           <ImageLogo />Cloud On Mobile
         </p>
 
-        <BaseUpload :max-size="1" />
+        <BaseUpload
+          class="dashboard-files__button-new-file"
+          label="+ Add new file"
+        />
       </div>
         
       <BaseButton
@@ -101,7 +104,7 @@ onMounted(() => {
     grid-column-start: 1;
     grid-column-end: 3;
     grid-row-start: 1;
-    grid-row-end: 9;
+    grid-row-end: 10;
     padding-right: 20px;
   }
   &__disconnect {
@@ -116,6 +119,10 @@ onMounted(() => {
     &-text {
       margin: 12px;
     }
+  }
+
+  &__button-new-file {
+    width: 100%;
   }
 
   &__files {
@@ -133,17 +140,7 @@ onMounted(() => {
       align-content: flex-start;
       flex-wrap: wrap;
     }
-    &--empty {
-      border: 1px dashed #0e70f1;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      align-content: center;
-      flex-wrap: wrap;
-    }
-
+    
     &-content {
       width: 100%;
       height: 100%;
