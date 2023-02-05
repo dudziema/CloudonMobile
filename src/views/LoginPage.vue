@@ -50,6 +50,7 @@ function next(e: { inputType: string; target: { nextSibling: { nodeType: number;
 }
 
 function previous(e: { target: { previousSibling: { nodeType: number; focus: () => void } } }) {
+  isPasscodeCorrect.value = true
   if (e.target?.previousSibling?.nodeType !== 1) return
   e.target?.previousSibling?.focus()
 }
@@ -64,12 +65,11 @@ function getPasscodeInputs() {
 }
 
 function connect() {
-
   isPasscodeCorrect.value = true
 
   if(isAllValuesFilled.value) {
-    let passCode: number = parseInt(getPasscodeInputs().join(''))
-    webSocketService.login(passCode)
+    passcode.value = parseInt(getPasscodeInputs().join(''))
+    webSocketService.login(passcode.value)
   } else {
     // @CM-31 Handle errors
     console.log('Fill all inputs')
