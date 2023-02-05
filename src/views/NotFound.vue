@@ -3,6 +3,7 @@ import { shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
 import NotFoundImage from '@/assets/images/NotFoundImage.svg'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import Theme from '@/types/Theme'
 
 const router = useRouter()
 const title = shallowRef('Ooops!')
@@ -22,7 +23,7 @@ const description2 = shallowRef('Please try again.')
     </p>
 
     <BaseButton
-      theme="special"
+      :theme="Theme.SPECIAL"
       class="not-found__button"
       @click="router.push('/')"
     >

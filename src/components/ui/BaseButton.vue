@@ -41,8 +41,16 @@ const { theme } = defineProps<Props>()
     background-color: $color-background-special;
     padding: 0px;
   }
+  &--modal-action {
+    background-color: $color-background-error;
+  }
 
-  &--simple {
+  &--modal-simply {
+    background-color: transparent;
+    color: $color-background-special;
+  }
+
+  &--simply {
     background-color: transparent;
     color: $color-text-default;
     padding: 0;

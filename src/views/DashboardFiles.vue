@@ -9,6 +9,7 @@ import NoFilesSpace from '@/components/NoFilesSpace.vue'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
 import File from '@/types/File'
+import Theme from '@/types/Theme'
 
 const router = useRouter()
 const ctx = useContext()
@@ -56,7 +57,7 @@ onMounted(() => {
         
       <BaseButton
         class="dashboard-files__disconnect"
-        theme="simple"
+        :theme="Theme.SIMPLY"
         @click="disconnect"
       >
         <ImageLogOut />
