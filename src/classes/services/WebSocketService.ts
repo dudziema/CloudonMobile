@@ -11,7 +11,7 @@ export class WebSocketService {
   listFiles = [] as File[]
   private ws: WebSocket
   private wsOnMessageListenersListFiles: ((listfiles: File[]) => void) | null = null
-  wsOnMessageListeners: ((obj: any) => void)[] = []
+  wsOnMessageListeners: ((obj: Message) => void)[] = []
   constructor() {
     console.log('Starting connection to WebSocket Server')
     this.ws = new WebSocket('wss://cloudon.cc:9292/')
@@ -26,10 +26,10 @@ export class WebSocketService {
     }
   }
 
-  login(passCode: number) {
+  login(passcode: number) {
     this.sendMsgToWs({
       type: MessageTypes.LOGING_WITH_CODE,
-      code: passCode,
+      code: passcode,
     })
   }
 
