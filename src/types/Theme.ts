@@ -6,7 +6,6 @@ enum Theme {
   SPECIAL = 'special',
   MODAL_ACTION = 'modal-action',
   MODAL_SIMPLY = 'modal-simply',
-
 }
 
 export default Theme

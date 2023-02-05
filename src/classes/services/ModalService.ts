@@ -1,12 +1,13 @@
-import { shallowRef,ShallowRef, Ref, ref, computed } from 'vue'
+import { shallowRef,ShallowRef, computed } from 'vue'
 import ModalConfig from '@/types/ModalConfig'
 
 export class ModalService {
-  private _isVisible: Ref<boolean>
+  private _isVisible: ShallowRef<boolean>
   private _config: ShallowRef<ModalConfig> | ShallowRef<null>
+
   constructor() {
     this._config = shallowRef(null)
-    this._isVisible = ref(false)
+    this._isVisible = shallowRef(false)
   }
 
   open(config: ModalConfig) {

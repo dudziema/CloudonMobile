@@ -42,7 +42,7 @@ const { theme } = defineProps<Props>()
     padding: 0px;
   }
   &--modal-action {
-    background-color: #D1405A;
+    background-color: $color-background-error;
   }
 
   &--modal-simply {
