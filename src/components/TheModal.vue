@@ -5,6 +5,7 @@ import ImageWarning from '@/assets/images/modal/ImageWarning.svg'
 import ImageX from '@/assets/images/modal/x.svg'
 import { useContext } from '@/composables/context'
 import { computed } from 'vue'
+import Theme from '@/types/Theme'
 
 const ctx = useContext()
 const { modalService } = ctx
@@ -42,14 +43,14 @@ function closeModal() {
         <div class="modal__buttons">
           <BaseButton
             class="modal__button-cancel"
-            theme="simply"
+            :theme="Theme.MODAL_SIMPLY"
             @click="closeModal()"
           >
             Cancel
           </BaseButton>
           
           <BaseButton
-            theme="modal-action"
+            :theme="Theme.MODAL_ACTION"
             @click="modalConfig.buttonAction.callback()"
           >
             <ImageTrash
