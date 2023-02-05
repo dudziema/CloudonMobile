@@ -5,15 +5,13 @@ import MessageTypes from '@/types/MessageTypes'
 import File from '@/types/File'
 import ContentType from '@/types/ContentType'
 import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
-import { useRouter } from 'vue-router'
 import { Buffer } from 'buffer'
 
 export class WebSocketService {
   listFiles = [] as File[]
   private ws: WebSocket
-  private readonly router = useRouter()
   private wsOnMessageListenersListFiles: ((listfiles: File[]) => void) | null = null
-
+  wsOnMessageListeners: ((obj: Message) => void)[] = []
   constructor() {
     console.log('Starting connection to WebSocket Server')
     this.ws = new WebSocket('wss://cloudon.cc:9292/')
@@ -28,10 +26,10 @@ export class WebSocketService {
     }
   }
 
-  login(passCode: number) {
+  login(passcode: number) {
     this.sendMsgToWs({
       type: MessageTypes.LOGING_WITH_CODE,
-      code: passCode,
+      code: passcode,
     })
   }
 
@@ -68,6 +66,10 @@ export class WebSocketService {
     }
   }
 
+  addWsOnMessageListener( listenerFunction: any ) {
+    this.wsOnMessageListeners.push(listenerFunction)
+  }
+
   private sendMsgToWs(msg: Message) {
     this.ws.send(JSON.stringify(msg))
   }
@@ -100,8 +102,10 @@ export class WebSocketService {
     let obj = JSON.parse(receivedMessage)
 
     if (obj.type === MessageTypes.LOGING_WITH_CODE) {
-      if (!obj.result) {
-        router.push('/dashboard')
+      if (this.wsOnMessageListeners) {
+        this.wsOnMessageListeners.forEach(listener => {
+          listener(obj)
+        })
       }
     }
     let message: MessageCommands = obj.command
