@@ -36,10 +36,19 @@ const { theme } = defineProps<Props>()
   &--inactive {
     background-color: $color-background-inactive;
   }
+
   &--new-file {
     background-color: $color-background-special;
     padding: 0px;
   }
+
+  &--simple {
+    background-color: transparent;
+    color: $color-text-default;
+    padding: 0;
+    justify-content: flex-start;
+  }
+
   &--special {
     background-color: $color-background-divider;
     color: $color-text-dark;

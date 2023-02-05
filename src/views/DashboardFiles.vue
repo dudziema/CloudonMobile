@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import { shallowRef, ShallowRef, onMounted } from 'vue'
+import { useContext } from '@/composables/context'
+import { useRouter } from 'vue-router'
+import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
+import NoFilesSpace from '@/components/NoFilesSpace.vue'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
-import NoFilesSpace from '@/components/NoFilesSpace.vue'
 import File from '@/types/File'
-import { useContext } from '@/composables/context'
 
+const router = useRouter()
 const ctx = useContext()
 const { webSocketService } = ctx
 
@@ -25,6 +28,11 @@ async function refreshFilesList() {
   await webSocketService.wsListFiles((listFiles: File[]) => {
     files.value = listFiles
   })
+}
+
+function disconnect() {
+  webSocketService.disconnect()
+  router.push('/')
 }
 
 onMounted(() => {
@@ -45,13 +53,16 @@ onMounted(() => {
           label="+ Add new file"
         />
       </div>
-
-      <div class="dashboard-files__log-out">
+        
+      <BaseButton
+        class="dashboard-files__disconnect"
+        theme="simple"
+        @click="disconnect"
+      >
         <ImageLogOut />
-        <p class="dashboard-files__log-out-text">
-          Disconnect
-        </p>
-      </div>
+        
+        <span class="dashboard-files__disconnect-text">Disconnect</span>
+      </BaseButton>
     </div>
 
     <h1 class="dashboard-files__title">
@@ -96,18 +107,17 @@ onMounted(() => {
     grid-row-end: 10;
     padding-right: 20px;
   }
-  &__log-out {
-    grid-row-start: 10;
-    margin: 20px;
+  &__disconnect {
+    grid-row-start: 9;
+    grid-row-end: 10;
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
-    color: #0c0c0c;
     display: flex;
     align-content: center;
 
     &-text {
-      margin: 0 11px;
+      margin: 12px;
     }
   }
 
