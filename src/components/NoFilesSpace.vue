@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ImageFiles from '@/assets/images/buttons/ImageFiles.svg'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import Theme from '@/types/Theme'
 import { useContext } from '@/composables/context'
 
 const ctx = useContext()
@@ -40,7 +41,7 @@ function onDrop(event: DragEvent) {
     <p>There are no items here!</p>
     <p>Drag & drop your file here to start uploading</p>
     <p>- or -</p>
-    <BaseButton theme="active">
+    <BaseButton :theme="Theme.ACTIVE">
       Browse Files
     </BaseButton>
   </div>

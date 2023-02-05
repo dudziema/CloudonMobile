@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { Ref, ref, onMounted } from 'vue'
-import { useContext } from '@/composables/context'
+import { Ref, ref,onMounted, computed, ComputedRef } from 'vue'
 import { Router, useRouter } from 'vue-router'
+import { useContext } from '@/composables/context'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
 import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle.svg'
+import Theme from '@/types/Theme'
 import Message from '@/types/Message'
 
 const PASSCODE_INPUTS: Ref<{ id: number, value: string }[]> = ref([])
@@ -35,12 +36,10 @@ onMounted(
   })
 )
 
+const isAllValuesFilled: ComputedRef<boolean> = computed(() => PASSCODE_INPUTS.value.every(input => input.value))
+
 function next(e: { inputType: string; target: { nextSibling: { nodeType: number; focus: () => void } } }) {
-  if (
-    e.inputType === 'deleteContentBackward' ||
-    e.target?.nextSibling?.nodeType !== 1
-  )
-    return
+  if (e.inputType === 'deleteContentBackward' || e.target?.nextSibling?.nodeType !== 1) return
   e.target?.nextSibling?.focus()
 }
 
@@ -61,9 +60,12 @@ function getPasscodeInputs() {
 function connect() {
   isPasscodeCorrect.value = true
 
-  if(webSocketService.ws.readyState === WebSocket.OPEN) {
+  if(isAllValuesFilled.value) {
     let passCode: number = parseInt(getPasscodeInputs().join(''))
     webSocketService.login(passCode)
+  } else {
+    // @CM-31 Handle errors
+    console.log('Fill all inputs')
   }
 }
 </script>
@@ -73,7 +75,7 @@ function connect() {
     <div class="login-page__divider" />
 
     <div class="login-page__content">
-      <h1>Enter the access code</h1>
+      <h1 class="login-page__title">Enter the access code</h1>
 
       <p class="login-page__details">
         To connect with your device, please enter the access code displayed in
@@ -97,12 +99,13 @@ function connect() {
             `login-page__input login-page__input--wrong`"
             @input="next"
             @keyup.backspace="previous"
+            @keyup.enter="connect()"
           />
         </form>
 
         <BaseButton
           class="login-page__button"
-          theme="active"
+          :theme="isAllValuesFilled ? Theme.ACTIVE : Theme.INACTIVE"
           data-testid="login-button"
           @click="connect()"
         >
@@ -159,17 +162,50 @@ function connect() {
       grid-row-end: 10;
     }
   }
+  &__title {
+    text-align: left;
+
+    @include devices(desktop-small) {
+      text-align: center;
+    }
+  }
   &__details {
     margin: 16px 0 56px 0;
     max-width: 390px;
     font-weight: 400;
     opacity: 0.8;
+    text-align: left;
+    
+    @include devices(desktop-small) {
+      text-align: center;
+      max-width: 100%;
+    }
   }
   &__inputs {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
   }
+
+  &__input {
+    display: flex;
+    text-align: center;
+    height: 64px;
+    width: 61px;
+    border-radius: 8px;
+    background-color: $color-background-inputs;
+    font-size: calc($font-size-base * 2);
+    
+    &:focus {
+      border: 2px solid $color-border-default;
+    }
+
+    &--focused {
+      background-color: $color-background-main;
+      border: 2px solid $color-border-default;
+    }
+  }
+
   &__stores {
     display: flex;
     justify-content: space-around;
@@ -190,21 +226,6 @@ function connect() {
       border: solid 2px $color-border-error;
       animation: shake .5s linear;
     }
-  }
-}
-input {
-  height: 64px;
-  width: 61px;
-  left: 0px;
-  top: 0px;
-  border-radius: 8px;
-  background-color: $color-background-inputs;
-  display: flex;
-  text-align: center;
-  font-weight: 500;
-  font-size: 32px;
-  &:focus {
-    border: 2px solid $color-border-default;
   }
 }
   /* Hide scrollbar for Chrome, Safari and Opera */

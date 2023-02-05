@@ -2,6 +2,7 @@
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useContext } from '@/composables/context'
 import File from '@/types/File'
+import Theme from '@/types/Theme'
 
 const KB = 1024
 const MB = 1024 * KB
@@ -28,7 +29,7 @@ function addNewFile(event: { target: { files: File[] } }) {
 <template>
   <BaseButton
     class="dashboard-files__button"
-    theme="new-file"
+    :theme="Theme.NEW_FILE"
     @change="addNewFile"
   >
     <label for="selectFile">+ Add new file</label>
