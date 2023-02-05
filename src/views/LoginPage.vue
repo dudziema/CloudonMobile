@@ -64,6 +64,7 @@ function getPasscodeInputs() {
 }
 
 function connect() {
+
   isPasscodeCorrect.value = true
 
   if(isAllValuesFilled.value) {
