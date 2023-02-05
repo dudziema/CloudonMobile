@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ImageFiles from '@/assets/images/buttons/ImageFiles.svg'
-import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseUpload from '@/components/ui/BaseUpload.vue'
 import { useContext } from '@/composables/context'
 
 const ctx = useContext()
@@ -30,7 +30,7 @@ function onDrop(event: DragEvent) {
 <template>
   <div
     data-testid="dashboard-no-files"
-    class="dashboard-files__files dashboard-files__files--empty"
+    class="no-files-space"
     @dragover.prevent
     @dragenter.prevent
     @dragleave.prevent="onDrop"
@@ -40,8 +40,32 @@ function onDrop(event: DragEvent) {
     <p>There are no items here!</p>
     <p>Drag & drop your file here to start uploading</p>
     <p>- or -</p>
-    <BaseButton theme="active">
-      Browse Files
-    </BaseButton>
+    <BaseUpload
+      label="Browse Files"
+      class="no-files-space__button-new-file"
+    />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.no-files-space {
+  width: 100%;
+  grid-column-start: 3;
+  grid-column-end: 11;
+  grid-row-start: 2;
+  grid-row-end: 9;
+  border: 1px dashed $color-border-default;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+
+  &__button-new-file {
+    min-width: 132px;
+  }
+}
+
+</style>

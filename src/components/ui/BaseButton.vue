@@ -1,15 +1,19 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
+import Theme from '@/types/Theme'
 
 interface Props {
-  theme: string
+  theme: Theme
 }
 
 const { theme } = defineProps<Props>()
 </script>
 
 <template>
-  <button :class="`base-button base-button--${theme}`">
+  <button
+    :class="`base-button base-button--${theme}`"
+    :disabled="theme === Theme.INACTIVE ? true : false"
+  >
     <slot />
   </button>
 </template>
@@ -40,9 +44,23 @@ const { theme } = defineProps<Props>()
   &--modal-action {
     background-color: #D1405A;
   }
-  &--simply {
+
+  &--modal-simply {
     background-color: transparent;
     color: $color-background-special;
+  }
+
+  &--simply {
+    background-color: transparent;
+    color: $color-text-default;
+    padding: 0;
+    justify-content: flex-start;
+  }
+
+  &--special {
+    background-color: $color-background-divider;
+    color: $color-text-dark;
+    font-weight: $font-weight-thin;
   }
 }
 </style>

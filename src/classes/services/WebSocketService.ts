@@ -5,34 +5,45 @@ import MessageTypes from '@/types/MessageTypes'
 import File from '@/types/File'
 import ContentType from '@/types/ContentType'
 import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
-import { useRouter } from 'vue-router'
 import { Buffer } from 'buffer'
 
 export class WebSocketService {
   listFiles = [] as File[]
-  private ws: WebSocket
-  private readonly router = useRouter()
+  wsOnMessageListeners: ((obj: Message) => void)[] = []
+  private ws: WebSocket | undefined
+  private passCode: number | undefined
   private wsOnMessageListenersListFiles: ((listfiles: File[]) => void) | null = null
 
-  constructor() {
-    console.log('Starting connection to WebSocket Server')
-    this.ws = new WebSocket('wss://cloudon.cc:9292/')
-
-    this.ws.onopen = () => {
-      console.log('WS opened')
-    }
-
-    this.ws.onmessage = event => {
-      let receivedMessage: string = event.data
-      this.parseMessage(receivedMessage)
-    }
-  }
-
-  login(passCode: number) {
+  onOpen = () => {
+    console.log('WS opened')
     this.sendMsgToWs({
       type: MessageTypes.LOGING_WITH_CODE,
-      code: passCode,
+      code: this.passCode,
     })
+  }
+
+  onMessage = (event: MessageEvent<string>) => {
+    let receivedMessage: string = event.data
+    this.parseMessage(receivedMessage)
+  }
+
+  onError = (error: Event) => {
+    console.log(error)
+    this.ws?.close()
+  }
+
+  onClose = (event: Event) => {
+    console.log('socket closed' + JSON.stringify(event))
+  }
+  
+  login(passCode: number) {
+    console.log('Starting connection to WebSocket Server')
+    this.passCode = passCode
+    this.ws = new WebSocket('wss://cloudon.cc:9292/')
+    this.ws.onopen = this.onOpen
+    this.ws.onmessage = this.onMessage
+    this.ws.onerror = this.onError
+    this.ws.onclose = this.onClose
   }
 
   downloadFile(fileName: string) {
@@ -67,9 +78,17 @@ export class WebSocketService {
       }
     }
   }
+  
+  disconnect() {
+    this.ws?.close()
+  }
+
+  addWsOnMessageListener( listenerFunction: any ) {
+    this.wsOnMessageListeners.push(listenerFunction)
+  }
 
   private sendMsgToWs(msg: Message) {
-    this.ws.send(JSON.stringify(msg))
+    this.ws?.send(JSON.stringify(msg))
   }
 
   private parseListFiles(obj: { payload: File[] }) {
@@ -100,8 +119,10 @@ export class WebSocketService {
     let obj = JSON.parse(receivedMessage)
 
     if (obj.type === MessageTypes.LOGING_WITH_CODE) {
-      if (!obj.result) {
-        router.push('/dashboard')
+      if (this.wsOnMessageListeners) {
+        this.wsOnMessageListeners.forEach(listener => {
+          listener(obj)
+        })
       }
     }
     let message: MessageCommands = obj.command
@@ -125,11 +146,11 @@ export class WebSocketService {
       command: MessageCommands.UPLOAD,
       payload: { filepath: filename, path: '', size: size, bytes: base64String },
     }
-    this.ws.send(JSON.stringify(msg))
+    this.ws?.send(JSON.stringify(msg))
   }
   private wsListFiles(func?: () => void) {
     if (func) this.wsOnMessageListenersListFiles = func
-    this.ws.send(
+    this.ws?.send(
       JSON.stringify({
         type: MessageTypes.FORWARD,
         command: MessageCommands.LIST_FILES,

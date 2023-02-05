@@ -13,7 +13,7 @@ interface Props {
   file: File
 }
 interface ExtentionList {
-  icon: any,
+  icon: string,
   extention: string[]
 }
 
