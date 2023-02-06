@@ -1,4 +1,3 @@
-import router from '@/router'
 import Message from '@/types/Message'
 import MessageCommands from '@/types/MessageCommands'
 import MessageTypes from '@/types/MessageTypes'
@@ -6,6 +5,7 @@ import File from '@/types/File'
 import ContentType from '@/types/ContentType'
 import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
 import { Buffer } from 'buffer'
+import MessageSent from '@/types/MessageSent'
 
 export class WebSocketService {
   listFiles = [] as File[]
@@ -47,7 +47,7 @@ export class WebSocketService {
   }
 
   downloadFile(fileName: string) {
-    let msg: Message = {
+    let msg: MessageSent = {
       type: MessageTypes.FORWARD,
       command: MessageCommands.DOWNLOAD,
       path: fileName,
@@ -56,7 +56,7 @@ export class WebSocketService {
   }
 
   deleteFile(fileName: string) {
-    let msg = {
+    let msg: MessageSent = {
       type: MessageTypes.FORWARD,
       command: MessageCommands.REMOVE,
       path: fileName,
@@ -87,7 +87,7 @@ export class WebSocketService {
     this.wsOnMessageListeners.push(listenerFunction)
   }
 
-  private sendMsgToWs(msg: Message) {
+  private sendMsgToWs(msg: MessageSent) {
     this.ws?.send(JSON.stringify(msg))
   }
 
