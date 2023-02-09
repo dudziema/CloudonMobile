@@ -1,11 +1,11 @@
 import MessageCommands from '@/types/MessageCommands'
 import MessageTypes from '@/types/MessageTypes'
+import MessageSent from '@/types/MessageSent'
+import MessageReceived from '@/types/MessageReceived'
 import File from '@/types/File'
 import ContentType from '@/types/ContentType'
 import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
 import { Buffer } from 'buffer'
-import MessageSent from '@/types/MessageSent'
-import MessageReceived from '@/types/MessageReceived'
 
 export class WebSocketService {
   listFiles = [] as File[] | File | undefined
@@ -108,7 +108,7 @@ export class WebSocketService {
     }
   }
 
-  isFileArray(files: File | File[]): files is File[] {
+  private isFileArray(files: File | File[]): files is File[] {
     return Array.isArray(files)
   }
 
@@ -116,13 +116,11 @@ export class WebSocketService {
     if(message.payload) {
       if(this.isFileArray(message.payload)) {
         message.payload.forEach(file => {
-          const decodedBytes = base64ToArrayBuffer(file.bytes)
-          this.saveByteArray(file.filename, decodedBytes)
+          this.saveByteArray(file.filename, base64ToArrayBuffer(file.bytes))
         })
 
       } else {
-        const decodedBytes = base64ToArrayBuffer(message.payload.bytes)
-        this.saveByteArray(message.payload.filename, decodedBytes)
+        this.saveByteArray(message.payload.filename, base64ToArrayBuffer(message.payload.bytes))
       }
     }
   }
