@@ -30,7 +30,7 @@ function search(searchFile: string) {
   position: relative;
 
   &__input {
-    border: 1px solid #555;
+    border: 1px solid transparent;
     border-radius: 8px;
     width: 80%;
     padding: 9px 4px 9px 40px;

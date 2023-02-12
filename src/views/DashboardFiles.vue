@@ -42,11 +42,17 @@ onMounted(() => {
   refreshFilesList()
 })
 const filteredFiles: ShallowRef<File[]> = shallowRef([])
+const title: ShallowRef<string> = shallowRef('All files')
+ 
+function assignTitle(searchText: string) {
+  return searchText === '' ? 'All files' : 'Search results'
+}
 
-function findFile(value: string) {
+function findFile(searchText: string) {
   filteredFiles.value = files.value.filter((file: File) =>
-    file.name.toLowerCase().includes(value.toLowerCase())
+    file.name.toLowerCase().includes(searchText.toLowerCase())
   )
+  title.value = assignTitle(searchText)
 }
 </script>
 
@@ -80,7 +86,7 @@ function findFile(value: string) {
     />
 
     <h1 class="dashboard-files__title">
-      All files
+      {{ title }}
     </h1>
 
     <div
