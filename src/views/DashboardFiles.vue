@@ -6,6 +6,7 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
 import NoFilesSpace from '@/components/NoFilesSpace.vue'
+import SearchBar from '@/components/ui/SearchBar.vue'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
 import File from '@/types/File'
@@ -28,6 +29,7 @@ const tableHeaders: ShallowRef = shallowRef([
 async function refreshFilesList() {
   await webSocketService.wsListFiles((listFiles: File[]) => {
     files.value = listFiles
+    filteredFiles.value = files.value
   })
 }
 
@@ -39,6 +41,13 @@ function disconnect() {
 onMounted(() => {
   refreshFilesList()
 })
+const filteredFiles: ShallowRef<File[]> = shallowRef([])
+
+function findFile(value: string) {
+  filteredFiles.value = files.value.filter((file: File) =>
+    file.name.toLowerCase().includes(value.toLowerCase())
+  )
+}
 </script>
 
 <template>
@@ -65,13 +74,17 @@ onMounted(() => {
         <span class="dashboard-files__disconnect-text">Disconnect</span>
       </BaseButton>
     </div>
+    <SearchBar
+      class="dashboard-files__search-bar"
+      @search="findFile"
+    />
 
     <h1 class="dashboard-files__title">
       All files
     </h1>
 
     <div
-      v-if="files.length !== 0"
+      v-if="files.length"
       class="dashboard-files__files dashboard-files__files--full"
       @dragover.prevent
       @dragenter.prevent
@@ -79,12 +92,15 @@ onMounted(() => {
       @drop.prevent="onDrop"
     >
       <FileTable
-        :files="files"
+        :files="filteredFiles"
         :table-headers="tableHeaders"
       />
     </div>
 
-    <NoFilesSpace v-else />
+    <NoFilesSpace
+      v-else
+      class="dashboard-files__files"
+    />
   </div>
 </template>
 
@@ -130,7 +146,7 @@ onMounted(() => {
     width: 100%;
     grid-column-start: 3;
     grid-column-end: 11;
-    grid-row-start: 2;
+    grid-row-start: 3;
     grid-row-end: 9;
 
     &--full {
@@ -157,11 +173,17 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
   }
+    &__search-bar {
+      grid-column-start: 3;
+      grid-column-end: 11;
+      grid-row-start: 1;
+      grid-row-end: 1;
+    }
   &__title {
     grid-column-start: 3;
     grid-column-end: 11;
-    grid-row-start: 1;
-    grid-row-end: 1;
+    grid-row-start: 2;
+    grid-row-end: 2;
   }
   &__button {
     width: 100%;
