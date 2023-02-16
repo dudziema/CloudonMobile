@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import { watch } from 'vue'
-import IconImage from '@/assets/images/iconsFiles/IconImage.svg'
-import IconDoc from '@/assets/images/iconsFiles/IconDoc.svg'
-import IconFilm from '@/assets/images/iconsFiles/IconFilm.svg'
-import IconMusic from '@/assets/images/iconsFiles/IconMusic.svg'
+import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
 
 interface Props {
-  chipsList: { image: string, name: string, clicked: boolean }[]
+  chipsList: { name: string, clicked: boolean }[]
 }
 
 const { chipsList } = defineProps<Props>()
@@ -28,7 +24,7 @@ function selectChipsClicked(chipsName: string) {
     @click="selectChipsClicked(chips.name)"
   >
     <component
-      :is="chips.icon"
+      :is="iconForExtentionDictionary[chips.name]"
       class="base-chips__icon"
     />
     <p

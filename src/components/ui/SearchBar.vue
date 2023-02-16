@@ -2,16 +2,12 @@
 import { ref, Ref, shallowRef } from 'vue'
 import IconSearch from '@/assets/images/search/IconSearch.svg'
 import ImageX from '@/assets/images/modal/x.svg'
-import IconImage from '@/assets/images/iconsFiles/IconImage.svg'
-import IconDoc from '@/assets/images/iconsFiles/IconDoc.svg'
-import IconFilm from '@/assets/images/iconsFiles/IconFilm.svg'
-import IconMusic from '@/assets/images/iconsFiles/IconMusic.svg'
 import BaseChips from '@/components/ui/BaseChips.vue'
 
 const searchInput: Ref<string> = ref()
 const emit = defineEmits<{
   (e: 'search', value: string): void
-  (e: 'chipsList', chipsList: {icon:any, name:string, clicked:boolean}[]):void
+  (e: 'chipsList', chipsList: { name:string, clicked:boolean }[]):void
 }>()
 
 function search(searchFile: string) {
@@ -25,10 +21,10 @@ function clearSearchInput() {
 }
 
 const chipsList = ref([
-  { icon: IconImage, name:'Pictures', clicked: false },
-  { icon: IconDoc, name: 'Files', clicked: false  },
-  { icon: IconFilm, name: 'Videos', clicked: false  },
-  { icon: IconMusic, name: 'Sound files', clicked: false  },
+  { name:'Pictures', clicked: false },
+  { name: 'Files', clicked: false  },
+  { name: 'Videos', clicked: false  },
+  { name: 'Sound files', clicked: false  },
 ])
 
 const selectedChipsList = ref([])
