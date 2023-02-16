@@ -3,18 +3,11 @@ import { ShallowRef, shallowRef } from 'vue'
 import { useContext } from '@/composables/context'
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
-import IconImage from '@/assets/images/iconsFiles/IconImage.svg'
-import IconDoc from '@/assets/images/iconsFiles/IconDoc.svg'
-import IconFilm from '@/assets/images/iconsFiles/IconFilm.svg'
-import IconMusic from '@/assets/images/iconsFiles/IconMusic.svg'
 import File from '@/types/File'
+import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
 
 interface Props {
   file: File
-}
-interface ExtentionList {
-  icon: string,
-  extention: string[]
 }
 
 const { file } = defineProps<Props>()
@@ -36,15 +29,6 @@ const openModalDeleteFile = () => {
 }
 
 const { webSocketService } = ctx
-const extentionsList: ShallowRef<ExtentionList[]> = shallowRef([
-  { icon: IconImage, extention: ['jpg', 'jpeg', 'png', 'gif'] },
-  {
-    icon: IconDoc,
-    extention: ['doc', 'docx', 'pdf', 'xls', 'xlsx', 'ppt', 'pptx'],
-  },
-  { icon: IconFilm, extention: ['mp4', 'wmv', 'avi'] },
-  { icon: IconMusic, extention: ['mp3'] },
-])
 
 function formatBytes(bytes: number) {
   if (bytes === 0) return '0 Bytes'
@@ -62,14 +46,6 @@ function formatTime(epochTime: number) {
 
   return formattedDate.replace(/\//g, '.')
 }
-
-function getIcon(fileName: string) {
-  let extention = fileName.split('.').pop().split(/[?#]/)[0]
-  let extentionListItem: ExtentionList = extentionsList.value.find(item => item.extention.includes(extention)) ||
-    extentionsList.value[1]
-
-  return extentionListItem.icon
-}
 </script>
 
 <template>
@@ -79,7 +55,7 @@ function getIcon(fileName: string) {
       data-testid="file-icon"
     >
       <component
-        :is="getIcon(file.name)"
+        :is="iconForExtentionDictionary[file.type]"
       />
     </td>
     <td

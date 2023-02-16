@@ -5,6 +5,7 @@ import MessageTypes from '@/types/MessageTypes'
 import File from '@/types/File'
 import ContentType from '@/types/ContentType'
 import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
+import { extentionsDictionary } from '@/utils/extentionsDictionary'
 import { Buffer } from 'buffer'
 
 export class WebSocketService {
@@ -91,8 +92,26 @@ export class WebSocketService {
     this.ws?.send(JSON.stringify(msg))
   }
 
+  private getFileType(fileName: string) {
+    const extension = fileName.split('.').pop() || ''
+
+    for (const [type, extensions] of Object.entries(extentionsDictionary)) {
+      if (extensions.includes(extension)) {
+        return type
+      }
+    }
+
+    return 'Files'
+  }
+
   private parseListFiles(obj: { payload: File[] }) {
-    this.listFiles = obj.payload
+    this.listFiles = obj.payload.map(file => {
+      return {
+        ...file,
+        type: this.getFileType(file.filename)
+      }
+    })
+    debugger
 
     if (this.wsOnMessageListenersListFiles) {
       this.wsOnMessageListenersListFiles(this.listFiles)
