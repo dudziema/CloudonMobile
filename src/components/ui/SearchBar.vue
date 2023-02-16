@@ -1,11 +1,17 @@
 <script lang="ts" setup>
-import { ref, Ref } from 'vue'
+import { ref, Ref, shallowRef } from 'vue'
 import IconSearch from '@/assets/images/search/IconSearch.svg'
 import ImageX from '@/assets/images/modal/x.svg'
+import IconImage from '@/assets/images/iconsFiles/IconImage.svg'
+import IconDoc from '@/assets/images/iconsFiles/IconDoc.svg'
+import IconFilm from '@/assets/images/iconsFiles/IconFilm.svg'
+import IconMusic from '@/assets/images/iconsFiles/IconMusic.svg'
+import BaseChips from '@/components/ui/BaseChips.vue'
 
 const searchInput: Ref<string> = ref()
 const emit = defineEmits<{
   (e: 'search', value: string): void
+  (e: 'chipsList', chipsList: {icon:any, name:string, clicked:boolean}[]):void
 }>()
 
 function search(searchFile: string) {
@@ -15,6 +21,27 @@ function search(searchFile: string) {
 function clearSearchInput() {
   searchInput.value = ''
   search(searchInput.value)
+  isSearchBarClicked.value = false
+}
+
+const chipsList = ref([
+  { icon: IconImage, name:'Pictures', clicked: false },
+  { icon: IconDoc, name: 'Files', clicked: false  },
+  { icon: IconFilm, name: 'Videos', clicked: false  },
+  { icon: IconMusic, name: 'Sound files', clicked: false  },
+])
+
+const selectedChipsList = ref([])
+
+const isSearchBarClicked = ref(false)
+
+function selectChipsClicked(chipsName: string) {
+  const chips = chipsList.value.find(chips => chips.name === chipsName)
+
+  if(chips) {
+    chips.clicked = !chips.clicked
+    emit('chipsList', chipsList.value)
+  }
 }
 </script>
 
@@ -26,12 +53,21 @@ function clearSearchInput() {
       class="search-bar__input"
       placeholder="Search for anything"
       @keyup.prevent="search(searchInput)"
+      @click="isSearchBarClicked=true"
     />
     <IconSearch class="search-bar__img" />
     <ImageX
       class="search-bar__cancel"
       @click="clearSearchInput"
     />
+
+    <div class="search-bar__chips">
+      <BaseChips
+        v-if="isSearchBarClicked"
+        :chips-list="chipsList"
+        @selectChipsClicked="selectChipsClicked"
+      />
+    </div>
   </div>
 </template>
 
@@ -39,6 +75,8 @@ function clearSearchInput() {
 .search-bar {
   position: relative;
   width: 80%;
+  display: flex;
+  flex-direction: column;;
 
   &__input {
     border: 1px solid transparent;
@@ -70,6 +108,10 @@ function clearSearchInput() {
     position: absolute;
     right: 12px;
     top: 10px;
+  }
+  &__chips {
+    display: flex;
+    flex-direction: row;
   }
 }
 

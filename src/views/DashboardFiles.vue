@@ -54,6 +54,18 @@ function findFile(searchText: string) {
   )
   title.value = assignTitle(searchText)
 }
+
+function filterFilesByCategory(files:any, categories:any) {
+  return files.filter((file:any) => categories.some((category:any) => file.type.includes(category)))
+}
+
+function filterFilesByChips(chipsList: any) {
+  debugger
+  const listOfCategoriesSelected = chipsList
+    .filter((chips:any) => chips.clicked === true)
+    .map((chips:any) => chips.name)
+  filteredFiles.value = filterFilesByCategory(files.value, listOfCategoriesSelected)
+}
 </script>
 
 <template>
@@ -83,6 +95,7 @@ function findFile(searchText: string) {
     <SearchBar
       class="dashboard-files__search-bar"
       @search="findFile"
+      @chips-list="filterFilesByChips"
     />
 
     <h1 class="dashboard-files__title">
