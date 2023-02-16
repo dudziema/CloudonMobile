@@ -1,4 +1,5 @@
 interface File {
+  type?: string
   name: string
   filename: string
   size: number

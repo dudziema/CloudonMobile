@@ -56,6 +56,8 @@ function findFile(searchText: string) {
 }
 
 function filterFilesByCategory(files:any, categories:any) {
+  if(!categories.length) return files
+  
   return files.filter((file:any) => categories.some((category:any) => file.type.includes(category)))
 }
 
