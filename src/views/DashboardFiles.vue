@@ -90,7 +90,7 @@ function findFile(searchText: string) {
     </h1>
 
     <div
-      v-if="files.length"
+      v-if="filteredFiles.length"
       class="dashboard-files__files dashboard-files__files--full"
       @dragover.prevent
       @dragenter.prevent
@@ -103,8 +103,15 @@ function findFile(searchText: string) {
       />
     </div>
 
+    <div
+      v-else-if="!filteredFiles.length && title === 'Search results'"
+      class="dashboard-files__files dashboard-files__files--search"
+    >
+      Oops, we didn't find any files matching your search criteria.
+    </div>
+
     <NoFilesSpace
-      v-else
+      v-else-if="!files.length"
       class="dashboard-files__files"
     />
   </div>
@@ -162,6 +169,9 @@ function findFile(searchText: string) {
       align-items: flex-start;
       align-content: flex-start;
       flex-wrap: wrap;
+    }
+    &--search {
+      font-weight: 200;
     }
     
     &-content {

@@ -27,8 +27,8 @@ const { files, tableHeaders } = defineProps<Props>()
 
     <tbody>
       <FileItem
-        v-for="(file, index) in files"
-        :key="index"
+        v-for="file in files"
+        :key="file.name"
         :file="file"
       />
     </tbody>
