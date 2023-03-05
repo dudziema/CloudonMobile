@@ -12,10 +12,15 @@ const emit = defineEmits<{
 
 function search(searchFile: string) {
   emit('search', searchFile)
+
+  if(!searchFile) {
+    clearChipsSelection()
+  }
 }
 
 function clearSearchInput() {
   searchInput.value = ''
+  clearChipsSelection()
   search(searchInput.value)
   isSearchBarClicked.value = false
 }
@@ -38,6 +43,12 @@ function selectChipsClicked(chipsName: string) {
     chips.clicked = !chips.clicked
     emit('chipsList', chipsList.value)
   }
+}
+
+function clearChipsSelection() {
+  chipsList.value.forEach(chips => {
+    chips.clicked = false
+  })
 }
 </script>
 
