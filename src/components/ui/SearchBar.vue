@@ -20,7 +20,6 @@ function search(searchFile: string, chipsList: { name:string, clicked:boolean }[
 
 function clearSearchInput() {
   searchInput.value = ''
-  isSearchBarClicked.value = false
   emit('clearSearch')
   clearChipsSelection()
 }
@@ -31,10 +30,6 @@ const chipsList = ref([
   { name: 'Videos', clicked: false  },
   { name: 'Sound files', clicked: false  },
 ])
-
-const selectedChipsList = ref([])
-
-const isSearchBarClicked = ref(false)
 
 function selectChipsClicked(chipsName: string) {
   const chips = chipsList.value.find(chips => chips.name === chipsName)
@@ -64,13 +59,13 @@ function clearChipsSelection() {
     />
     <IconSearch class="search-bar__img" />
     <ImageX
+      v-if="searchInput"
       class="search-bar__cancel"
       @click="clearSearchInput"
     />
 
     <div class="search-bar__chips">
       <BaseChips
-        v-if="isSearchBarClicked"
         :chips-list="chipsList"
         @selectChipsClicked="selectChipsClicked"
       />
