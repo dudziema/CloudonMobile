@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { shallowRef, ShallowRef, onMounted } from 'vue'
+import { shallowRef, ShallowRef, onMounted, ref, Ref } from 'vue'
 import { useContext } from '@/composables/context'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -43,30 +43,40 @@ onMounted(() => {
 })
 const filteredFiles: ShallowRef<File[]> = shallowRef([])
 const title: ShallowRef<string> = shallowRef('All files')
- 
-function assignTitle(searchText: string) {
-  return searchText === '' ? 'All files' : 'Search results'
+
+const listOfCategoriesSelected: Ref<string[]> = ref([])
+
+function findFile(searchText: string, categories:any) {
+
+  if(categories !== undefined){
+    listOfCategoriesSelected.value = categories
+      .filter((chips:any) => chips.clicked === true)
+      .map((chips:any) => chips.name)
+  }
+
+  if(searchText !== ''  && listOfCategoriesSelected.value.length) {
+    const filteredValues = files.value.filter((file:any) =>
+      listOfCategoriesSelected.value.some((category:any) => file.type.includes(category)))
+    filteredFiles.value = filteredValues.filter((file: File) =>
+      file.name.toLowerCase().includes(searchText.toLowerCase())
+    )
+  }
+  else if(searchText === '' && listOfCategoriesSelected.value.length) {
+    filteredFiles.value = files.value.filter((file:any) =>
+      listOfCategoriesSelected.value.some((category:any) => file.type.includes(category)))
+  } else if(searchText !== ''  && !listOfCategoriesSelected.value.length) {
+    filteredFiles.value = files.value.filter((file: File) =>
+      file.name.toLowerCase().includes(searchText.toLowerCase())
+    )
+  } else if(searchText === ''  && !listOfCategoriesSelected.value.length) {
+    filteredFiles.value = files.value
+  }
+  title.value = 'Search results'
 }
 
-function findFile(searchText: string) {
-  filteredFiles.value = files.value.filter((file: File) =>
-    file.name.toLowerCase().includes(searchText.toLowerCase())
-  )
-  title.value = assignTitle(searchText)
-}
-
-function filterFilesByCategory(files:any, categories:any) {
-  if(!categories.length) return files
-  
-  return files.filter((file:any) => categories.some((category:any) => file.type.includes(category)))
-}
-
-function filterFilesByChips(chipsList: any) {
-  debugger
-  const listOfCategoriesSelected = chipsList
-    .filter((chips:any) => chips.clicked === true)
-    .map((chips:any) => chips.name)
-  filteredFiles.value = filterFilesByCategory(files.value, listOfCategoriesSelected)
+function clearSearch() {
+  filteredFiles.value = files.value
+  title.value = 'All files'
 }
 </script>
 
@@ -97,7 +107,7 @@ function filterFilesByChips(chipsList: any) {
     <SearchBar
       class="dashboard-files__search-bar"
       @search="findFile"
-      @chips-list="filterFilesByChips"
+      @clear-search="clearSearch"
     />
 
     <h1 class="dashboard-files__title">

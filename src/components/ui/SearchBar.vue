@@ -4,25 +4,25 @@ import IconSearch from '@/assets/images/search/IconSearch.svg'
 import ImageX from '@/assets/images/modal/x.svg'
 import BaseChips from '@/components/ui/BaseChips.vue'
 
-const searchInput: Ref<string> = ref()
+const searchInput: Ref<string> = ref('')
 const emit = defineEmits<{
-  (e: 'search', value: string): void
-  (e: 'chipsList', chipsList: { name:string, clicked:boolean }[]):void
+  (e: 'search', input: string, chipsList: { name:string, clicked:boolean }[]): void
+  (e: 'clearSearch'): void
 }>()
 
-function search(searchFile: string) {
-  emit('search', searchFile)
+function search(searchFile: string, chipsList: { name:string, clicked:boolean }[]) {
+  emit('search', searchFile, chipsList)
 
   if(!searchFile) {
-    clearChipsSelection()
+    clearSearchInput()
   }
 }
 
 function clearSearchInput() {
   searchInput.value = ''
-  clearChipsSelection()
-  search(searchInput.value)
   isSearchBarClicked.value = false
+  emit('clearSearch')
+  clearChipsSelection()
 }
 
 const chipsList = ref([
@@ -41,7 +41,7 @@ function selectChipsClicked(chipsName: string) {
 
   if(chips) {
     chips.clicked = !chips.clicked
-    emit('chipsList', chipsList.value)
+    emit('search', searchInput.value, chipsList.value)
   }
 }
 
@@ -59,7 +59,7 @@ function clearChipsSelection() {
       type="search"
       class="search-bar__input"
       placeholder="Search for anything"
-      @keyup.prevent="search(searchInput)"
+      @keyup.prevent="search(searchInput, chipsList)"
       @click="isSearchBarClicked=true"
     />
     <IconSearch class="search-bar__img" />
