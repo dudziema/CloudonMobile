@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
+import Chips from '@/types/Chips'
 
 interface Props {
-  chipsList: { name: string, clicked: boolean }[]
+  chipsList: Chips[]
 }
 
 const { chipsList } = defineProps<Props>()
+
 const emit = defineEmits<{
   (e: 'selectChipsClicked', chipsName: string): void
 }>()
@@ -13,7 +15,6 @@ const emit = defineEmits<{
 function selectChipsClicked(chipsName: string) {
   emit('selectChipsClicked', chipsName)
 }
-
 </script>
 
 <template>
@@ -42,9 +43,9 @@ function selectChipsClicked(chipsName: string) {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0px 16px 0px 0px;
+  padding-right: calc($spacing-horizontal-small * 2);
   height: 40px;
-  margin: 8px;
+  margin: $spacing-vertical-small $spacing-horizontal-small;
   cursor: pointer;
 
   &__name {
@@ -55,6 +56,7 @@ function selectChipsClicked(chipsName: string) {
       opacity: 1;
     }
   }
+
   &--active {
     border: 1px solid $color-border-default;
   }

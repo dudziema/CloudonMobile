@@ -11,6 +11,7 @@ import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
 import File from '@/types/File'
 import Theme from '@/types/Theme'
+import Chips from '@/types/Chips'
 
 const router = useRouter()
 const ctx = useContext()
@@ -46,24 +47,24 @@ const title: ShallowRef<string> = shallowRef('All files')
 
 const listOfCategoriesSelected: Ref<string[]> = ref([])
 
-function findFile(searchText: string, categories:any) {
+function findFile(searchText: string, categories: Chips[]) {
 
   if(categories !== undefined){
     listOfCategoriesSelected.value = categories
-      .filter((chips:any) => chips.clicked === true)
-      .map((chips:any) => chips.name)
+      .filter((chips: Chips) => chips.clicked === true)
+      .map((chips: Chips) => chips.name)
   }
 
   if(searchText !== ''  && listOfCategoriesSelected.value.length) {
-    const filteredValues = files.value.filter((file:any) =>
-      listOfCategoriesSelected.value.some((category:any) => file.type.includes(category)))
+    const filteredValues = files.value.filter((file: File) =>
+      listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
     filteredFiles.value = filteredValues.filter((file: File) =>
       file.name.toLowerCase().includes(searchText.toLowerCase())
     )
   }
   else if(searchText === '' && listOfCategoriesSelected.value.length) {
-    filteredFiles.value = files.value.filter((file:any) =>
-      listOfCategoriesSelected.value.some((category:any) => file.type.includes(category)))
+    filteredFiles.value = files.value.filter((file: File) =>
+      listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
   } else if(searchText !== ''  && !listOfCategoriesSelected.value.length) {
     filteredFiles.value = files.value.filter((file: File) =>
       file.name.toLowerCase().includes(searchText.toLowerCase())

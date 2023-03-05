@@ -3,14 +3,15 @@ import { ref, Ref, shallowRef } from 'vue'
 import IconSearch from '@/assets/images/search/IconSearch.svg'
 import ImageX from '@/assets/images/modal/x.svg'
 import BaseChips from '@/components/ui/BaseChips.vue'
+import Chips from '@/types/Chips'
 
 const searchInput: Ref<string> = ref('')
 const emit = defineEmits<{
-  (e: 'search', input: string, chipsList: { name:string, clicked:boolean }[]): void
+  (e: 'search', input: string, chipsList: Chips[]): void
   (e: 'clearSearch'): void
 }>()
 
-function search(searchFile: string, chipsList: { name:string, clicked:boolean }[]) {
+function search(searchFile: string, chipsList: Chips[]) {
   emit('search', searchFile, chipsList)
 
   if(!searchFile) {
@@ -24,7 +25,7 @@ function clearSearchInput() {
   clearChipsSelection()
 }
 
-const chipsList = ref([
+const chipsList: Ref<Chips[]> = ref([
   { name:'Pictures', clicked: false },
   { name: 'Files', clicked: false  },
   { name: 'Videos', clicked: false  },

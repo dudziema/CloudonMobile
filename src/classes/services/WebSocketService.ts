@@ -111,7 +111,6 @@ export class WebSocketService {
         type: this.getFileType(file.filename)
       }
     })
-    debugger
 
     if (this.wsOnMessageListenersListFiles) {
       this.wsOnMessageListenersListFiles(this.listFiles)
