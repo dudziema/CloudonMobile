@@ -103,7 +103,7 @@ function connect() {
             maxlength="1"
             required
             :class="isPasscodeCorrect ? `login-page__input login-page__input--correct` :
-            `login-page__input login-page__input--wrong`"
+              `login-page__input login-page__input--wrong`"
             @input="next"
             @keyup.backspace="previous"
             @keyup.enter="connect()"
@@ -168,6 +168,10 @@ function connect() {
       grid-row-start: 2;
       grid-row-end: 10;
     }
+    
+    @include devices(mobile) {
+      grid-column-start: 2;
+    }
   }
   &__title {
     text-align: left;
@@ -210,6 +214,10 @@ function connect() {
     &--focused {
       background-color: $color-background-main;
       border: 2px solid $color-border-default;
+    }
+   
+    @include devices(mobile) {
+      width: 44px;
     }
   }
 
