@@ -13,6 +13,7 @@ export class WebSocketService {
   private ws: WebSocket | undefined
   private passCode: number | undefined
   private wsOnMessageListenersListFiles: ((listfiles: File[]) => void) | null = null
+  wsOnErrorListener!: () => void
 
   onOpen = () => {
     console.log('WS opened')
@@ -28,6 +29,7 @@ export class WebSocketService {
   }
 
   onError = (error: Event) => {
+    this.wsOnErrorListener()
     console.log(error)
     this.ws?.close()
   }
@@ -36,7 +38,8 @@ export class WebSocketService {
     console.log('socket closed' + JSON.stringify(event))
   }
   
-  login(passCode: number) {
+  login(passCode: number, errorMethod: () => void) {
+    this.wsOnErrorListener = errorMethod
     console.log('Starting connection to WebSocket Server')
     this.passCode = passCode
     this.ws = new WebSocket('wss://cloudon.cc:9292/')
