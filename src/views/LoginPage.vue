@@ -83,8 +83,7 @@ function connect() {
     passcode.value = parseInt(getPasscodeInputs().join(''))
     webSocketService.login(passcode.value, ifErrorShowModal)
   } else {
-    // @CM-31 Handle errors
-    console.log('Fill all inputs')
+    isPasscodeCorrect.value = false
   }
 }
 </script>
