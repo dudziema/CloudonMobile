@@ -1,14 +1,17 @@
 <script lang="ts" setup>
-import { shallowRef, ShallowRef, onMounted, ref, Ref, computed, watch } from 'vue'
+import { shallowRef, ShallowRef, onMounted, ref, Ref, computed, ComputedRef, watch } from 'vue'
 import { useContext } from '@/composables/context'
 import { useRouter } from 'vue-router'
+
 import TheWidget from '@/components/TheWidget.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
 import NoFilesSpace from '@/components/NoFilesSpace.vue'
+
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
+
 import File from '@/types/File'
 import Theme from '@/types/Theme'
 
@@ -26,6 +29,10 @@ const tableHeaders: ShallowRef = shallowRef([
   { label: 'button', field: '' },
 ])
 
+onMounted(() => {
+  refreshFilesList()
+})
+
 async function refreshFilesList() {
   await webSocketService.wsListFiles((listFiles: File[]) => {
     files.value = listFiles
@@ -37,13 +44,11 @@ function disconnect() {
   router.push('/')
 }
 
-onMounted(() => {
-  refreshFilesList()
-})
-
 const selectedFiles: Ref<File[]> = ref([])
-const quantityItemsSelected = computed(()=>selectedFiles.value.length)
-const quantityFileName = computed(() => quantityItemsSelected.value > 1 ? 'files' : 'file')
+const quantityItemsSelected: ComputedRef<number> = computed(()=>selectedFiles.value.length)
+const quantityFileName: ComputedRef<'files' | 'file'> = computed(() => quantityItemsSelected.value > 1 ?
+  'files' : 'file')
+const clearItems: Ref<boolean> = ref(false)
 
 function itemsSelected(itemsSelected: File[]) {
   selectedFiles.value = itemsSelected
@@ -57,7 +62,6 @@ function downloadFiles() {
   clearItems.value = false
   closeWidgetClicked.value = true
 }
-const clearItems = ref(false)
 
 function deleteFiles() {
   modalService.open({
@@ -77,7 +81,7 @@ function deleteFiles() {
   })
 }
 
-const closeWidgetClicked = ref(false)
+const closeWidgetClicked: Ref<boolean> = ref(false)
 
 function closeWidget() {
   closeWidgetClicked.value = true
@@ -186,7 +190,7 @@ watch(quantityItemsSelected, newValue => {
   }
 
   &__files {
-    position:relative;
+    position: relative;
     width: 100%;
     grid-column-start: 3;
     grid-column-end: 11;

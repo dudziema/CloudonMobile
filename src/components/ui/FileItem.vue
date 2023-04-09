@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ShallowRef, Ref, shallowRef, ref, watchEffect, watch,  computed, toRefs} from 'vue'
+import { ShallowRef, Ref, shallowRef, ref, watch } from 'vue'
 import { useContext } from '@/composables/context'
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'

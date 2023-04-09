@@ -15,7 +15,7 @@ const itemsSelected: Ref<File[]> = ref([])
 const emit = defineEmits(['itemsSelected'])
 
 function isSelected(file: File, isSelected: boolean) {
-  if(isSelected) {
+  if (isSelected) {
     itemsSelected.value.push(file)
   } else if (!isSelected) {
     const index = itemsSelected.value.indexOf(file)
@@ -28,10 +28,10 @@ function isSelected(file: File, isSelected: boolean) {
   emit('itemsSelected', itemsSelected.value)
 }
 
-const allItemsButtonSelected = ref(false)
+const allItemsButtonSelected: Ref<boolean>= ref(false)
 
 watch(props, newValue => {
-  if(newValue.clearItems){
+  if (newValue.clearItems) {
     itemsSelected.value.length = 0
     emit('itemsSelected', itemsSelected.value)
   }

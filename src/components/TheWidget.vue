@@ -4,6 +4,7 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import ImageTrashSmall from '@/assets/images/modal/ImageTrashSmall.svg'
 import ImageDownload from '@/assets/images/modal/ImageDownload.svg'
 import ImageX from '@/assets/images/modal/x.svg'
+import Theme from '@/types/Theme'
 
 interface Props {
   quantityItemsSelected: number
@@ -18,25 +19,31 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
   <div class="widget">
     <p class="widget__counter">
       <span class="widget__counter-number">{{ quantityItemsSelected }}</span>
+      
       <span class="widget__counter-text">files selected</span>
     </p>
+
     <div class="widget__buttons">
       <BaseButton
         class="widget__button"
-        theme="special"
+        :theme="Theme.SPECIAL"
         @click="emit('download')"
       >
         <ImageDownload class="widget__button-image" />
+        
         Download
       </BaseButton>
+      
       <BaseButton
         class="widget__button"
-        theme="modal-action"
+        :theme="Theme.MODAL_ACTION"
         @click="emit('delete')"
       >
         <ImageTrashSmall class="widget__button-image" />
+        
         Delete
       </BaseButton>
+      
       <button class="widget__button-close">
         <ImageX
           class="widget__close"
@@ -62,7 +69,7 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
   align-items: center;
   justify-content: space-between;
   align-content: center;
-  padding:15px;
+  padding: 15px;
 
   &__counter {
     color: white;
