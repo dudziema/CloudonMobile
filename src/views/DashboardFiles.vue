@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { shallowRef, ShallowRef, onMounted, ref, Ref, computed } from 'vue'
+import { shallowRef, ShallowRef, onMounted, ref, Ref, computed, watch } from 'vue'
 import { useContext } from '@/composables/context'
 import { useRouter } from 'vue-router'
 import TheWidget from '@/components/TheWidget.vue'
@@ -50,15 +50,16 @@ function itemsSelected(itemsSelected: File[]) {
 }
 
 function downloadFiles() {
+  clearItems.value = true
   selectedFiles.value.forEach(file => {
     webSocketService.downloadFile(file.name)
   })
-  selectedFiles.value=[]
+  clearItems.value = false
+  closeWidgetClicked.value = true
 }
 const clearItems = ref(false)
 
 function deleteFiles() {
-  clearItems.value = false
   modalService.open({
     title: `Delete ${ quantityItemsSelected.value } ${ quantityFileName.value }`,
     description: `Are you sure? Deleting ${ quantityItemsSelected.value } ${ quantityFileName.value } will be permamently removed from your inventory.`,
@@ -68,16 +69,23 @@ function deleteFiles() {
         selectedFiles.value.forEach(file => {
           webSocketService.deleteFile(file.name)
         })
-        clearItems.value = true
+        clearItems.value = false
+        closeWidgetClicked.value = true
         modalService.close()
       },
     },
   })
 }
 
+const closeWidgetClicked = ref(false)
+
 function closeWidget() {
-  console.log('clicked')
+  closeWidgetClicked.value = true
 }
+
+watch(quantityItemsSelected, newValue => {
+  if(!newValue) closeWidgetClicked.value = false
+})
 
 </script>
 
@@ -122,6 +130,7 @@ function closeWidget() {
         :files="files"
         :table-headers="tableHeaders"
         :clear-items="clearItems"
+        :close-widget-clicked="closeWidgetClicked"
         @items-selected="itemsSelected"
       />
 

@@ -16,7 +16,9 @@ interface ExtentionList {
 
 const props = defineProps<{
   file: File,
-  allItemsSelected: boolean,
+  allItemsButtonSelected: boolean,
+  closeWidgetClicked:boolean,
+  clearItems: boolean,
 }>()
 
 const ctx = useContext()
@@ -76,7 +78,8 @@ const isSelected: Ref<boolean> = ref(false)
 const emit = defineEmits(['isSelected'])
 
 watch(props, newValue => {
-  isSelected.value = newValue.allItemsSelected
+  if(newValue.allItemsButtonSelected !== undefined) isSelected.value = newValue.allItemsButtonSelected
+  if(newValue.closeWidgetClicked || newValue.clearItems) isSelected.value = false
 })
 watch(isSelected, newValue => {
   emit('isSelected', props.file, newValue)

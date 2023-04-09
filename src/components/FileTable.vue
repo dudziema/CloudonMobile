@@ -6,7 +6,8 @@ import { ref, Ref, watch } from 'vue'
 const props = defineProps<{
   files: File[]
   tableHeaders: { label: string; field: string }[],
-  clearItems: boolean
+  clearItems: boolean,
+  closeWidgetClicked: boolean
 }>()
 
 const itemsSelected: Ref<File[]> = ref([])
@@ -31,8 +32,12 @@ const allItemsButtonSelected = ref(false)
 
 watch(props, newValue => {
   if(newValue.clearItems){
-    itemsSelected.value = []
+    itemsSelected.value.length = 0
     emit('itemsSelected', itemsSelected.value)
+  }
+
+  if(newValue.closeWidgetClicked){
+    allItemsButtonSelected.value = false
   }
 })
 </script>
@@ -64,7 +69,9 @@ watch(props, newValue => {
         v-for="(file, index) in files"
         :key="index"
         :file="file"
-        :all-items-selected="allItemsButtonSelected"
+        :all-items-button-selected="allItemsButtonSelected"
+        :clear-items="clearItems"
+        :close-widget-clicked="closeWidgetClicked"
         @is-selected="isSelected"
       />
     </tbody>
