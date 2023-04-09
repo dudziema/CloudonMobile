@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ShallowRef, shallowRef } from 'vue'
+import { ShallowRef, Ref, shallowRef, ref, watchEffect, watch,  computed, toRefs} from 'vue'
 import { useContext } from '@/composables/context'
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
@@ -9,15 +9,16 @@ import IconFilm from '@/assets/images/iconsFiles/IconFilm.svg'
 import IconMusic from '@/assets/images/iconsFiles/IconMusic.svg'
 import File from '@/types/File'
 
-interface Props {
-  file: File
-}
 interface ExtentionList {
   icon: string,
   extention: string[]
 }
 
-const { file } = defineProps<Props>()
+const props = defineProps<{
+  file: File,
+  allItemsSelected: boolean
+}>()
+
 const ctx = useContext()
 const { modalService } = ctx
 
@@ -28,7 +29,7 @@ const openModalDeleteFile = () => {
     buttonAction: {
       text: 'Delete',
       callback: () => {
-        webSocketService.deleteFile(file.name)
+        webSocketService.deleteFile(props.file.name)
         modalService.close()
       },
     },
@@ -70,10 +71,27 @@ function getIcon(fileName: string) {
 
   return extentionListItem.icon
 }
+
+const isSelected: Ref<boolean> = ref(false)
+const emit = defineEmits(['isSelected'])
+
+watch(props, newValue => {
+  isSelected.value = newValue.allItemsSelected
+})
+watch(isSelected, newValue => {
+  emit('isSelected', props.file, newValue)
+})
 </script>
 
 <template>
   <tr class="file-item-row">
+    <td>
+      <input
+        v-model="isSelected"
+        type="checkbox"
+        @click="toggleSelection"
+      >
+    </td>
     <td
       class="file-item-field file-item-field__image"
       data-testid="file-icon"

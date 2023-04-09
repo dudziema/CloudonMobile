@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import FileItem from '@/components/ui/FileItem.vue'
 import File from '@/types/File'
+import { ref, Ref } from 'vue'
 
 interface Props {
   files: File[]
@@ -8,12 +9,35 @@ interface Props {
 }
 
 const { files, tableHeaders } = defineProps<Props>()
+
+const itemsSelected: Ref<File[]> = ref([])
+
+function isSelected(file: File, isSelected: boolean) {
+  if(isSelected) {
+    itemsSelected.value.push(file)
+  } else if (!isSelected) {
+    const index = itemsSelected.value.indexOf(file)
+
+    if (index > -1) {
+      itemsSelected.value.splice(index, 1)
+    }
+  }
+}
+
+const allItemsButtonSelected = ref(false)
 </script>
 
 <template>
   <table class="file-table">
     <thead class="file-table__header">
       <tr class="file-table__header-line">
+        <th class="file-table__line file-table__line-button">
+          <input
+            v-model="allItemsButtonSelected"
+            type="checkbox"
+          />
+        </th>
+
         <th
           v-for="(column, index) in tableHeaders"
           :key="index"
@@ -30,6 +54,8 @@ const { files, tableHeaders } = defineProps<Props>()
         v-for="(file, index) in files"
         :key="index"
         :file="file"
+        :all-items-selected="allItemsButtonSelected"
+        @is-selected="isSelected"
       />
     </tbody>
   </table>
