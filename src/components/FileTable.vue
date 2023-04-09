@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import FileItem from '@/components/ui/FileItem.vue'
 import File from '@/types/File'
-import { ref, Ref } from 'vue'
+import { ref, Ref, watch } from 'vue'
 
 const props = defineProps<{
   files: File[]
   tableHeaders: { label: string; field: string }[],
+  clearItems: boolean
 }>()
 
 const itemsSelected: Ref<File[]> = ref([])
@@ -27,6 +28,13 @@ function isSelected(file: File, isSelected: boolean) {
 }
 
 const allItemsButtonSelected = ref(false)
+
+watch(props, newValue => {
+  if(newValue.clearItems){
+    itemsSelected.value = []
+    emit('itemsSelected', itemsSelected.value)
+  }
+})
 </script>
 
 <template>
