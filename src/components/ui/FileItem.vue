@@ -162,6 +162,13 @@ watch(isSelected, newValue => {
 
   &__image {
     width: 5%;
+    border-radius: 8px;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
   }
   &__time {
     width: 15%;
@@ -172,5 +179,18 @@ watch(isSelected, newValue => {
     width: 15%;
     opacity: 0.6;
   }
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  opacity: 0.2;
+  border: 1px solid $color-border-primary;
+  border-radius: 4px;
+  margin: 12px;
+}
+
+input[type="checkbox"]:checked {
+  opacity: 1;
 }
 </style>

@@ -100,4 +100,17 @@ const allItemsButtonSelected = ref(false)
     }
   }
 }
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  opacity: 0.2;
+  border: 1px solid $color-border-primary;
+  border-radius: 4px;
+  margin: 12px;
+}
+
+input[type="checkbox"]:checked {
+  opacity: 1;
+}
 </style>
