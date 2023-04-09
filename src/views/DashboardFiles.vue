@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { shallowRef, ShallowRef, onMounted } from 'vue'
+import { shallowRef, ShallowRef, onMounted, ref, Ref, computed } from 'vue'
 import { useContext } from '@/composables/context'
 import { useRouter } from 'vue-router'
+import TheWidget from '@/components/TheWidget.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
@@ -13,7 +14,7 @@ import Theme from '@/types/Theme'
 
 const router = useRouter()
 const ctx = useContext()
-const { webSocketService } = ctx
+const { webSocketService, modalService } = ctx
 
 const files: ShallowRef<File[]> = shallowRef([])
 const tableHeaders: ShallowRef = shallowRef([
@@ -39,6 +40,45 @@ function disconnect() {
 onMounted(() => {
   refreshFilesList()
 })
+
+const selectedFiles: Ref<File[]> = ref([])
+const quantityItemsSelected = computed(()=>selectedFiles.value.length)
+const quantityFileName = computed(() => quantityItemsSelected.value > 1 ? 'files' : 'file')
+
+function itemsSelected(itemsSelected: File[]) {
+  selectedFiles.value = itemsSelected
+}
+
+function downloadFiles() {
+  selectedFiles.value.forEach(file => {
+    webSocketService.downloadFile(file.name)
+  })
+  selectedFiles.value=[]
+}
+const clearItems = ref(false)
+
+function deleteFiles() {
+  clearItems.value = false
+  modalService.open({
+    title: `Delete ${ quantityItemsSelected.value } ${ quantityFileName.value }`,
+    description: `Are you sure? Deleting ${ quantityItemsSelected.value } ${ quantityFileName.value } will be permamently removed from your inventory.`,
+    buttonAction: {
+      text: 'Delete',
+      callback: () => {
+        selectedFiles.value.forEach(file => {
+          webSocketService.deleteFile(file.name)
+        })
+        clearItems.value = true
+        modalService.close()
+      },
+    },
+  })
+}
+
+function closeWidget() {
+  console.log('clicked')
+}
+
 </script>
 
 <template>
@@ -81,6 +121,16 @@ onMounted(() => {
       <FileTable
         :files="files"
         :table-headers="tableHeaders"
+        :clear-items="clearItems"
+        @items-selected="itemsSelected"
+      />
+
+      <TheWidget
+        v-if="quantityItemsSelected"
+        :quantity-items-selected="quantityItemsSelected"
+        @download="downloadFiles"
+        @delete="deleteFiles"
+        @close-widget="closeWidget"
       />
     </div>
 
@@ -127,6 +177,7 @@ onMounted(() => {
   }
 
   &__files {
+    position:relative;
     width: 100%;
     grid-column-start: 3;
     grid-column-end: 11;

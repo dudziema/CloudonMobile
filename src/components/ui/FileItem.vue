@@ -16,7 +16,7 @@ interface ExtentionList {
 
 const props = defineProps<{
   file: File,
-  allItemsSelected: boolean
+  allItemsSelected: boolean,
 }>()
 
 const ctx = useContext()

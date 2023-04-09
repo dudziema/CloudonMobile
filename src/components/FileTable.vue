@@ -3,14 +3,14 @@ import FileItem from '@/components/ui/FileItem.vue'
 import File from '@/types/File'
 import { ref, Ref } from 'vue'
 
-interface Props {
+const props = defineProps<{
   files: File[]
-  tableHeaders: { label: string; field: string }[]
-}
-
-const { files, tableHeaders } = defineProps<Props>()
+  tableHeaders: { label: string; field: string }[],
+}>()
 
 const itemsSelected: Ref<File[]> = ref([])
+
+const emit = defineEmits(['itemsSelected'])
 
 function isSelected(file: File, isSelected: boolean) {
   if(isSelected) {
@@ -22,6 +22,8 @@ function isSelected(file: File, isSelected: boolean) {
       itemsSelected.value.splice(index, 1)
     }
   }
+
+  emit('itemsSelected', itemsSelected.value)
 }
 
 const allItemsButtonSelected = ref(false)
@@ -80,7 +82,24 @@ const allItemsButtonSelected = ref(false)
     letter-spacing: 0.005em;
     text-transform: uppercase;
     color: #0C0C0C;
-    opacity: 0.6;
+
+    &:not(&-button) {
+      opacity: 0.6;
+    }
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      opacity: 0.2 !important;
+      border: 1px solid $color-border-primary;
+      border-radius: 4px;
+      margin: 12px;
+    }
+
+    input[type="checkbox"]:checked {
+      opacity: 1 !important;
+    }
+
     &-button {
       width:5%;
     }
@@ -99,18 +118,6 @@ const allItemsButtonSelected = ref(false)
       width: 15%;
     }
   }
-}
 
-input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  opacity: 0.2;
-  border: 1px solid $color-border-primary;
-  border-radius: 4px;
-  margin: 12px;
-}
-
-input[type="checkbox"]:checked {
-  opacity: 1;
 }
 </style>
