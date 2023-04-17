@@ -37,7 +37,7 @@ describe('FileItem', () => {
   })
 
   it('should render the correct file date', () => {
-    const date = wrapper.find('[data-testid=file-dateEpoch]')
+    const date = wrapper.find('[data-testid=file-date_epoch]')
     expect(date.exists()).toBeTruthy()
     expect(date.text()).toContain('27.01.2023')
   })

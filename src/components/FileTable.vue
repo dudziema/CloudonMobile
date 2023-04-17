@@ -1,13 +1,62 @@
 <script lang="ts" setup>
+import { computed, Ref, ref } from 'vue'
+import ButtonSort from '@/assets/images/buttons/ButtonSort.svg'
 import FileItem from '@/components/ui/FileItem.vue'
 import File from '@/types/File'
 
 interface Props {
   files: File[]
-  tableHeaders: { label: string; field: string }[]
+  tableHeaders: { id: number, label: string; field: string, sortable: boolean }[]
 }
 
 const { files, tableHeaders } = defineProps<Props>()
+
+const filesSorted: Ref<File[]> = ref(files)
+const sortDirections: Ref<{ [key: string]: string }> = ref({'name': 'asc', 'time': 'asc'})
+
+function sortName() {
+  sortDirections.value.name = sortDirections.value.name  === 'asc' ? 'desc' : 'asc'
+
+  filesSorted.value.sort((a: File, b: File) => {
+    const nameA = a.name.toUpperCase()
+    const nameB = b.name.toUpperCase()
+
+    if (sortDirections.value.name === 'asc') {
+      return nameA.localeCompare(nameB )
+    } else {
+      return nameB.localeCompare(nameA)
+    }
+  })
+}
+
+function sortByEpochDate() {
+  sortDirections.value.time = sortDirections.value.time  === 'asc' ? 'desc' : 'asc'
+  
+  filesSorted.value.sort((a: File, b: File) => {
+    const dateA = a.date_epoch
+    const dateB = b.date_epoch
+
+    if (sortDirections.value.time === 'asc') {
+      return dateA - dateB
+    } else {
+      return dateB - dateA
+    }
+  })
+}
+
+function sortTable(headerName: string) {
+  if (headerName === 'name') sortName()
+  if (headerName === 'time') sortByEpochDate()
+}
+
+function sortClass(headerLabel: string): string {
+  const baseClass = 'file-table__sort'
+  const ascClass = `${baseClass}--asc-${headerLabel}`
+  const dscClass = `${baseClass}--dsc-${headerLabel}`
+  
+  return sortDirections.value[headerLabel] === 'asc' ? ascClass : dscClass
+}
+
 </script>
 
 <template>
@@ -15,19 +64,25 @@ const { files, tableHeaders } = defineProps<Props>()
     <thead class="file-table__header">
       <tr class="file-table__header-line">
         <th
-          v-for="(column, index) in tableHeaders"
-          :key="index"
-          :class="`file-table__line file-table__line-${column.label}`"
+          v-for="header in tableHeaders"
+          :key="header.id"
+          :class="['file-table__line', `file-table__line-${header.label}`]"
           data-testid="table-headers"
+          @click="() => { if (header.sortable) sortTable(header.label) }"
         >
-          {{ column.field }}
+          {{ header.field }}
+
+          <ButtonSort
+            v-if="header.sortable"
+            :class="sortClass(header.label)"
+          />
         </th>
       </tr>
     </thead>
 
     <tbody class="file-table__body">
       <FileItem
-        v-for="(file, index) in files"
+        v-for="(file, index) in filesSorted"
         :key="index"
         :file="file"
       />
@@ -79,6 +134,17 @@ const { files, tableHeaders } = defineProps<Props>()
   #{ $self }, #{ $self }__body {
    overflow: auto;
    height: 80vh;
+  }
+
+  &__sort {
+    &--asc-name, &--asc-time {
+      transition: 0.5s ease-in;
+    }
+
+    &--dsc-name, &--dsc-time {
+      rotate: -180deg;
+      transition: 0.5s ease-in-out;
+    }
   }
 }
 </style>

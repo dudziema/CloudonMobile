@@ -2,7 +2,7 @@ interface File {
   name: string
   filename: string
   size: number
-  dateEpoch?: number
+  date_epoch?: number
   dir?: false
   bytes?: string
 }

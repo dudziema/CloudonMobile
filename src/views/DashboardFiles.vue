@@ -17,12 +17,12 @@ const { webSocketService } = ctx
 
 const files: ShallowRef<File[]> = shallowRef([])
 const tableHeaders: ShallowRef = shallowRef([
-  { label: 'image', field: '' },
-  { label: 'name', field: 'NAME' },
-  { label: 'size', field: 'FILE SIZE' },
-  { label: 'time', field: 'UPLOAD DATE' },
-  { label: 'button', field: '' },
-  { label: 'button', field: '' },
+  { id: 0, label: 'image', field: '', sortable: false },
+  { id: 1, label: 'name', field: 'NAME', sortable: true },
+  { id: 2, label: 'size', field: 'FILE SIZE', sortable: false },
+  { id: 3, label: 'time', field: 'UPLOAD DATE', sortable: true },
+  { id: 4, label: 'button', field: '', sortable: false },
+  { id: 5, label: 'button', field: '', sortable: false },
 ])
 
 async function refreshFilesList() {
