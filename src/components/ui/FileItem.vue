@@ -123,28 +123,35 @@ function getIcon(fileName: string) {
 .file-item-row {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   align-items: center;
   align-content: center;
   flex-wrap: nowrap;
+  padding-right: 8px;
 
   &:hover {
-    background: #f5faff;
+    background: $color-background-divider;
     border-radius: 8px;
   }
 }
 .file-item-field {
-  margin-right: 20px;
+  margin-right: 4px;
+
   &__button {
     width: 5%;
   }
+
   &__name {
     width: 50%;
+    padding-right: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__image {
     width: 5%;
   }
+
   &__time {
     width: 15%;
     opacity: 0.6;
