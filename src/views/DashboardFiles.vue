@@ -13,7 +13,7 @@ import Theme from '@/types/Theme'
 
 const router = useRouter()
 const ctx = useContext()
-const { webSocketService } = ctx
+const { webSocketService, modalService } = ctx
 
 const files: ShallowRef<File[]> = shallowRef([])
 const tableHeaders: ShallowRef = shallowRef([
@@ -32,8 +32,18 @@ async function refreshFilesList() {
 }
 
 function disconnect() {
-  webSocketService.disconnect()
-  router.push('/')
+  modalService.open({
+    title: 'Disconnect account',
+    description: 'Are you sure you want to proceed?',
+    buttonAction: {
+      text: 'Disconnect',
+      callback: () => {
+        webSocketService.disconnect()
+        modalService.close()
+        router.push('/')
+      },
+    },
+  })
 }
 
 onMounted(() => {
