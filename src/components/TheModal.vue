@@ -42,6 +42,7 @@ function closeModal() {
         <p class="modal__description">{{ modalConfig.description}}</p>
         <div class="modal__buttons">
           <BaseButton
+            v-if="modalConfig.isCancel"
             class="modal__button-cancel"
             :theme="Theme.MODAL_SIMPLY"
             @click="closeModal()"
@@ -89,7 +90,6 @@ function closeModal() {
     border-radius: 12px;
     padding: 24px;
     width: 546px;
-    height: 232px;
     margin:12px;
   }
 
@@ -103,8 +103,21 @@ function closeModal() {
     align-content: center;
     flex-wrap: wrap;
     flex-direction: row;
+    width: 100%;
+    margin: 24px 0;
+
+    @include devices(mobile) {
+      justify-content: center;
+      font-size: 20px;
+      flex-direction: column;
+      text-align: center;
+    }
     &-icon {
       margin-right: 12px;
+      
+      @include devices(mobile) {
+        margin: 18px;
+      }
     }
   }
   &__title {
@@ -125,12 +138,24 @@ function closeModal() {
   }
   &__description {
     opacity: 0.6;
+    
+    @include devices(mobile) {
+      margin: 16px;
+      text-align: center;
+    }
   }
   &__buttons {
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
     width: 100%;
+    margin: 32px 0 0 0;
+      
+    @include devices(mobile) {
+      margin: 16px 0;
+      align-items: center;
+      justify-content: center;
+    }
   }
   &__button {
 

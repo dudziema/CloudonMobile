@@ -25,7 +25,7 @@ const { files, tableHeaders } = defineProps<Props>()
       </tr>
     </thead>
 
-    <tbody>
+    <tbody class="file-table__body">
       <FileItem
         v-for="file in files"
         :key="file.name"
@@ -37,41 +37,48 @@ const { files, tableHeaders } = defineProps<Props>()
 
 <style lang="scss" scoped>
 .file-table {
-  width:100%;
+  $self: &;
+  width: 100%;
+
   &__header-line {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: center;
     align-content: center;
     flex-wrap: nowrap;
+    margin: 12px 0;
+    padding-right: 24px;
   }
   &__line {
-    margin-right: 20px;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 24px;
+    font-weight: $font-weight-semi-bold;
     letter-spacing: 0.005em;
     text-transform: uppercase;
-    color: #0C0C0C;
+    color: $color-text-default;
     opacity: 0.6;
+
     &-button {
-      width:5%;
+      width: 5%;
     }
     &-name {
       width: 50%;
+      text-overflow: ellipsis;
     }
 
     &-image {
-      width:5%;
+      width: 5%;
     }
-      &-time{
+      &-time {
       width: 15%;
     }
 
-    &-size{
+    &-size {
       width: 15%;
     }
+  }
+  #{ $self }, #{ $self }__body {
+   overflow: auto;
+   height: 80vh;
   }
 }
 </style>

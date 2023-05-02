@@ -6,6 +6,8 @@ interface File {
   dateEpoch?: number
   dir?: false
   bytes?: string
+  filepath?: string
+  path?: string
 }
 
 export default File
