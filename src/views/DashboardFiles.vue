@@ -48,6 +48,7 @@ const title: ShallowRef<string> = shallowRef('All files')
 const listOfCategoriesSelected: Ref<string[]> = ref([])
 
 function findFile(searchText: string, categories: Chips[]) {
+  title.value = 'Search results'
 
   if(categories !== undefined){
     listOfCategoriesSelected.value = categories
@@ -55,24 +56,24 @@ function findFile(searchText: string, categories: Chips[]) {
       .map((chips: Chips) => chips.name)
   }
 
-  if(searchText !== ''  && listOfCategoriesSelected.value.length) {
-    const filteredValues = files.value.filter((file: File) =>
-      listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
-    filteredFiles.value = filteredValues.filter((file: File) =>
-      file.name.toLowerCase().includes(searchText.toLowerCase())
-    )
+  if(searchText) {
+    if(listOfCategoriesSelected.value.length) {
+      const filteredValues = files.value.filter((file: File) =>
+        listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
+      filteredFiles.value = filteredValues.filter((file: File) =>
+        file.name.toLowerCase().includes(searchText.toLowerCase()))
+    } else {
+      filteredFiles.value = files.value.filter((file: File) =>
+        file.name.toLowerCase().includes(searchText.toLowerCase()))
+    }
+  } else {
+    if(listOfCategoriesSelected.value.length) {
+      filteredFiles.value = files.value.filter((file: File) =>
+        listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
+    } else {
+      filteredFiles.value = files.value
+    }
   }
-  else if(searchText === '' && listOfCategoriesSelected.value.length) {
-    filteredFiles.value = files.value.filter((file: File) =>
-      listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
-  } else if(searchText !== ''  && !listOfCategoriesSelected.value.length) {
-    filteredFiles.value = files.value.filter((file: File) =>
-      file.name.toLowerCase().includes(searchText.toLowerCase())
-    )
-  } else if(searchText === ''  && !listOfCategoriesSelected.value.length) {
-    filteredFiles.value = files.value
-  }
-  title.value = 'Search results'
 }
 
 function clearSearch() {
