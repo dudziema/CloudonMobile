@@ -1,18 +1,20 @@
 import MessageCommands from '@/types/MessageCommands'
 import MessageTypes from '@/types/MessageTypes'
 import MessageSent from '@/types/MessageSent'
-import MessageReceived from '@/types/MessageReceived'
+import MessageReceived from '@/types/message-received/MessageReceived'
+import MessageDownload from '@/types/message-received/MessageDownload'
+import MessageListFiles from '@/types/message-received/MessageListFiles'
 import File from '@/types/File'
 import ContentType from '@/types/ContentType'
 import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
 import { Buffer } from 'buffer'
 
 export class WebSocketService {
-  listFiles = [] as File[] | File | undefined
+  fileList = [] as File[]
   wsOnMessageListeners: ((obj: MessageReceived) => void)[] = []
   private ws: WebSocket | undefined
   private passcode: number | undefined
-  private wsOnMessageListenersListFiles: ((listfiles: File[]| File | undefined) => void) | null = null
+  private wsOnMessageListenersListFiles: ((fileList: File[]| File | undefined) => void) | null = null
 
   onOpen = () => {
     console.log('WS opened')
@@ -88,11 +90,11 @@ export class WebSocketService {
     this.ws?.send(JSON.stringify(msg))
   }
 
-  private parseListFiles(obj: MessageReceived) {
-    this.listFiles = obj.payload
+  private parseListFiles(obj: MessageListFiles) {
+    this.fileList = obj.payload
 
     if (this.wsOnMessageListenersListFiles) {
-      this.wsOnMessageListenersListFiles(this.listFiles)
+      this.wsOnMessageListenersListFiles(this.fileList)
     }
   }
 
@@ -112,7 +114,9 @@ export class WebSocketService {
     return Array.isArray(files)
   }
 
-  private onDownloadedFileFromPhone(message: MessageReceived) {
+  private onDownloadedFileFromPhone(message: MessageDownload) {
+    debugger
+
     if(message.payload) {
       if(this.isFileArray(message.payload)) {
         message.payload.forEach(file => {
@@ -125,7 +129,8 @@ export class WebSocketService {
     }
   }
 
-  private parseMessage(receivedMessage: MessageReceived) {
+  private parseMessage(receivedMessage: MessageReceived ) {
+
     if (receivedMessage.type === MessageTypes.LOGING_WITH_CODE) {
       if (this.wsOnMessageListeners) {
         this.wsOnMessageListeners.forEach(listener => {
@@ -137,13 +142,21 @@ export class WebSocketService {
 
     switch (messageCommand) {
     case MessageCommands.DOWNLOAD:
-      this.onDownloadedFileFromPhone(receivedMessage)
+      let messageDownload = receivedMessage as MessageDownload
+  
+      if(messageDownload) {
+        this.onDownloadedFileFromPhone(messageDownload)
+      }
       break
     case MessageCommands.UPLOAD:
       this.wsListFiles()
       break
     case MessageCommands.LIST_FILES:
-      this.parseListFiles(receivedMessage)
+      let messageListFiles = receivedMessage as MessageListFiles
+  
+      if(messageListFiles) {
+        this.parseListFiles(messageListFiles)
+      }
       break
     }
   }
