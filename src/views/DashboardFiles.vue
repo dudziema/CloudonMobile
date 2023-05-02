@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-import { shallowRef, ShallowRef, onMounted } from 'vue'
+import { shallowRef, ShallowRef, onMounted, ref, Ref } from 'vue'
 import { useContext } from '@/composables/context'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
 import NoFilesSpace from '@/components/NoFilesSpace.vue'
+import SearchBar from '@/components/ui/SearchBar.vue'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
 import File from '@/types/File'
 import Theme from '@/types/Theme'
+import Chips from '@/types/Chips'
 
 const router = useRouter()
 const ctx = useContext()
@@ -28,6 +30,7 @@ const tableHeaders: ShallowRef = shallowRef([
 async function refreshFilesList() {
   await webSocketService.wsListFiles((listFiles: File[]) => {
     files.value = listFiles
+    filteredFiles.value = files.value
   })
 }
 
@@ -49,6 +52,44 @@ function disconnect() {
 onMounted(() => {
   refreshFilesList()
 })
+const filteredFiles: ShallowRef<File[]> = shallowRef([])
+const title: ShallowRef<string> = shallowRef('All files')
+
+const listOfCategoriesSelected: Ref<string[]> = ref([])
+
+function findFile(searchText: string, categories: Chips[]) {
+  title.value = 'Search results'
+
+  if(categories !== undefined){
+    listOfCategoriesSelected.value = categories
+      .filter((chips: Chips) => chips.clicked === true)
+      .map((chips: Chips) => chips.name)
+  }
+
+  if(searchText) {
+    if(listOfCategoriesSelected.value.length) {
+      const filteredValues = files.value.filter((file: File) =>
+        listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
+      filteredFiles.value = filteredValues.filter((file: File) =>
+        file.name.toLowerCase().includes(searchText.toLowerCase()))
+    } else {
+      filteredFiles.value = files.value.filter((file: File) =>
+        file.name.toLowerCase().includes(searchText.toLowerCase()))
+    }
+  } else {
+    if(listOfCategoriesSelected.value.length) {
+      filteredFiles.value = files.value.filter((file: File) =>
+        listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
+    } else {
+      filteredFiles.value = files.value
+    }
+  }
+}
+
+function clearSearch() {
+  filteredFiles.value = files.value
+  title.value = 'All files'
+}
 </script>
 
 <template>
@@ -75,13 +116,18 @@ onMounted(() => {
         <span class="dashboard-files__disconnect-text">Disconnect</span>
       </BaseButton>
     </div>
+    <SearchBar
+      class="dashboard-files__search-bar"
+      @search="findFile"
+      @clear-search="clearSearch"
+    />
 
     <h1 class="dashboard-files__title">
-      All files
+      {{ title }}
     </h1>
 
     <div
-      v-if="files.length !== 0"
+      v-if="filteredFiles.length"
       class="dashboard-files__files dashboard-files__files--full"
       @dragover.prevent
       @dragenter.prevent
@@ -89,12 +135,22 @@ onMounted(() => {
       @drop.prevent="onDrop"
     >
       <FileTable
-        :files="files"
+        :files="filteredFiles"
         :table-headers="tableHeaders"
       />
     </div>
 
-    <NoFilesSpace v-else />
+    <div
+      v-else-if="!filteredFiles.length && title === 'Search results'"
+      class="dashboard-files__files dashboard-files__files--search"
+    >
+      Oops, we didn't find any files matching your search criteria.
+    </div>
+
+    <NoFilesSpace
+      v-else-if="!files.length"
+      class="dashboard-files__files"
+    />
   </div>
 </template>
 
@@ -140,7 +196,7 @@ onMounted(() => {
     width: 100%;
     grid-column-start: 3;
     grid-column-end: 11;
-    grid-row-start: 2;
+    grid-row-start: 3;
     grid-row-end: 9;
 
     &--full {
@@ -150,6 +206,9 @@ onMounted(() => {
       align-items: flex-start;
       align-content: flex-start;
       flex-wrap: wrap;
+    }
+    &--search {
+      font-weight: 200;
     }
     
     &-content {
@@ -167,11 +226,17 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
   }
+    &__search-bar {
+      grid-column-start: 3;
+      grid-column-end: 11;
+      grid-row-start: 1;
+      grid-row-end: 1;
+    }
   &__title {
     grid-column-start: 3;
     grid-column-end: 11;
-    grid-row-start: 1;
-    grid-row-end: 1;
+    grid-row-start: 2;
+    grid-row-end: 2;
   }
   &__button {
     width: 100%;
