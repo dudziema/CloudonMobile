@@ -10,7 +10,7 @@ import Message from '@/types/Message'
 
 const PASSCODE_INPUTS: Ref<{ id: number, value: string }[]> = ref([])
 const ctx = useContext()
-const { webSocketService } = ctx
+const { webSocketService , modalService} = ctx
 const router: Router = useRouter()
 const isPasscodeCorrect: Ref<boolean> = ref(true)
 const passcode: Ref<number> | Ref<null> = ref(null)
@@ -64,15 +64,26 @@ function getPasscodeInputs() {
   return code
 }
 
+const ifErrorShowModal = () => {
+  modalService.open({
+    title: 'Someting went wrong  :(',
+    description: 'There was a problem with connection with the mobile app. Please try again later.',
+    buttonAction: {
+      text: 'Close',
+      callback: () => modalService.close()
+    },
+    isCancel: false
+  })
+}
+
 function connect() {
   isPasscodeCorrect.value = true
 
   if(isAllValuesFilled.value) {
     passcode.value = parseInt(getPasscodeInputs().join(''))
-    webSocketService.login(passcode.value)
+    webSocketService.login(passcode.value, ifErrorShowModal)
   } else {
-    // @CM-31 Handle errors
-    console.log('Fill all inputs')
+    isPasscodeCorrect.value = false
   }
 }
 </script>
@@ -103,7 +114,7 @@ function connect() {
             maxlength="1"
             required
             :class="isPasscodeCorrect ? `login-page__input login-page__input--correct` :
-            `login-page__input login-page__input--wrong`"
+              `login-page__input login-page__input--wrong`"
             @input="next"
             @keyup.backspace="previous"
             @keyup.enter="connect()"
@@ -168,6 +179,10 @@ function connect() {
       grid-row-start: 2;
       grid-row-end: 10;
     }
+    
+    @include devices(mobile) {
+      grid-column-start: 2;
+    }
   }
   &__title {
     text-align: left;
@@ -210,6 +225,10 @@ function connect() {
     &--focused {
       background-color: $color-background-main;
       border: 2px solid $color-border-default;
+    }
+   
+    @include devices(mobile) {
+      width: 44px;
     }
   }
 
