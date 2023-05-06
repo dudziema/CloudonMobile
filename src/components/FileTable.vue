@@ -17,7 +17,7 @@ const emit = defineEmits(['itemsSelected'])
 function isSelected(file: File, isSelected: boolean) {
   if (isSelected) {
     itemsSelected.value.push(file)
-  } else if (!isSelected) {
+  } else {
     const index = itemsSelected.value.indexOf(file)
 
     if (index > -1) {
