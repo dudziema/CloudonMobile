@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import { ShallowRef, shallowRef } from 'vue'
+import { ShallowRef, Ref, shallowRef, ref, watch } from 'vue'
 import { useContext } from '@/composables/context'
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
-import IconImage from '@/assets/images/iconsFiles/IconImage.svg'
-import IconDoc from '@/assets/images/iconsFiles/IconDoc.svg'
-import IconFilm from '@/assets/images/iconsFiles/IconFilm.svg'
-import IconMusic from '@/assets/images/iconsFiles/IconMusic.svg'
 import File from '@/types/File'
+import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
 
-interface Props {
-  file: File
-}
 interface ExtentionList {
   icon: string,
   extention: string[]
 }
 
-const { file } = defineProps<Props>()
+const props = defineProps<{
+  file: File,
+  allItemsButtonSelected: boolean,
+  closeWidgetClicked:boolean,
+  clearItems: boolean,
+}>()
+
 const ctx = useContext()
 const { modalService } = ctx
 
@@ -28,7 +28,7 @@ const openModalDeleteFile = () => {
     buttonAction: {
       text: 'Delete',
       callback: () => {
-        webSocketService.deleteFile(file.name)
+        webSocketService.deleteFile(props.file.name)
         modalService.close()
       },
     },
@@ -36,15 +36,6 @@ const openModalDeleteFile = () => {
 }
 
 const { webSocketService } = ctx
-const extentionsList: ShallowRef<ExtentionList[]> = shallowRef([
-  { icon: IconImage, extention: ['jpg', 'jpeg', 'png', 'gif'] },
-  {
-    icon: IconDoc,
-    extention: ['doc', 'docx', 'pdf', 'xls', 'xlsx', 'ppt', 'pptx'],
-  },
-  { icon: IconFilm, extention: ['mp4', 'wmv', 'avi'] },
-  { icon: IconMusic, extention: ['mp3'] },
-])
 
 function formatBytes(bytes: number) {
   if (bytes === 0) return '0 Bytes'
@@ -70,16 +61,34 @@ function getIcon(fileName: string) {
 
   return extentionListItem.icon
 }
+
+const isSelected: Ref<boolean> = ref(false)
+const emit = defineEmits(['isSelected'])
+
+watch(props, newValue => {
+  if(newValue.allItemsButtonSelected !== undefined) isSelected.value = newValue.allItemsButtonSelected
+  if(newValue.closeWidgetClicked || newValue.clearItems) isSelected.value = false
+})
+watch(isSelected, newValue => {
+  emit('isSelected', props.file, newValue)
+})
 </script>
 
 <template>
   <tr class="file-item-row">
+    <td>
+      <input
+        v-model="isSelected"
+        type="checkbox"
+        @click="toggleSelection"
+      >
+    </td>
     <td
       class="file-item-field file-item-field__image"
       data-testid="file-icon"
     >
       <component
-        :is="getIcon(file.name)"
+        :is="iconForExtentionDictionary[file.type]"
       />
     </td>
     <td
@@ -150,6 +159,13 @@ function getIcon(fileName: string) {
 
   &__image {
     width: 5%;
+    border-radius: 8px;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
   }
 
   &__time {
@@ -161,5 +177,18 @@ function getIcon(fileName: string) {
     width: 15%;
     opacity: 0.6;
   }
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  opacity: 0.2;
+  border: 1px solid $color-border-primary;
+  border-radius: 4px;
+  margin: 12px;
+}
+
+input[type="checkbox"]:checked {
+  opacity: 1;
 }
 </style>

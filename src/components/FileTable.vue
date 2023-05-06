@@ -1,55 +1,88 @@
 <script lang="ts" setup>
-import { computed, Ref, ref } from 'vue'
+import { computed, Ref, ref, watch } from 'vue'
 import ButtonSort from '@/assets/images/buttons/ButtonSort.svg'
 import FileItem from '@/components/ui/FileItem.vue'
 import File from '@/types/File'
 
-interface Props {
+const props = defineProps<{
   files: File[]
-  tableHeaders: { id: number, label: string; field: string, sortable: boolean }[]
-}
+  tableHeaders: { id: number, label: string; field: string, sortable: boolean }[],
+  clearItems: boolean,
+  closeWidgetClicked: boolean,
+  sortDirections: { [key: string]: string }
+}>()
 
-const { files, tableHeaders } = defineProps<Props>()
+const itemsSelected: Ref<File[]> = ref([])
 
-const ASC = 'asc'
-const DSC = 'dsc'
+const emit = defineEmits(['itemsSelected', 'sortTable'])
 
-const filesSorted: Ref<File[]> = ref(files)
-const sortDirections: Ref<{ [key: string]: string }> = ref({'name': ASC, 'time': ASC })
+function isSelected(file: File, isSelected: boolean) {
+  if (isSelected) {
+    itemsSelected.value.push(file)
+  } else {
+    const index = itemsSelected.value.indexOf(file)
 
-function sortName() {
-  sortDirections.value.name = sortDirections.value.name  === ASC ? DSC : ASC
-
-  filesSorted.value.sort((a: File, b: File) => {
-    const nameA = a.name.toUpperCase()
-    const nameB = b.name.toUpperCase()
-
-    if (sortDirections.value.name === ASC) {
-      return nameA.localeCompare(nameB )
-    } else {
-      return nameB.localeCompare(nameA)
+    if (index > -1) {
+      itemsSelected.value.splice(index, 1)
     }
-  })
+  }
+
+  emit('itemsSelected', itemsSelected.value)
 }
 
-function sortByEpochDate() {
-  sortDirections.value.time = sortDirections.value.time  === ASC ? DSC : ASC
+const allItemsButtonSelected: Ref<boolean>= ref(false)
+
+watch(props, newValue => {
+  if (newValue.clearItems) {
+    itemsSelected.value.length = 0
+    emit('itemsSelected', itemsSelected.value)
+  }
+
+  if(newValue.closeWidgetClicked){
+    allItemsButtonSelected.value = false
+  }
+})
+
+// const ASC = 'asc'
+// const DSC = 'dsc'
+
+// const filesSorted: Ref<File[]> = ref(props.files)
+// const sortDirections: Ref<{ [key: string]: string }> = ref({'name': ASC, 'time': ASC })
+
+// function sortName() {
+//   sortDirections.value.name = sortDirections.value.name  === ASC ? DSC : ASC
+
+//   filesSorted.value.sort((a: File, b: File) => {
+//     const nameA = a.name.toUpperCase()
+//     const nameB = b.name.toUpperCase()
+
+//     if (sortDirections.value.name === ASC) {
+//       return nameA.localeCompare(nameB )
+//     } else {
+//       return nameB.localeCompare(nameA)
+//     }
+//   })
+// }
+
+// function sortByEpochDate() {
+//   sortDirections.value.time = sortDirections.value.time  === ASC ? DSC : ASC
   
-  filesSorted.value.sort((a: File, b: File) => {
-    const dateA = a.date_epoch
-    const dateB = b.date_epoch
+//   filesSorted.value.sort((a: File, b: File) => {
+//     const dateA = a.date_epoch
+//     const dateB = b.date_epoch
 
-    if (sortDirections.value.time === ASC) {
-      return dateA - dateB
-    } else {
-      return dateB - dateA
-    }
-  })
-}
+//     if (sortDirections.value.time === ASC) {
+//       return dateA - dateB
+//     } else {
+//       return dateB - dateA
+//     }
+//   })
+// }
 
 function sortTable(headerName: string) {
-  if (headerName === 'name') sortName()
-  if (headerName === 'time') sortByEpochDate()
+  emit('sortTable', headerName)
+// if (headerName === 'name') sortName()
+// if (headerName === 'time') sortByEpochDate()
 }
 
 function sortClass(headerLabel: string): string {
@@ -57,7 +90,7 @@ function sortClass(headerLabel: string): string {
   const ascClass = `${baseClass}--asc-${headerLabel}`
   const dscClass = `${baseClass}--dsc-${headerLabel}`
   
-  return sortDirections.value[headerLabel] === ASC ? ascClass : dscClass
+  return props.sortDirections[headerLabel] === 'asc' ? ascClass : dscClass
 }
 
 </script>
@@ -66,6 +99,13 @@ function sortClass(headerLabel: string): string {
   <table class="file-table">
     <thead class="file-table__header">
       <tr class="file-table__header-line">
+        <th class="file-table__line file-table__line-button">
+          <input
+            v-model="allItemsButtonSelected"
+            type="checkbox"
+          />
+        </th>
+
         <th
           v-for="header in tableHeaders"
           :key="header.id"
@@ -85,9 +125,13 @@ function sortClass(headerLabel: string): string {
 
     <tbody class="file-table__body">
       <FileItem
-        v-for="(file, index) in filesSorted"
+        v-for="(file, index) in files"
         :key="index"
         :file="file"
+        :all-items-button-selected="allItemsButtonSelected"
+        :clear-items="clearItems"
+        :close-widget-clicked="closeWidgetClicked"
+        @is-selected="isSelected"
       />
     </tbody>
   </table>
@@ -113,7 +157,23 @@ function sortClass(headerLabel: string): string {
     letter-spacing: 0.005em;
     text-transform: uppercase;
     color: $color-text-default;
-    opacity: 0.6;
+
+    &:not(&-button) {
+      opacity: 0.6;
+    }
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      opacity: 0.2 !important;
+      border: 1px solid $color-border-primary;
+      border-radius: 4px;
+      margin: 12px;
+    }
+
+    input[type="checkbox"]:checked {
+      opacity: 1 !important;
+    }
 
     &-button {
       width: 5%;
