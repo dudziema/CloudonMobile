@@ -11,17 +11,20 @@ interface Props {
 
 const { files, tableHeaders } = defineProps<Props>()
 
+const ASC = 'asc'
+const DSC = 'dsc'
+
 const filesSorted: Ref<File[]> = ref(files)
-const sortDirections: Ref<{ [key: string]: string }> = ref({'name': 'asc', 'time': 'asc'})
+const sortDirections: Ref<{ [key: string]: string }> = ref({'name': ASC, 'time': ASC })
 
 function sortName() {
-  sortDirections.value.name = sortDirections.value.name  === 'asc' ? 'desc' : 'asc'
+  sortDirections.value.name = sortDirections.value.name  === ASC ? DSC : ASC
 
   filesSorted.value.sort((a: File, b: File) => {
     const nameA = a.name.toUpperCase()
     const nameB = b.name.toUpperCase()
 
-    if (sortDirections.value.name === 'asc') {
+    if (sortDirections.value.name === ASC) {
       return nameA.localeCompare(nameB )
     } else {
       return nameB.localeCompare(nameA)
@@ -30,13 +33,13 @@ function sortName() {
 }
 
 function sortByEpochDate() {
-  sortDirections.value.time = sortDirections.value.time  === 'asc' ? 'desc' : 'asc'
+  sortDirections.value.time = sortDirections.value.time  === ASC ? DSC : ASC
   
   filesSorted.value.sort((a: File, b: File) => {
     const dateA = a.date_epoch
     const dateB = b.date_epoch
 
-    if (sortDirections.value.time === 'asc') {
+    if (sortDirections.value.time === ASC) {
       return dateA - dateB
     } else {
       return dateB - dateA
@@ -54,7 +57,7 @@ function sortClass(headerLabel: string): string {
   const ascClass = `${baseClass}--asc-${headerLabel}`
   const dscClass = `${baseClass}--dsc-${headerLabel}`
   
-  return sortDirections.value[headerLabel] === 'asc' ? ascClass : dscClass
+  return sortDirections.value[headerLabel] === ASC ? ascClass : dscClass
 }
 
 </script>
