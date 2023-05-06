@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { shallowRef, ShallowRef, onMounted, ref, Ref } from 'vue'
+import { shallowRef, ShallowRef, onMounted, ref, Ref, computed, ComputedRef, watch } from 'vue'
 import { useContext } from '@/composables/context'
 import { useRouter } from 'vue-router'
+
+import TheWidget from '@/components/TheWidget.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
@@ -9,6 +11,7 @@ import NoFilesSpace from '@/components/NoFilesSpace.vue'
 import SearchBar from '@/components/ui/SearchBar.vue'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
+
 import File from '@/types/File'
 import Theme from '@/types/Theme'
 import Chips from '@/types/Chips'
@@ -26,6 +29,10 @@ const tableHeaders: ShallowRef = shallowRef([
   { label: 'button', field: '' },
   { label: 'button', field: '' },
 ])
+
+onMounted(() => {
+  refreshFilesList()
+})
 
 async function refreshFilesList() {
   await webSocketService.wsListFiles((listFiles: File[]) => {
@@ -49,8 +56,51 @@ function disconnect() {
   })
 }
 
-onMounted(() => {
-  refreshFilesList()
+const selectedFiles: Ref<File[]> = ref([])
+const quantityItemsSelected: ComputedRef<number> = computed(()=>selectedFiles.value.length)
+const quantityFileName: ComputedRef<'files' | 'file'> = computed(() => quantityItemsSelected.value > 1 ?
+  'files' : 'file')
+const clearItems: Ref<boolean> = ref(false)
+
+function itemsSelected(itemsSelected: File[]) {
+  selectedFiles.value = itemsSelected
+}
+
+function downloadFiles() {
+  clearItems.value = true
+  selectedFiles.value.forEach(file => {
+    webSocketService.downloadFile(file.name)
+  })
+  clearItems.value = false
+  closeWidgetClicked.value = true
+}
+
+function deleteFiles() {
+  modalService.open({
+    title: `Delete ${ quantityItemsSelected.value } ${ quantityFileName.value }`,
+    description: `Are you sure? Deleting ${ quantityItemsSelected.value } ${ quantityFileName.value } will be permamently removed from your inventory.`,
+    buttonAction: {
+      text: 'Delete',
+      callback: () => {
+        selectedFiles.value.forEach(file => {
+          webSocketService.deleteFile(file.name)
+        })
+        clearItems.value = false
+        closeWidgetClicked.value = true
+        modalService.close()
+      },
+    },
+  })
+}
+
+const closeWidgetClicked: Ref<boolean> = ref(false)
+
+function closeWidget() {
+  closeWidgetClicked.value = true
+}
+
+watch(quantityItemsSelected, newValue => {
+  if(!newValue) closeWidgetClicked.value = false
 })
 const filteredFiles: ShallowRef<File[]> = shallowRef([])
 const title: ShallowRef<string> = shallowRef('All files')
@@ -137,6 +187,17 @@ function clearSearch() {
       <FileTable
         :files="filteredFiles"
         :table-headers="tableHeaders"
+        :clear-items="clearItems"
+        :close-widget-clicked="closeWidgetClicked"
+        @items-selected="itemsSelected"
+      />
+
+      <TheWidget
+        v-if="quantityItemsSelected"
+        :quantity-items-selected="quantityItemsSelected"
+        @download="downloadFiles"
+        @delete="deleteFiles"
+        @close-widget="closeWidget"
       />
     </div>
 
@@ -193,6 +254,7 @@ function clearSearch() {
   }
 
   &__files {
+    position: relative;
     width: 100%;
     grid-column-start: 3;
     grid-column-end: 11;

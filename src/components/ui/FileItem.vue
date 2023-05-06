@@ -1,16 +1,23 @@
 <script lang="ts" setup>
-import { ShallowRef, shallowRef } from 'vue'
+import { ShallowRef, Ref, shallowRef, ref, watch } from 'vue'
 import { useContext } from '@/composables/context'
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
 import File from '@/types/File'
 import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
 
-interface Props {
-  file: File
+interface ExtentionList {
+  icon: string,
+  extention: string[]
 }
 
-const { file } = defineProps<Props>()
+const props = defineProps<{
+  file: File,
+  allItemsButtonSelected: boolean,
+  closeWidgetClicked:boolean,
+  clearItems: boolean,
+}>()
+
 const ctx = useContext()
 const { modalService } = ctx
 
@@ -21,7 +28,7 @@ const openModalDeleteFile = () => {
     buttonAction: {
       text: 'Delete',
       callback: () => {
-        webSocketService.deleteFile(file.name)
+        webSocketService.deleteFile(props.file.name)
         modalService.close()
       },
     },
@@ -46,10 +53,36 @@ function formatTime(epochTime: number) {
 
   return formattedDate.replace(/\//g, '.')
 }
+
+function getIcon(fileName: string) {
+  let extention = fileName.split('.').pop().split(/[?#]/)[0]
+  let extentionListItem: ExtentionList = extentionsList.value.find(item => item.extention.includes(extention)) ||
+    extentionsList.value[1]
+
+  return extentionListItem.icon
+}
+
+const isSelected: Ref<boolean> = ref(false)
+const emit = defineEmits(['isSelected'])
+
+watch(props, newValue => {
+  if(newValue.allItemsButtonSelected !== undefined) isSelected.value = newValue.allItemsButtonSelected
+  if(newValue.closeWidgetClicked || newValue.clearItems) isSelected.value = false
+})
+watch(isSelected, newValue => {
+  emit('isSelected', props.file, newValue)
+})
 </script>
 
 <template>
   <tr class="file-item-row">
+    <td>
+      <input
+        v-model="isSelected"
+        type="checkbox"
+        @click="toggleSelection"
+      >
+    </td>
     <td
       class="file-item-field file-item-field__image"
       data-testid="file-icon"
@@ -126,6 +159,13 @@ function formatTime(epochTime: number) {
 
   &__image {
     width: 5%;
+    border-radius: 8px;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
   }
 
   &__time {
@@ -137,5 +177,18 @@ function formatTime(epochTime: number) {
     width: 15%;
     opacity: 0.6;
   }
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  opacity: 0.2;
+  border: 1px solid $color-border-primary;
+  border-radius: 4px;
+  margin: 12px;
+}
+
+input[type="checkbox"]:checked {
+  opacity: 1;
 }
 </style>

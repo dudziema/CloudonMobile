@@ -1,19 +1,58 @@
 <script lang="ts" setup>
 import FileItem from '@/components/ui/FileItem.vue'
 import File from '@/types/File'
+import { ref, Ref, watch } from 'vue'
 
-interface Props {
+const props = defineProps<{
   files: File[]
-  tableHeaders: { label: string; field: string }[]
+  tableHeaders: { label: string; field: string }[],
+  clearItems: boolean,
+  closeWidgetClicked: boolean
+}>()
+
+const itemsSelected: Ref<File[]> = ref([])
+
+const emit = defineEmits(['itemsSelected'])
+
+function isSelected(file: File, isSelected: boolean) {
+  if (isSelected) {
+    itemsSelected.value.push(file)
+  } else {
+    const index = itemsSelected.value.indexOf(file)
+
+    if (index > -1) {
+      itemsSelected.value.splice(index, 1)
+    }
+  }
+
+  emit('itemsSelected', itemsSelected.value)
 }
 
-const { files, tableHeaders } = defineProps<Props>()
+const allItemsButtonSelected: Ref<boolean>= ref(false)
+
+watch(props, newValue => {
+  if (newValue.clearItems) {
+    itemsSelected.value.length = 0
+    emit('itemsSelected', itemsSelected.value)
+  }
+
+  if(newValue.closeWidgetClicked){
+    allItemsButtonSelected.value = false
+  }
+})
 </script>
 
 <template>
   <table class="file-table">
     <thead class="file-table__header">
       <tr class="file-table__header-line">
+        <th class="file-table__line file-table__line-button">
+          <input
+            v-model="allItemsButtonSelected"
+            type="checkbox"
+          />
+        </th>
+
         <th
           v-for="(column, index) in tableHeaders"
           :key="index"
@@ -30,6 +69,10 @@ const { files, tableHeaders } = defineProps<Props>()
         v-for="file in files"
         :key="file.name"
         :file="file"
+        :all-items-button-selected="allItemsButtonSelected"
+        :clear-items="clearItems"
+        :close-widget-clicked="closeWidgetClicked"
+        @is-selected="isSelected"
       />
     </tbody>
   </table>
@@ -55,7 +98,23 @@ const { files, tableHeaders } = defineProps<Props>()
     letter-spacing: 0.005em;
     text-transform: uppercase;
     color: $color-text-default;
-    opacity: 0.6;
+
+    &:not(&-button) {
+      opacity: 0.6;
+    }
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      opacity: 0.2 !important;
+      border: 1px solid $color-border-primary;
+      border-radius: 4px;
+      margin: 12px;
+    }
+
+    input[type="checkbox"]:checked {
+      opacity: 1 !important;
+    }
 
     &-button {
       width: 5%;
