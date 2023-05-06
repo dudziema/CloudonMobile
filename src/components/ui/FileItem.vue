@@ -3,11 +3,8 @@ import { ShallowRef, Ref, shallowRef, ref, watch } from 'vue'
 import { useContext } from '@/composables/context'
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
-import IconImage from '@/assets/images/iconsFiles/IconImage.svg'
-import IconDoc from '@/assets/images/iconsFiles/IconDoc.svg'
-import IconFilm from '@/assets/images/iconsFiles/IconFilm.svg'
-import IconMusic from '@/assets/images/iconsFiles/IconMusic.svg'
 import File from '@/types/File'
+import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
 
 interface ExtentionList {
   icon: string,
@@ -39,15 +36,6 @@ const openModalDeleteFile = () => {
 }
 
 const { webSocketService } = ctx
-const extentionsList: ShallowRef<ExtentionList[]> = shallowRef([
-  { icon: IconImage, extention: ['jpg', 'jpeg', 'png', 'gif'] },
-  {
-    icon: IconDoc,
-    extention: ['doc', 'docx', 'pdf', 'xls', 'xlsx', 'ppt', 'pptx'],
-  },
-  { icon: IconFilm, extention: ['mp4', 'wmv', 'avi'] },
-  { icon: IconMusic, extention: ['mp3'] },
-])
 
 function formatBytes(bytes: number) {
   if (bytes === 0) return '0 Bytes'
@@ -100,7 +88,7 @@ watch(isSelected, newValue => {
       data-testid="file-icon"
     >
       <component
-        :is="getIcon(file.name)"
+        :is="iconForExtentionDictionary[file.type]"
       />
     </td>
     <td
@@ -144,23 +132,29 @@ watch(isSelected, newValue => {
 .file-item-row {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   align-items: center;
   align-content: center;
   flex-wrap: nowrap;
+  padding-right: 8px;
 
   &:hover {
-    background: #f5faff;
+    background: $color-background-divider;
     border-radius: 8px;
   }
 }
 .file-item-field {
-  margin-right: 20px;
+  margin-right: 4px;
+
   &__button {
     width: 5%;
   }
+
   &__name {
     width: 50%;
+    padding-right: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__image {
@@ -173,6 +167,7 @@ watch(isSelected, newValue => {
     flex-direction: column;
     flex-wrap: nowrap;
   }
+
   &__time {
     width: 15%;
     opacity: 0.6;
