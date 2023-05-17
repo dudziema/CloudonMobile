@@ -22,12 +22,12 @@ const { webSocketService, modalService } = ctx
 
 const files: ShallowRef<File[]> = shallowRef([])
 const tableHeaders: ShallowRef = shallowRef([
-  { label: 'image', field: '' },
-  { label: 'name', field: 'NAME' },
-  { label: 'size', field: 'FILE SIZE' },
-  { label: 'time', field: 'UPLOAD DATE' },
-  { label: 'button', field: '' },
-  { label: 'button', field: '' },
+  { id: 0, label: 'image', field: '', sortable: false },
+  { id: 1, label: 'name', field: 'NAME', sortable: true },
+  { id: 2, label: 'size', field: 'FILE SIZE', sortable: false },
+  { id: 3, label: 'time', field: 'UPLOAD DATE', sortable: true },
+  { id: 4, label: 'button', field: '', sortable: false },
+  { id: 5, label: 'button', field: '', sortable: false },
 ])
 
 onMounted(() => {
@@ -140,6 +140,53 @@ function clearSearch() {
   filteredFiles.value = files.value
   title.value = 'All files'
 }
+
+const ASC = 'asc'
+const DSC = 'dsc'
+const sortDirections: Ref<{ [key: string]: string }> = ref({'name': ASC, 'time': ASC })
+
+function sortName() {
+  sortDirections.value.name = sortDirections.value.name  === ASC ? DSC : ASC
+
+  filteredFiles.value.sort((a: File, b: File) => {
+    const nameA = a.name.toUpperCase()
+    const nameB = b.name.toUpperCase()
+
+    if (sortDirections.value.name === ASC) {
+      return nameA.localeCompare(nameB )
+    } else {
+      return nameB.localeCompare(nameA)
+    }
+  })
+}
+
+function sortByEpochDate() {
+  sortDirections.value.time = sortDirections.value.time  === ASC ? DSC : ASC
+  
+  filteredFiles.value.sort((a: File, b: File) => {
+    const dateA = a.date_epoch
+    const dateB = b.date_epoch
+
+    if (sortDirections.value.time === ASC) {
+      return dateA - dateB
+    } else {
+      return dateB - dateA
+    }
+  })
+}
+
+function sortTable(headerName: string) {
+  if (headerName === 'name') sortName()
+  if (headerName === 'time') sortByEpochDate()
+}
+
+function sortClass(headerLabel: string): string {
+  const baseClass = 'file-table__sort'
+  const ascClass = `${baseClass}--asc-${headerLabel}`
+  const dscClass = `${baseClass}--dsc-${headerLabel}`
+  
+  return sortDirections.value[headerLabel] === ASC ? ascClass : dscClass
+}
 </script>
 
 <template>
@@ -189,7 +236,9 @@ function clearSearch() {
         :table-headers="tableHeaders"
         :clear-items="clearItems"
         :close-widget-clicked="closeWidgetClicked"
+        :sort-directions="sortDirections"
         @items-selected="itemsSelected"
+        @sort-table="sortTable"
       />
 
       <TheWidget

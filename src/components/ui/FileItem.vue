@@ -105,7 +105,7 @@ watch(isSelected, newValue => {
     </td>
     <td
       class="file-item-field file-item-field__time"
-      data-testid="file-dateEpoch"
+      data-testid="file-date_epoch"
     >
       {{ formatTime(file.date_epoch) }}
     </td>

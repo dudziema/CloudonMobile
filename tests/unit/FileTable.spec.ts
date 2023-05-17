@@ -6,9 +6,9 @@ import File from '@/types/File'
 describe('FileTable', () => {
   let wrapper: VueWrapper<any>
   const files: File[] = [
-    { name: 'example1.jpg', filename: 'example1.jpg', size: 1000000, dateEpoch: 1610733200000 },
-    { name: 'example2.docx', filename: 'example2.docx', size: 2000000, dateEpoch: 1610733200000 },
-    { name: 'example3.mp4', filename: 'example3.mp4', size: 3000000, dateEpoch: 1610733200000 },
+    { name: 'example1.jpg', filename: 'example1.jpg', size: 1000000, date_epoch: 1610733200000 },
+    { name: 'example2.docx', filename: 'example2.docx', size: 2000000, date_epoch: 1610733200000 },
+    { name: 'example3.mp4', filename: 'example3.mp4', size: 3000000, date_epoch: 1610733200000 },
   ]
   const tableHeaders: { label: string; field: string }[] = [
     { label: 'image', field: 'Image' },
