@@ -155,6 +155,7 @@ watch(isSelected, newValue => {
     padding-right: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
+    height: 24px;
   }
 
   &__image {

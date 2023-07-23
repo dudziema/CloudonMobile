@@ -9,8 +9,11 @@ import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
 import NoFilesSpace from '@/components/NoFilesSpace.vue'
 import SearchBar from '@/components/ui/SearchBar.vue'
+
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
+import ButtonAllFiles from '@/assets/images/buttons/ButtonAllFiles.svg'
+import ButtonRecentFiles from '@/assets/images/buttons/ButtonRecentFiles.svg'
 
 import File from '@/types/File'
 import Theme from '@/types/Theme'
@@ -180,19 +183,27 @@ function sortTable(headerName: string) {
   if (headerName === 'time') sortByEpochDate()
 }
 
-function sortClass(headerLabel: string): string {
-  const baseClass = 'file-table__sort'
-  const ascClass = `${baseClass}--asc-${headerLabel}`
-  const dscClass = `${baseClass}--dsc-${headerLabel}`
-  
-  return sortDirections.value[headerLabel] === ASC ? ascClass : dscClass
+const isAllFilesBtnActive = ref(false)
+const isRecentFilesBtnActive = ref(false)
+
+function sortRecentFiles() {
+  isRecentFilesBtnActive.value = true
+  isAllFilesBtnActive.value = false
+  sortDirections.value.time = DSC
+  sortByEpochDate()
+}
+
+function allFiles() {
+  isRecentFilesBtnActive.value = false
+  isAllFilesBtnActive.value = true
+  refreshFilesList()
 }
 </script>
 
 <template>
   <div class="dashboard-files">
     <div class="dashboard-files__left">
-      <div>
+      <div class="dashboard-files__left-up">
         <p class="dashboard-files__logo">
           <ImageLogo />Cloud On Mobile
         </p>
@@ -201,6 +212,24 @@ function sortClass(headerLabel: string): string {
           class="dashboard-files__button-new-file"
           label="+ Add new file"
         />
+        <BaseButton
+          :class="isAllFilesBtnActive ? 'dashboard-files__button-all-files dashboard-files__button-all-files--active'
+            : 'dashboard-files__button-all-files'"
+          :theme="Theme.SIMPLY"
+          @click="allFiles"
+        >
+          <ButtonAllFiles /> All files
+        </BaseButton>
+      
+        <BaseButton
+          :class="isRecentFilesBtnActive ?
+            'dashboard-files__button-recent-files dashboard-files__button-recent-files--active' :
+            'dashboard-files__button-recent-files'"
+          :theme="Theme.SIMPLY"
+          @click="sortRecentFiles"
+        >
+          <ButtonRecentFiles /> Recent files
+        </BaseButton>
       </div>
         
       <BaseButton
@@ -273,6 +302,7 @@ function sortClass(headerLabel: string): string {
   gap: 8px 8px;
   height: 100vh;
   overflow: hidden;
+  margin: 8px;
 
   &__left {
     display: flex;
@@ -283,6 +313,11 @@ function sortClass(headerLabel: string): string {
     grid-row-start: 1;
     grid-row-end: 10;
     padding-right: 20px;
+    margin-bottom: 12px;
+
+    &-up {
+      padding: 10px;
+    }
   }
   &__disconnect {
     grid-row-start: 9;
@@ -300,6 +335,43 @@ function sortClass(headerLabel: string): string {
 
   &__button-new-file {
     width: 100%;
+    margin: 16px 0;
+  }
+
+  &__button-all-files {
+    color: var(--primary-100, #0E70F1);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.048px;
+    gap: 16px;
+    padding: 0 8px;
+    width: 100%;
+    &--active {
+      border-radius: 8px;
+      background: var(--primary-10, #F5FAFF);
+    }
+  }
+
+  &__button-recent-files {
+    color: var(--black, #0C0C0C);
+    font-feature-settings: 'clig' off, 'liga' off;
+    /* Body/16/Regular */
+    font-family: Poppins;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.048px;
+    gap: 16px;
+    padding: 0 8px;
+    width: 100%;
+    &--active {
+      border-radius: 8px;
+      background: var(--primary-10, #F5FAFF);
+    }
   }
 
   &__files {
@@ -308,7 +380,8 @@ function sortClass(headerLabel: string): string {
     grid-column-start: 3;
     grid-column-end: 11;
     grid-row-start: 3;
-    grid-row-end: 9;
+    grid-row-end: 10;
+    margin-bottom: 40px;
 
     &--full {
       display: flex;
@@ -317,6 +390,7 @@ function sortClass(headerLabel: string): string {
       align-items: flex-start;
       align-content: flex-start;
       flex-wrap: wrap;
+      overflow: auto;
     }
     &--search {
       font-weight: 200;
