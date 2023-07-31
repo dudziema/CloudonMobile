@@ -35,6 +35,11 @@ h1 {
   font-size: $font-size-title;
   font-weight: $font-weight-semi-bold;
   line-height: $line-height-large;
+
+  @include devices(mobile) {
+    font-size: $font-size-title-sm;
+    line-height: $line-height-medium;
+  }
 }
 
 p {
