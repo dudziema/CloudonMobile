@@ -194,7 +194,6 @@ function connect() {
   &__details {
     margin: 16px 0 56px 0;
     max-width: 390px;
-    font-weight: 400;
     opacity: 0.8;
     text-align: left;
     

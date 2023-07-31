@@ -8,9 +8,6 @@ import TheModal from '@/components/TheModal.vue'
 </template>
 
 <style>
-#app {
-  min-height: 100vh;
-}
 body {
   overflow-y: hidden;
   margin: 0;
