@@ -1,23 +1,22 @@
 <script lang="ts" setup>
 import { shallowRef, ShallowRef, onMounted, ref, Ref, computed, ComputedRef, watch } from 'vue'
 import { useContext } from '@/composables/context'
-import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 import TheWidget from '@/components/TheWidget.vue'
-import BaseButton from '@/components/ui/BaseButton.vue'
-import BaseUpload from '@/components/ui/BaseUpload.vue'
 import FileTable from '@/components/FileTable.vue'
 import NoFilesSpace from '@/components/NoFilesSpace.vue'
 import SearchBar from '@/components/ui/SearchBar.vue'
-import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
-import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
+import LeftMenu from '@/components/LeftMenu.vue'
+import BurgerMenu from '@/components/BurgerMenu.vue'
+import ButtonMenu from '@/assets/images/buttons/ButtonMenu.svg'
 
 import File from '@/types/File'
-import Theme from '@/types/Theme'
 import Chips from '@/types/Chips'
+import Message from '@/types/Message'
 
-const router = useRouter()
 const ctx = useContext()
+const route = useRoute()
 const { webSocketService, modalService } = ctx
 
 const files: ShallowRef<File[]> = shallowRef([])
@@ -30,29 +29,43 @@ const tableHeaders: ShallowRef = shallowRef([
   { id: 5, label: 'button', field: '', sortable: false },
 ])
 
+const ifErrorShowModal = () => {
+  modalService.open({
+    title: 'Something went wrong  :(',
+    description: 'There was a problem with connection with the mobile app. Please try again later.',
+    buttonAction: {
+      text: 'Close',
+      callback: () => modalService.close()
+    },
+    isCancel: false
+  })
+}
+
+const isPasscodeCorrect =ref<boolean| null>(null) //@to-do Add handling wrong input in url
+
 onMounted(() => {
-  refreshFilesList()
+  if(!webSocketService.getIsConnected()){
+    webSocketService.addWsOnMessageListener(function (messageFromServer: Message) {
+      if(messageFromServer.result) {
+        // Wrong passcode
+        isPasscodeCorrect.value = false
+      } else if(!messageFromServer.result) {
+        // Correct passcode
+        isPasscodeCorrect.value = true
+        refreshFilesList()
+      }
+    })
+    const passcode = parseInt(route.params.passcode as string)
+    webSocketService.login(passcode, ifErrorShowModal)
+  } else {
+    refreshFilesList()
+  }
 })
 
 async function refreshFilesList() {
   await webSocketService.wsListFiles((listFiles: File[]) => {
     files.value = listFiles
     filteredFiles.value = files.value
-  })
-}
-
-function disconnect() {
-  modalService.open({
-    title: 'Disconnect account',
-    description: 'Are you sure you want to proceed?',
-    buttonAction: {
-      text: 'Disconnect',
-      callback: () => {
-        webSocketService.disconnect()
-        modalService.close()
-        router.push('/')
-      },
-    },
   })
 }
 
@@ -187,80 +200,78 @@ function sortClass(headerLabel: string): string {
   
   return sortDirections.value[headerLabel] === ASC ? ascClass : dscClass
 }
+
+const isBurgerMenuOpen = ref(false)
 </script>
 
 <template>
   <div class="dashboard-files">
     <div class="dashboard-files__left">
-      <div>
-        <p class="dashboard-files__logo">
-          <ImageLogo />Cloud On Mobile
-        </p>
+      <LeftMenu />
+    </div>
 
-        <BaseUpload
-          class="dashboard-files__button-new-file"
-          label="+ Add new file"
+    <BurgerMenu
+      class="dashboard-files__burger-menu"
+      :is-burger-menu-open="isBurgerMenuOpen"
+      @close-burger-menu="isBurgerMenuOpen = false"
+    />
+    <div class="dashboard-files__main">
+      <div class="dashboard-files__main-search">
+        <ButtonMenu
+          class="dashboard-files__main-search-menu"
+          @click="isBurgerMenuOpen = true"
+        />
+
+        <SearchBar
+          class="dashboard-files__search-bar"
+          @search="findFile"
+          @clear-search="clearSearch"
         />
       </div>
-        
-      <BaseButton
-        class="dashboard-files__disconnect"
-        :theme="Theme.SIMPLY"
-        @click="disconnect"
+
+      <h1 class="dashboard-files__title">
+        {{ title }}
+      </h1>
+
+      <div
+        v-if="filteredFiles.length"
+        class="dashboard-files__files dashboard-files__files--full"
+        @dragover.prevent
+        @dragenter.prevent
+        @dragleave.prevent="onDrop"
+        @drop.prevent="onDrop"
       >
-        <ImageLogOut />
-        
-        <span class="dashboard-files__disconnect-text">Disconnect</span>
-      </BaseButton>
-    </div>
-    <SearchBar
-      class="dashboard-files__search-bar"
-      @search="findFile"
-      @clear-search="clearSearch"
-    />
+        <FileTable
+          :files="filteredFiles"
+          :table-headers="tableHeaders"
+          :clear-items="clearItems"
+          :close-widget-clicked="closeWidgetClicked"
+          :sort-directions="sortDirections"
+          @items-selected="itemsSelected"
+          @sort-table="sortTable"
+        />
 
-    <h1 class="dashboard-files__title">
-      {{ title }}
-    </h1>
+        <TheWidget
+          v-if="quantityItemsSelected"
+          :quantity-items-selected="quantityItemsSelected"
+          @download="downloadFiles"
+          @delete="deleteFiles"
+          @close-widget="closeWidget"
+        />
+      </div>
 
-    <div
-      v-if="filteredFiles.length"
-      class="dashboard-files__files dashboard-files__files--full"
-      @dragover.prevent
-      @dragenter.prevent
-      @dragleave.prevent="onDrop"
-      @drop.prevent="onDrop"
-    >
-      <FileTable
-        :files="filteredFiles"
-        :table-headers="tableHeaders"
-        :clear-items="clearItems"
-        :close-widget-clicked="closeWidgetClicked"
-        :sort-directions="sortDirections"
-        @items-selected="itemsSelected"
-        @sort-table="sortTable"
-      />
+      <div
+        v-else-if="!filteredFiles.length && title === 'Search results'"
+        class="dashboard-files__files dashboard-files__files--search"
+      >
+        Oops, we didn't find any files matching your search criteria.
+      </div>
 
-      <TheWidget
-        v-if="quantityItemsSelected"
-        :quantity-items-selected="quantityItemsSelected"
-        @download="downloadFiles"
-        @delete="deleteFiles"
-        @close-widget="closeWidget"
+      <NoFilesSpace
+        v-else-if="!files.length"
+        class="dashboard-files__files"
       />
     </div>
-
-    <div
-      v-else-if="!filteredFiles.length && title === 'Search results'"
-      class="dashboard-files__files dashboard-files__files--search"
-    >
-      Oops, we didn't find any files matching your search criteria.
-    </div>
-
-    <NoFilesSpace
-      v-else-if="!files.length"
-      class="dashboard-files__files"
-    />
   </div>
 </template>
 
@@ -275,40 +286,55 @@ function sortClass(headerLabel: string): string {
   overflow: hidden;
 
   &__left {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     grid-column-start: 1;
     grid-column-end: 3;
     grid-row-start: 1;
     grid-row-end: 10;
     padding-right: 20px;
-  }
-  &__disconnect {
-    grid-row-start: 9;
-    grid-row-end: 10;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    display: flex;
-    align-content: center;
 
-    &-text {
-      margin: 12px;
+    @include devices(tablet) {
+      display: none;
     }
   }
 
-  &__button-new-file {
-    width: 100%;
+  &__burger-menu {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 10;
+    padding-right: 20px;
+    @include devices(only-desktop) {
+      display: none;
+    }
   }
-
-  &__files {
+  &__main {
     position: relative;
+    padding: 15px;
     width: 100%;
     grid-column-start: 3;
     grid-column-end: 11;
-    grid-row-start: 3;
+    grid-row-start: 1;
     grid-row-end: 9;
+
+    @include devices(tablet) {
+      grid-column-start: 1;
+    }
+
+    &-search {
+      display: flex;
+      gap: 24px;
+
+      &-menu {
+        margin-top: 8px;
+
+        @include devices(only-desktop) {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &__files {
 
     &--full {
       display: flex;
@@ -331,24 +357,7 @@ function sortClass(headerLabel: string): string {
       flex-direction: column;
     }
   }
-  &__logo {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-    &__search-bar {
-      grid-column-start: 3;
-      grid-column-end: 11;
-      grid-row-start: 1;
-      grid-row-end: 1;
-    }
-  &__title {
-    grid-column-start: 3;
-    grid-column-end: 11;
-    grid-row-start: 2;
-    grid-row-end: 2;
-  }
+
   &__button {
     width: 100%;
     margin-top: 30px;

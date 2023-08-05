@@ -79,6 +79,7 @@ function closeModal() {
   align-items: center;
   justify-content: center;
   align-content: center;
+  z-index: 2;
 
   &__content {
     display: flex;
