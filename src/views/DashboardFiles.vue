@@ -273,6 +273,8 @@ function sortClass(headerLabel: string): string {
   gap: 8px 8px;
   height: 100vh;
   overflow: hidden;
+  max-width: 1520px;
+  width: 100%;
 
   &__left {
     display: flex;

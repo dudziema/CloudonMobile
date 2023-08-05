@@ -154,6 +154,7 @@ function connect() {
   overflow-y: hidden; /* Hide vertical scrollbar */
   overflow-x: hidden;
   height: 100vh;
+  width:100%;
 
   &__divider {
     background-color: $color-background-divider;

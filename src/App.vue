@@ -10,6 +10,8 @@ import TheModal from '@/components/TheModal.vue'
 <style>
 #app {
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
 }
 body {
   overflow-y: hidden;

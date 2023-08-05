@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import { ShallowRef, Ref, shallowRef, ref, watch } from 'vue'
+import { ShallowRef, Ref, shallowRef, ref, watch, onBeforeUnmount } from 'vue'
 import { useContext } from '@/composables/context'
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
+import IconMore from '@/assets/images/iconsFiles/IconMore.svg'
 import File from '@/types/File'
 import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
+import BaseDropDown from '@/components/ui/BaseDropDown.vue'
 
 interface ExtentionList {
   icon: string,
@@ -72,6 +74,29 @@ watch(props, newValue => {
 watch(isSelected, newValue => {
   emit('isSelected', props.file, newValue)
 })
+
+const isDropdownActive = ref(false)
+const buttonMore = ref<HTMLElement | null>(null)
+
+function handleClickOutside(event: MouseEvent) {
+
+  if(buttonMore.value && !buttonMore.value.contains(event.target as Node)) {
+    isDropdownActive.value = false
+    document.removeEventListener('click', handleClickOutside)
+  }
+
+}
+
+function toggleDropdown(){
+  isDropdownActive.value = !isDropdownActive.value
+
+  if(isDropdownActive.value) {
+    console.log('active')
+    document.addEventListener('click', handleClickOutside)
+  } else {
+    document.removeEventListener('click', handleClickOutside)
+  }
+}
 </script>
 
 <template>
@@ -125,6 +150,40 @@ watch(isSelected, newValue => {
         />
       </button>
     </td>
+    <td class="file-item-field file-item-field__button--more">
+      <button
+        ref="buttonMore"
+        class="file-item-field__button--more"
+      >
+        <IconMore
+          class="file-item-field__more-icon"
+          @click="toggleDropdown"
+        />
+      </button>
+      <BaseDropDown v-if="isDropdownActive">
+        <div class="file-item-field__dropdown-content">
+          <button
+            class="file-item-field__dropdown-content-btn"
+            @click="webSocketService.downloadFile(file.name)"
+          >
+            <IconDownload
+              class="file-item-field__dropdown-content-download-icon"
+            />
+            Download File
+          </button>
+
+          <button
+            class="file-item-field__dropdown-content-btn"
+            @click="openModalDeleteFile"
+          >
+            <IconTrash
+              class="file-item-field__dropdown-content-delete-icon"
+            />
+            <span class="file-item-field__dropdown-content-delete-icon-text">Delete File</span>
+          </button>
+        </div>
+      </BaseDropDown>
+    </td>
   </tr>
 </template>
 
@@ -146,8 +205,57 @@ watch(isSelected, newValue => {
 .file-item-field {
   margin-right: 4px;
 
+  &__download-icon {
+    opacity: 0.6;
+  }
+
+  &__delete-icon {
+    opacity: 0.6;
+  }
+
+  &__more-icon {
+    opacity: 0.6;
+  }
+
+  &__dropdown-content {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    &-download-icon {
+      
+    }
+
+    &-delete-icon {
+      filter: invert(38%) sepia(23%) saturate(3992%) hue-rotate(319deg) brightness(85%) contrast(90%);
+      &-text {
+        color: #D1405A
+      }
+    }
+
+    &-btn {
+      display: flex;
+      gap: 8px;
+
+      &:hover {
+        background: $color-background-divider;
+      }
+
+    }
+  }
+
   &__button {
     width: 5%;
+
+    @include devices(tablet-min) {
+      display: none
+    }
+
+    &--more {
+      position: relative;
+      display: inline-block;
+    }
   }
 
   &__name {
@@ -191,4 +299,17 @@ input[type="checkbox"] {
 input[type="checkbox"]:checked {
   opacity: 1;
 }
+
+@include devices(tablet) {
+  .file-item-field__button{
+    display: none !important;
+  }
+}
+
+@include devices(only-desktop) {
+  .file-item-field__button--more{
+    display: none !important;
+  }
+}
+
 </style>

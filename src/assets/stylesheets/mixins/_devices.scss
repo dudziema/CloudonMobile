@@ -30,4 +30,9 @@
       @content;
     }
   }
+  @if $breakpoint == only-desktop {
+    @media only screen and (min-width: $desktop-min) {
+      @content;
+    }
+  }
 }
