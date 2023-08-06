@@ -71,7 +71,7 @@ async function refreshFilesList() {
 
 const selectedFiles: Ref<File[]> = ref([])
 const quantityItemsSelected: ComputedRef<number> = computed(()=>selectedFiles.value.length)
-const quantityFileName: ComputedRef<'files' | 'file'> = computed(() => quantityItemsSelected.value > 1 ?
+const quantityFileName: ComputedRef<string> = computed(() => quantityItemsSelected.value > 1 ?
   'files' : 'file')
 const clearItems: Ref<boolean> = ref(false)
 
@@ -91,7 +91,7 @@ function downloadFiles() {
 function deleteFiles() {
   modalService.open({
     title: `Delete ${ quantityItemsSelected.value } ${ quantityFileName.value }`,
-    description: `Are you sure? Deleting ${ quantityItemsSelected.value } ${ quantityFileName.value } will be permamently removed from your inventory.`,
+    description: `Are you sure? Deleting ${ quantityItemsSelected.value } ${ quantityFileName.value } will be permanently removed from your inventory.`,
     buttonAction: {
       text: 'Delete',
       callback: () => {
