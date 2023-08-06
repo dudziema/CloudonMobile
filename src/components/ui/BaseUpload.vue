@@ -56,9 +56,6 @@ function addNewFile(event: { target: { files: File[] } }) {
 
 <style lang="scss" scoped>
 .base-upload {
-  &__button {
-    margin: $spacing-vertical-small $spacing-horizontal-default;
-  }
 
   &__label {
     width: 100%;
