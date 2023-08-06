@@ -44,7 +44,7 @@ const ifErrorShowModal = () => {
 const isPasscodeCorrect =ref<boolean| null>(null) //@to-do Add handling wrong input in url
 
 onMounted(() => {
-  if(!webSocketService.getIsConnected()){
+  if(!webSocketService.isConnectedValue()){
     webSocketService.addWsOnMessageListener(function (messageFromServer: Message) {
       if(messageFromServer.result) {
         // Wrong passcode

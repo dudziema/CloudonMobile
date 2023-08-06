@@ -19,6 +19,10 @@ export class WebSocketService {
   private wsOnMessageListenersListFiles: ((listfiles: File[]) => void) | null = null
   wsOnErrorListener!: () => void
 
+  get isConnectedValue() {
+    return this.isConnected
+  }
+
   onOpen = () => {
     console.log('WS opened')
     this.sendMsgToWs({
@@ -89,10 +93,6 @@ export class WebSocketService {
 
   addWsOnMessageListener( listenerFunction: ((obj: MessageReceived) => void) ) {
     this.wsOnMessageListeners.push(listenerFunction)
-  }
-
-  getIsConnected() {
-    return this.isConnected
   }
 
   private sendMsgToWs(msg: MessageSent) {
