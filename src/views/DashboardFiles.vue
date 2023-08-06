@@ -302,6 +302,8 @@ function allFiles() {
   gap: 8px 8px;
   height: 100vh;
   overflow: hidden;
+  max-width: 1520px;
+  width: 100%;
   margin: 8px;
 
   &__left {
