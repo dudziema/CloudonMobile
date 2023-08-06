@@ -43,46 +43,8 @@ watch(props, newValue => {
   }
 })
 
-// const ASC = 'asc'
-// const DSC = 'dsc'
-
-// const filesSorted: Ref<File[]> = ref(props.files)
-// const sortDirections: Ref<{ [key: string]: string }> = ref({'name': ASC, 'time': ASC })
-
-// function sortName() {
-//   sortDirections.value.name = sortDirections.value.name  === ASC ? DSC : ASC
-
-//   filesSorted.value.sort((a: File, b: File) => {
-//     const nameA = a.name.toUpperCase()
-//     const nameB = b.name.toUpperCase()
-
-//     if (sortDirections.value.name === ASC) {
-//       return nameA.localeCompare(nameB )
-//     } else {
-//       return nameB.localeCompare(nameA)
-//     }
-//   })
-// }
-
-// function sortByEpochDate() {
-//   sortDirections.value.time = sortDirections.value.time  === ASC ? DSC : ASC
-  
-//   filesSorted.value.sort((a: File, b: File) => {
-//     const dateA = a.date_epoch
-//     const dateB = b.date_epoch
-
-//     if (sortDirections.value.time === ASC) {
-//       return dateA - dateB
-//     } else {
-//       return dateB - dateA
-//     }
-//   })
-// }
-
 function sortTable(headerName: string) {
   emit('sortTable', headerName)
-// if (headerName === 'name') sortName()
-// if (headerName === 'time') sortByEpochDate()
 }
 
 function sortClass(headerLabel: string): string {
@@ -196,7 +158,7 @@ function sortClass(headerLabel: string): string {
   }
   #{ $self }, #{ $self }__body {
    overflow: auto;
-   height: 80vh;
+   height: calc(100% - 270px);
   }
 
   &__sort {

@@ -4,9 +4,11 @@ import LeftMenu from '@/components/LeftMenu.vue'
 
 const props = defineProps<{
   isBurgerMenuOpen: boolean,
+  isAllFilesBtnActive: boolean,
+  isRecentFilesBtnActive: boolean
 }>()
 
-const emit = defineEmits(['closeBurgerMenu'])
+const emit = defineEmits(['closeBurgerMenu', 'allFiles', 'sortRecentFiles'])
 </script>
 
 <template>
@@ -22,7 +24,12 @@ const emit = defineEmits(['closeBurgerMenu'])
         <ImageX />
       </button>
 
-      <LeftMenu />
+      <LeftMenu
+        :is-all-files-btn-active="isAllFilesBtnActive"
+        :is-recent-files-btn-active="isRecentFilesBtnActive"
+        @all-files="emit('allFiles')"
+        @sort-recent-files="emit('sortRecentFiles')"
+      />
     </div>
   </Transition>
 </template>

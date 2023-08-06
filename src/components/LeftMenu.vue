@@ -9,6 +9,15 @@ import BaseUpload from '@/components/ui/BaseUpload.vue'
 
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
+import ButtonAllFiles from '@/assets/images/buttons/ButtonAllFiles.svg'
+import ButtonRecentFiles from '@/assets/images/buttons/ButtonRecentFiles.svg'
+
+defineProps<{
+  isAllFilesBtnActive: boolean,
+  isRecentFilesBtnActive: boolean,
+}>()
+
+const emit = defineEmits(['allFiles', 'sortRecentFiles'])
 
 const router = useRouter()
 const ctx = useContext()
@@ -42,6 +51,24 @@ function disconnect() {
         class="left-menu__btn-new-file"
         label="+ Add new file"
       />
+      <BaseButton
+        :class="isAllFilesBtnActive ? 'left-menu__button-all-files left-menu__button-all-files--active'
+          : 'left-menu__button-all-files'"
+        :theme="Theme.SIMPLY"
+        @click="emit('allFiles')"
+      >
+        <ButtonAllFiles /> All files
+      </BaseButton>
+    
+      <BaseButton
+        :class="isRecentFilesBtnActive ?
+          'left-menu__button-recent-files left-menu__button-recent-files--active' :
+          'left-menu__button-recent-files'"
+        :theme="Theme.SIMPLY"
+        @click="emit('sortRecentFiles')"
+      >
+        <ButtonRecentFiles /> Recent files
+      </BaseButton>
     </div>
     
     <BaseButton
@@ -71,6 +98,7 @@ function disconnect() {
     justify-content: center;
     align-items: center;
   }
+
   &__btn {
     &-new-file {
       width: 100%;
@@ -86,6 +114,42 @@ function disconnect() {
       &-text {
         margin: 12px;
       }
+    }
+  }
+
+  &__button-all-files {
+    color: var(--primary-100, #0E70F1);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.048px;
+    gap: 16px;
+    padding: 0 8px;
+    width: 100%;
+    &--active {
+      border-radius: 8px;
+      background: var(--primary-10, #F5FAFF);
+    }
+  }
+
+  &__button-recent-files {
+    color: var(--black, #0C0C0C);
+    font-feature-settings: 'clig' off, 'liga' off;
+    /* Body/16/Regular */
+    font-family: Poppins;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.048px;
+    gap: 16px;
+    padding: 0 8px;
+    width: 100%;
+    &--active {
+      border-radius: 8px;
+      background: var(--primary-10, #F5FAFF);
     }
   }
 }

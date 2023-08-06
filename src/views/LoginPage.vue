@@ -44,15 +44,29 @@ onMounted(
 
 const isAllValuesFilled: ComputedRef<boolean> = computed(() => PASSCODE_INPUTS.value.every(input => input.value))
 
-function next(e: { inputType: string; target: { nextSibling: { nodeType: number; focus: () => void } } }) {
-  if (e.inputType === 'deleteContentBackward' || e.target?.nextSibling?.nodeType !== 1) return
-  e.target?.nextSibling?.focus()
-}
+function pressKey(event: KeyboardEvent, inputId: number) {
+  const pressedKey = event.key
+  const target = event.target as  HTMLButtonElement
+  const nextSibling = target.nextSibling as HTMLElement
+  const previousSibling = target.previousSibling as HTMLElement
+  const input = PASSCODE_INPUTS.value.find(input=> input.id === inputId)
+  const isNumeric = /^\d$/.test(pressedKey)
 
-function previous(e: { target: { previousSibling: { nodeType: number; focus: () => void } } }) {
-  isPasscodeCorrect.value = true
-  if (e.target?.previousSibling?.nodeType !== 1) return
-  e.target?.previousSibling?.focus()
+  if(!target || !input) return
+
+  if(event.key === 'Backspace') {
+    input.value = ''
+
+    if(previousSibling?.nodeType === 1) previousSibling?.focus()
+  } else {
+    if(nextSibling?.nodeType !== 1 && target.value !== '') {
+      return
+    } else if(isNumeric) {
+      input.value= event.key
+
+      if(nextSibling?.nodeType === 1) nextSibling?.focus()
+    }
+  }
 }
 
 function getPasscodeInputs() {
@@ -115,8 +129,7 @@ function connect() {
             required
             :class="isPasscodeCorrect ? `login-page__input login-page__input--correct` :
               `login-page__input login-page__input--wrong`"
-            @input="next"
-            @keyup.backspace="previous"
+            @keydown.prevent="pressKey($event, input.id)"
             @keyup.enter="connect()"
           />
         </form>
@@ -154,6 +167,7 @@ function connect() {
   overflow-y: hidden; /* Hide vertical scrollbar */
   overflow-x: hidden;
   height: 100vh;
+  width:100%;
 
   &__divider {
     background-color: $color-background-divider;

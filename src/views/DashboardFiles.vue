@@ -44,7 +44,7 @@ const ifErrorShowModal = () => {
 const isPasscodeCorrect =ref<boolean| null>(null) //@to-do Add handling wrong input in url
 
 onMounted(() => {
-  if(!webSocketService.isConnectedValue()){
+  if(!webSocketService.isConnectedValue){
     webSocketService.addWsOnMessageListener(function (messageFromServer: Message) {
       if(messageFromServer.result) {
         // Wrong passcode
@@ -177,8 +177,8 @@ function sortByEpochDate() {
   sortDirections.value.time = sortDirections.value.time  === ASC ? DSC : ASC
   
   filteredFiles.value.sort((a: File, b: File) => {
-    const dateA = a.date_epoch
-    const dateB = b.date_epoch
+    const dateA = a.date_epoch!
+    const dateB = b.date_epoch!
 
     if (sortDirections.value.time === ASC) {
       return dateA - dateB
@@ -193,12 +193,20 @@ function sortTable(headerName: string) {
   if (headerName === 'time') sortByEpochDate()
 }
 
-function sortClass(headerLabel: string): string {
-  const baseClass = 'file-table__sort'
-  const ascClass = `${baseClass}--asc-${headerLabel}`
-  const dscClass = `${baseClass}--dsc-${headerLabel}`
-  
-  return sortDirections.value[headerLabel] === ASC ? ascClass : dscClass
+const isAllFilesBtnActive = ref(false)
+const isRecentFilesBtnActive = ref(false)
+
+function sortRecentFiles() {
+  isRecentFilesBtnActive.value = true
+  isAllFilesBtnActive.value = false
+  sortDirections.value.time = DSC
+  sortByEpochDate()
+}
+
+function allFiles() {
+  isRecentFilesBtnActive.value = false
+  isAllFilesBtnActive.value = true
+  refreshFilesList()
 }
 
 const isBurgerMenuOpen = ref(false)
@@ -207,12 +215,22 @@ const isBurgerMenuOpen = ref(false)
 <template>
   <div class="dashboard-files">
     <div class="dashboard-files__left">
-      <LeftMenu />
+      <LeftMenu
+        :is-all-files-btn-active="isAllFilesBtnActive"
+        :is-recent-files-btn-active="isRecentFilesBtnActive"
+        @all-files="allFiles"
+        @sort-recent-files="sortRecentFiles"
+      />
     </div>
 
     <BurgerMenu
       class="dashboard-files__burger-menu"
+      :is-all-files-btn-active="isAllFilesBtnActive"
+      :is-recent-files-btn-active="isRecentFilesBtnActive"
       :is-burger-menu-open="isBurgerMenuOpen"
+      @all-files="allFiles"
+      @sort-recent-files="sortRecentFiles"
+
       @close-burger-menu="isBurgerMenuOpen = false"
     />
     <div class="dashboard-files__main">
@@ -284,6 +302,9 @@ const isBurgerMenuOpen = ref(false)
   gap: 8px 8px;
   height: 100vh;
   overflow: hidden;
+  max-width: 1520px;
+  width: 100%;
+  margin: 8px;
 
   &__left {
     grid-column-start: 1;
@@ -291,6 +312,7 @@ const isBurgerMenuOpen = ref(false)
     grid-row-start: 1;
     grid-row-end: 10;
     padding-right: 20px;
+    margin-bottom: 12px;
 
     @include devices(tablet) {
       display: none;
@@ -303,10 +325,12 @@ const isBurgerMenuOpen = ref(false)
     grid-row-start: 1;
     grid-row-end: 10;
     padding-right: 20px;
+
     @include devices(only-desktop) {
       display: none;
     }
   }
+
   &__main {
     position: relative;
     padding: 15px;
@@ -343,6 +367,7 @@ const isBurgerMenuOpen = ref(false)
       align-items: flex-start;
       align-content: flex-start;
       flex-wrap: wrap;
+      overflow: auto;
     }
     &--search {
       font-weight: 200;
