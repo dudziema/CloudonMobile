@@ -80,7 +80,7 @@ function getPasscodeInputs() {
 
 const ifErrorShowModal = () => {
   modalService.open({
-    title: 'Someting went wrong  :(',
+    title: 'Something went wrong  :(',
     description: 'There was a problem with connection with the mobile app. Please try again later.',
     buttonAction: {
       text: 'Close',

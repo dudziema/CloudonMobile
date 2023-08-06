@@ -15,8 +15,13 @@ export class WebSocketService {
   wsOnMessageListeners: ((obj: MessageReceived) => void)[] = []
   private ws: WebSocket | undefined
   private passCode: number | undefined
+  private isConnected = false
   private wsOnMessageListenersListFiles: ((listfiles: File[]) => void) | null = null
   wsOnErrorListener!: () => void
+
+  get isConnectedValue() {
+    return this.isConnected
+  }
 
   onOpen = () => {
     console.log('WS opened')
@@ -154,6 +159,7 @@ export class WebSocketService {
 
     if (receivedMessage.type === MessageTypes.LOGING_WITH_CODE) {
       if (this.wsOnMessageListeners) {
+        this.isConnected = true
         this.wsOnMessageListeners.forEach(listener => {
           listener(receivedMessage)
         })
