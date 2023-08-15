@@ -120,14 +120,16 @@ const title: ShallowRef<string> = shallowRef('All files')
 
 const listOfCategoriesSelected: Ref<string[]> = ref([])
 
-function findFile(searchText: string, categories: Chips[]) {
-  title.value = 'Search results'
-
+function getChipsSelected(categories: Chips[]) {
   if(categories !== undefined){
     listOfCategoriesSelected.value = categories
       .filter((chips: Chips) => chips.clicked === true)
       .map((chips: Chips) => chips.name)
   }
+}
+
+function searchByTextAndCategory(searchText: string) {
+  title.value = 'Search results'
 
   if(searchText) {
     if(listOfCategoriesSelected.value.length) {
@@ -147,6 +149,14 @@ function findFile(searchText: string, categories: Chips[]) {
       filteredFiles.value = files.value
     }
   }
+}
+
+function findFile(searchText: string, categories: Chips[]) {
+  getChipsSelected(categories)
+
+  if(!listOfCategoriesSelected.value.length  && !searchText) return  clearSearch()
+
+  searchByTextAndCategory(searchText)
 }
 
 function clearSearch() {
