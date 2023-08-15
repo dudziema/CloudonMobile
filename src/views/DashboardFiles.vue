@@ -295,16 +295,21 @@ const isBurgerMenuOpen = ref(false)
 
 <style lang="scss" scoped>
 .dashboard-files {
+  height: 100vh;
   display: grid;
   grid-auto-rows: auto;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(9, 1fr);
   gap: 8px 8px;
-  height: 100vh;
-  overflow: hidden;
+  // height: 100vh;
+  // overflow: hidden;
   max-width: 1520px;
   width: 100%;
-  margin: 8px;
+  // margin: 8px;
+
+  &__title {
+    margin: 12px 0;
+  }
 
   &__left {
     grid-column-start: 1;
@@ -339,6 +344,7 @@ const isBurgerMenuOpen = ref(false)
     grid-column-end: 11;
     grid-row-start: 1;
     grid-row-end: 9;
+    height: 100vh;
 
     @include devices(tablet) {
       grid-column-start: 1;
@@ -346,10 +352,16 @@ const isBurgerMenuOpen = ref(false)
 
     &-search {
       display: flex;
-      gap: 24px;
+      gap: 4px;
+
+      @include devices(only-desktop) {
+        gap: 24px;
+    }
 
       &-menu {
         margin-top: 8px;
+        min-height: 40px;
+    min-width: 40px;
 
         @include devices(only-desktop) {
           display: none;
@@ -359,6 +371,8 @@ const isBurgerMenuOpen = ref(false)
   }
 
   &__files {
+    height: calc(100vh - 215px);
+    overflow: auto;
 
     &--full {
       display: flex;

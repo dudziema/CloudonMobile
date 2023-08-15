@@ -141,7 +141,7 @@ function closeModal() {
     opacity: 0.6;
     
     @include devices(mobile) {
-      margin: 16px;
+      // margin: 16px;
       text-align: center;
     }
   }

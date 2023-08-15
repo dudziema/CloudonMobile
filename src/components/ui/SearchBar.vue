@@ -50,20 +50,22 @@ function clearChipsSelection() {
 
 <template>
   <div class="search-bar">
-    <input
-      v-model="searchInput"
-      type="search"
-      class="search-bar__input"
-      placeholder="Search for anything"
-      @keyup.prevent="search(searchInput, chipsList)"
-      @click="isSearchBarClicked=true"
-    />
-    <IconSearch class="search-bar__img" />
-    <ImageX
-      v-if="searchInput"
-      class="search-bar__cancel"
-      @click="clearSearchInput"
-    />
+    <div class="search-bar__input">
+      <input
+        v-model="searchInput"
+        type="search"
+        class="search-bar__input-field"
+        placeholder="Search for anything"
+        @keyup.prevent="search(searchInput, chipsList)"
+        @click="isSearchBarClicked=true"
+      />
+      <IconSearch class="search-bar__img" />
+      <ImageX
+        v-if="searchInput"
+        class="search-bar__cancel"
+        @click="clearSearchInput"
+      />
+    </div>
 
     <div class="search-bar__chips">
       <BaseChips
@@ -76,17 +78,29 @@ function clearChipsSelection() {
 
 <style lang="scss" scoped>
 .search-bar {
-  position: relative;
-  width: 80%;
   display: flex;
-  flex-direction: column;;
+  flex-direction: column;
+  width: calc(100vw - 74px);
+  @include devices(tablet-min) {
+
+  }
 
   &__input {
+    position: relative;
+    max-width:750px;
+    &-field {
+      width:100%;
     border: 1px solid transparent;
     border-radius: 8px;
-    width: 100%;
-    padding: 9px 4px 9px 40px;
+    padding: 9px 40px;
     background: transparent;
+    border: 1px solid transparent;
+
+    margin-bottom: 12px;
+
+    &:hover, &:focus {
+      border: 1px solid $color-border-default;
+    }
 
     &::placeholder {
       opacity: 0.4;
@@ -101,10 +115,11 @@ function clearChipsSelection() {
       filter: invert(18%) sepia(83%) saturate(3323%) hue-rotate(203deg) brightness(95%) contrast(108%);
     }
   }
+  }
   &__img {
     position: absolute;
     left: 8px;
-    top: 10px;
+    top: 8px;
     opacity: 0.4;
   }
   &__cancel {
@@ -115,6 +130,8 @@ function clearChipsSelection() {
   &__chips {
     display: flex;
     flex-direction: row;
+    overflow: auto;
+    padding-bottom: 12px;
   }
 }
 

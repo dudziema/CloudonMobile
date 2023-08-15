@@ -45,8 +45,10 @@ function selectChipsClicked(chipsName: string) {
   align-items: center;
   padding-right: calc($spacing-horizontal-small * 2);
   height: 40px;
-  margin: $spacing-vertical-small $spacing-horizontal-small;
+  margin-right: calc($spacing-horizontal-small * 2);
   cursor: pointer;
+  gap: 4px;
+  white-space: nowrap;
 
   &__name {
     opacity: 0.6;
