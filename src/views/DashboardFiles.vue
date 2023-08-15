@@ -27,6 +27,7 @@ const tableHeaders: ShallowRef = shallowRef([
   { id: 3, label: 'time', field: 'UPLOAD DATE', sortable: true },
   { id: 4, label: 'button', field: '', sortable: false },
   { id: 5, label: 'button', field: '', sortable: false },
+  { id: 6, label: 'button-more', field: '', sortable: false }
 ])
 
 const ifErrorShowModal = () => {

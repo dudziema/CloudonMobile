@@ -270,7 +270,7 @@ function toggleDropdown(){
   }
 
   &__button {
-    // width: 5%;
+    width: 40px;
 
     @include devices(tablet-min) {
       display: none
@@ -297,7 +297,10 @@ function toggleDropdown(){
       width:272px;
     }
     @include devices(tablet) {
-      max-width:497px;
+      max-width:384px;
+    }
+    @include devices(desktop-small) {
+      max-width:384px;
     }
   }
 
@@ -319,7 +322,7 @@ function toggleDropdown(){
   }
 
   &__size {
-    width: 80px;
+    width: 100px;
     opacity: 0.6;
   }
 }
