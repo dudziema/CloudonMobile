@@ -105,6 +105,7 @@ function toggleDropdown(){
       <input
         v-model="isSelected"
         type="checkbox"
+        class="file-item-field file-item-field__checkbox"
         @click="toggleSelection"
       >
     </td>
@@ -188,6 +189,7 @@ function toggleDropdown(){
 </template>
 
 <style lang="scss" scoped>
+
 .file-item-row {
   display: flex;
   flex-direction: row;
@@ -196,6 +198,9 @@ function toggleDropdown(){
   align-content: center;
   flex-wrap: nowrap;
   padding-right: 8px;
+  @include devices(mobile) {
+    max-width: 545px;
+    }
 
   &:hover {
     background: $color-background-divider;
@@ -205,6 +210,25 @@ function toggleDropdown(){
 .file-item-field {
   margin-right: 4px;
 
+  &__checkbox {
+    @include devices(mobile) {
+      display: none;
+    }
+  }
+
+  &__size {
+    @include devices(mobile) {
+      display: none;
+    }
+    @include devices(tablet-min) {
+      display: none;
+    }
+  }
+  &__time {
+    @include devices(mobile) {
+      display: none;
+    }
+  }
   &__download-icon {
     opacity: 0.6;
   }
@@ -223,9 +247,9 @@ function toggleDropdown(){
     flex-wrap: wrap;
     gap: 8px;
 
-    &-download-icon {
+    // &-download-icon {
       
-    }
+    // }
 
     &-delete-icon {
       filter: invert(38%) sepia(23%) saturate(3992%) hue-rotate(319deg) brightness(85%) contrast(90%);
@@ -246,7 +270,7 @@ function toggleDropdown(){
   }
 
   &__button {
-    width: 5%;
+    // width: 5%;
 
     @include devices(tablet-min) {
       display: none
@@ -259,15 +283,26 @@ function toggleDropdown(){
   }
 
   &__name {
-    width: 50%;
+
     padding-right: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
     height: 24px;
+    flex: 1;
+
+    @include devices(mobile) {
+      width:264px;
+    }
+    @include devices(tablet-min) {
+      width:272px;
+    }
+    @include devices(tablet) {
+      max-width:497px;
+    }
   }
 
   &__image {
-    width: 5%;
+    // width: 5%;
     border-radius: 8px;
     display: flex;
     align-content: center;
@@ -278,12 +313,13 @@ function toggleDropdown(){
   }
 
   &__time {
-    width: 15%;
+    // width: 15%;
     opacity: 0.6;
+    width: 122px
   }
 
   &__size {
-    width: 15%;
+    width: 80px;
     opacity: 0.6;
   }
 }

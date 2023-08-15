@@ -2,7 +2,7 @@
 import ImageX from '@/assets/images/modal/x.svg'
 import LeftMenu from '@/components/LeftMenu.vue'
 
-const props = defineProps<{
+defineProps<{
   isBurgerMenuOpen: boolean,
   isAllFilesBtnActive: boolean,
   isRecentFilesBtnActive: boolean
@@ -14,7 +14,7 @@ const emit = defineEmits(['closeBurgerMenu', 'allFiles', 'sortRecentFiles'])
 <template>
   <Transition name="slide">
     <div
-      v-if="props.isBurgerMenuOpen"
+      v-if="isBurgerMenuOpen"
       class="burger-menu"
     >
       <button

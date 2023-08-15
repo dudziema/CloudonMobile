@@ -37,9 +37,13 @@ function onDrop(event: DragEvent) {
     @drop.prevent="onDrop"
   >
     <ImageFiles />
-    <p>There are no items here!</p>
-    <p>Drag & drop your file here to start uploading</p>
-    <p>- or -</p>
+    <h1>There are no items here!</h1>
+    <p class="no-files-space__text">
+      Drag & drop your file here to start uploading
+    </p>
+    <p class="no-files-space__text">
+      - or -
+    </p>
     <BaseUpload
       label="Browse Files"
       class="no-files-space__button-new-file"
@@ -62,6 +66,16 @@ function onDrop(event: DragEvent) {
   align-items: center;
   align-content: center;
   flex-wrap: wrap;
+  gap: 16px;
+
+  &__text {
+    opacity: 0.6;
+    display: none;
+
+    @include devices(only-desktop) {
+      display: block;
+    }
+  }
 
   &__button-new-file {
     min-width: 132px;

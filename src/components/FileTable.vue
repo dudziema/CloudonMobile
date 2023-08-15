@@ -104,16 +104,24 @@ function sortClass(headerLabel: string): string {
   $self: &;
   width: 100%;
 
-  &__header-line {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    align-content: center;
-    flex-wrap: nowrap;
-    margin: 12px 0;
-    padding-right: 24px;
+  &__header {
+
+    @include devices(mobile) {
+      display: none;
+    }
+
+    &-line {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      align-content: center;
+      flex-wrap: nowrap;
+      margin: 12px 0;
+      padding-right: 24px;
+    }
   }
+
   &__line {
     font-weight: $font-weight-semi-bold;
     letter-spacing: 0.005em;
@@ -138,27 +146,38 @@ function sortClass(headerLabel: string): string {
     }
 
     &-button {
-      width: 5%;
+      width:24px;
     }
     &-name {
-      width: 50%;
+      // width: 50%;
       text-overflow: ellipsis;
+      flex: 1;
+      @include devices(tablet) {
+      max-width:497px;
+    }
     }
 
     &-image {
-      width: 5%;
+      width: 40px;
     }
       &-time {
-      width: 15%;
+      // width: 15%;
     }
 
     &-size {
-      width: 15%;
+      width:80px;
+      @include devices(tablet-min) {
+      display: none;
+    }
     }
   }
   #{ $self }, #{ $self }__body {
    overflow: auto;
    height: calc(100% - 270px);
+
+   @include devices(mobile) {
+    height: calc(100vh - 216px);
+    }
   }
 
   &__sort {
