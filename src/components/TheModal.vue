@@ -28,7 +28,7 @@ function closeModal() {
       <div class="modal__content">
         <div class="modal__title">
           <p class="modal__header">
-            <ImageWarning class="modal__header-icon"/>
+            <ImageWarning class="modal__header-icon" />
             {{ modalConfig.title }}
           </p>
           
@@ -39,7 +39,9 @@ function closeModal() {
             <ImageX />
           </button>
         </div>
-        <p class="modal__description">{{ modalConfig.description}}</p>
+        <p class="modal__description">
+          {{ modalConfig.description }}
+        </p>
         <div class="modal__buttons">
           <BaseButton
             v-if="modalConfig.isCancel"

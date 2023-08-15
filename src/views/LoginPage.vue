@@ -107,7 +107,9 @@ function connect() {
     <div class="login-page__divider" />
 
     <div class="login-page__content">
-      <h1 class="login-page__title">Enter the access code</h1>
+      <h1 class="login-page__title">
+        Enter the access code
+      </h1>
 
       <p class="login-page__details">
         To connect with your device, please enter the access code displayed in

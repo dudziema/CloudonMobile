@@ -4,12 +4,12 @@ import TheModal from '@/components/TheModal.vue'
 
 <template>
   <router-view />
+  
   <TheModal />
 </template>
 
 <style>
 body {
-  /* overflow: hidden; */
   margin: 0;
   height: 100vh;
   display: flex;
