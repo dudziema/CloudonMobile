@@ -12,6 +12,9 @@ import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
 import ButtonAllFiles from '@/assets/images/buttons/ButtonAllFiles.svg'
 import ButtonRecentFiles from '@/assets/images/buttons/ButtonRecentFiles.svg'
 
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 defineProps<{
   isAllFilesBtnActive: boolean,
   isRecentFilesBtnActive: boolean,
@@ -25,10 +28,10 @@ const { webSocketService, modalService } = ctx
 
 function disconnect() {
   modalService.open({
-    title: 'Disconnect account',
-    description: 'Are you sure you want to proceed?',
+    title: t('dashboard.disconnectAccount'),
+    description: t('dashboard.disconnectAreYouSureText'),
     buttonAction: {
-      text: 'Disconnect',
+      text: t('dashboard.disconnect'),
       callback: () => {
         webSocketService.disconnect()
         modalService.close()
@@ -44,12 +47,14 @@ function disconnect() {
   <div class="left-menu">
     <div class="left-menu__upper">
       <p class="left-menu__logo">
-        <ImageLogo />Cloud On Mobile
+        <ImageLogo />
+        
+        {{ $t("cloudOnMobile") }}
       </p>
 
       <BaseUpload
         class="left-menu__btn-new-file"
-        label="+ Add new file"
+        :label="t('dashboard.addNewFile')"
       />
       <BaseButton
         :class="isAllFilesBtnActive ? 'left-menu__button-all-files left-menu__button-all-files--active'
@@ -57,7 +62,7 @@ function disconnect() {
         :theme="Theme.SIMPLY"
         @click="emit('allFiles')"
       >
-        <ButtonAllFiles /> All files
+        <ButtonAllFiles />{{ $t("dashboard.allFiles") }}
       </BaseButton>
     
       <BaseButton
@@ -67,7 +72,7 @@ function disconnect() {
         :theme="Theme.SIMPLY"
         @click="emit('sortRecentFiles')"
       >
-        <ButtonRecentFiles /> Recent files
+        <ButtonRecentFiles />{{ $t("dashboard.recentFiles") }}
       </BaseButton>
     </div>
     
@@ -78,7 +83,7 @@ function disconnect() {
     >
       <ImageLogOut />
       
-      <span class="left-menu__btn-disconnect-text">Disconnect</span>
+      <span class="left-menu__btn-disconnect-text">{{ $t("dashboard.disconnect") }}</span>
     </BaseButton>
   </div>
 </template>

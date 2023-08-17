@@ -7,6 +7,9 @@ import { useContext } from '@/composables/context'
 import { computed } from 'vue'
 import Theme from '@/types/Theme'
 
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const ctx = useContext()
 const { modalService } = ctx
 const { modalConfig } = modalService
@@ -57,7 +60,7 @@ function closeModal() {
             @click="modalConfig.buttonAction.callback()"
           >
             <ImageTrash
-              v-if="modalConfig.buttonAction.text === 'Delete'"
+              v-if="modalConfig.buttonAction.text === t('dashboard.delete')"
               class="modal__button-icon"
             />
             {{ modalConfig.buttonAction.text }}

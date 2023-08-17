@@ -1,3 +1,39 @@
 {
-  "message": "hello i18n !!"
+  "login": {
+    "enterCode": "Enter the access code",
+    "enterCodeDescription": "To connect with your device, please enter the access code displayed in the mobile app.",
+    "connect": "Connect",
+    "downloadApp": "Download the mobile app"
+  },
+  "dashboard": {
+    "filesNotFound": "Oops, we didn't find any files matching your search criteria.",
+    "fileName": "Name",
+    "fileSize": "Size",
+    "fileTime": "Upload date",
+    "addNewFile": "+ Add new file",
+    "allFiles": "All files",
+    "recentFiles": "Recent files",
+    "disconnect": "Disconnect",
+    "pictures": "Pictures",
+    "files": "Files",
+    "videos": "Videos",
+    "soundFiles": "Sound Files",
+    "search": "Search for anything",
+    "errorModalTitle": "Something went wrong  :(",
+    "errorModalDescription": "There was a problem with connection with the mobile app. Please try again later.",
+    "close": "Close",
+    "searchResult": "Search results",
+    "file": "file",
+    "filesMoreThan10": "files",
+    "download": "Download",
+    "delete": "Delete",
+    "areYouSureText": "Are you sure? Deleting ",
+    "areYouSureTextContinued": "will be permanently removed from your inventory.",
+    "selectedFiles": "selected",
+     "disconnectAccount": "Disconnect account",
+    "disconnectAreYouSureText": "Are you sure you want to proceed?",
+    "deleteFileTitle": "Delete file",
+    "deleteAreYouSureText": "Are you sure? Deleting a file will permanently remove it from your inventory."
+  },
+  "cloudOnMobile": "Cloud On Mobile"
 }

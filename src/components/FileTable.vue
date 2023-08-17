@@ -149,19 +149,25 @@ function sortClass(headerLabel: string): string {
       width:24px;
     }
     &-name {
-      // width: 50%;
       text-overflow: ellipsis;
       flex: 1;
+
+      @include devices(mobile) {
+        width: $widthColumnNameMobile;
+      }
+      @include devices(tablet-min) {
+        width: $widthColumnNameTabletMin;
+      }
       @include devices(tablet) {
-      max-width:497px;
-    }
+        max-width: $widthColumnNameTablet;
+      }
     }
 
     &-image {
       width: 40px;
     }
       &-time {
-      // width: 15%;
+        width: 174px
     }
 
     &-size {
