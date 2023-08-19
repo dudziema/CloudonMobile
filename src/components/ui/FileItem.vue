@@ -276,7 +276,7 @@ debugger
   }
 
   &__button {
-    // width: 5%;
+    width: 40px;
 
     @include devices(tablet-min) {
       display: none
@@ -324,7 +324,7 @@ debugger
   }
 
   &__size {
-    width: 80px;
+    width: 100px;
     opacity: 0.6;
   }
 }

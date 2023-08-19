@@ -30,6 +30,7 @@ const tableHeaders: ShallowRef = shallowRef([
   { id: 3, label: 'time', field: t('dashboard.fileTime'), sortable: true },
   { id: 4, label: 'button', field: '', sortable: false },
   { id: 5, label: 'button', field: '', sortable: false },
+  { id: 6, label: 'button-more', field: '', sortable: false }
 ])
 
 const ifErrorShowModal = () => {
@@ -123,14 +124,16 @@ const title: ShallowRef<string> = shallowRef(t('dashboard.allFiles'))
 
 const listOfCategoriesSelected: Ref<string[]> = ref([])
 
-function findFile(searchText: string, categories: Chips[]) {
-  title.value = t('dashboard.searchResult')
-
+function getChipsSelected(categories: Chips[]) {
   if(categories !== undefined){
     listOfCategoriesSelected.value = categories
       .filter((chips: Chips) => chips.clicked === true)
       .map((chips: Chips) => chips.name)
   }
+}
+
+function searchByTextAndCategory(searchText: string) {
+  title.value = 'Search results'
 
   if(searchText) {
     if(listOfCategoriesSelected.value.length) {
@@ -150,6 +153,14 @@ function findFile(searchText: string, categories: Chips[]) {
       filteredFiles.value = files.value
     }
   }
+}
+
+function findFile(searchText: string, categories: Chips[]) {
+  getChipsSelected(categories)
+
+  if(!listOfCategoriesSelected.value.length  && !searchText) return  clearSearch()
+
+  searchByTextAndCategory(searchText)
 }
 
 function clearSearch() {

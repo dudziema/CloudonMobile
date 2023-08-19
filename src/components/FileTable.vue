@@ -61,7 +61,7 @@ function sortClass(headerLabel: string): string {
   <table class="file-table">
     <thead class="file-table__header">
       <tr class="file-table__header-line">
-        <th class="file-table__line file-table__line-button">
+        <th class="file-table__line file-table__line-button-input">
           <input
             v-model="allItemsButtonSelected"
             type="checkbox"
@@ -146,7 +146,19 @@ function sortClass(headerLabel: string): string {
     }
 
     &-button {
-      width:24px;
+      width: 40px;
+
+      @include devices(tablet) {
+        display: none !important;
+      }
+
+      &-more {
+        width:20px;
+
+        @include devices(only-desktop) {
+          display: none !important;
+        }
+      }
     }
     &-name {
       text-overflow: ellipsis;
@@ -171,7 +183,7 @@ function sortClass(headerLabel: string): string {
     }
 
     &-size {
-      width:80px;
+      width:100px;
       @include devices(tablet-min) {
       display: none;
     }
