@@ -16,27 +16,31 @@ import File from '@/types/File'
 import Chips from '@/types/Chips'
 import Message from '@/types/Message'
 
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
+const ctx = useContext()
 const route = useRoute()
 const router = useRouter()
-const ctx = useContext()
 const { webSocketService, modalService } = ctx
 
 const files: ShallowRef<File[]> = shallowRef([])
 const tableHeaders: ShallowRef = shallowRef([
   { id: 0, label: 'image', field: '', sortable: false },
-  { id: 1, label: 'name', field: 'NAME', sortable: true },
-  { id: 2, label: 'size', field: 'FILE SIZE', sortable: false },
-  { id: 3, label: 'time', field: 'UPLOAD DATE', sortable: true },
+  { id: 1, label: 'name', field: t('dashboard.fileName'), sortable: true },
+  { id: 2, label: 'size', field: t('dashboard.fileSize'), sortable: false },
+  { id: 3, label: 'time', field: t('dashboard.fileTime'), sortable: true },
   { id: 4, label: 'button', field: '', sortable: false },
   { id: 5, label: 'button', field: '', sortable: false },
+  { id: 6, label: 'button-more', field: '', sortable: false }
 ])
 
 const ifErrorShowModal = () => {
   modalService.open({
-    title: 'Something went wrong  :(',
-    description: 'There was a problem with connection with the mobile app. Please try again later.',
+    title: t('dashboard.errorModalTitle'),
+    description: t('dashboard.errorModalDescription'),
     buttonAction: {
-      text: 'Close',
+      text: t('dashboard.close'),
       callback: () => {
         modalService.close()
         router.push('/')
@@ -96,7 +100,7 @@ async function refreshFilesList() {
 const selectedFiles: Ref<File[]> = ref([])
 const quantityItemsSelected: ComputedRef<number> = computed(()=>selectedFiles.value.length)
 const quantityFileName: ComputedRef<string> = computed(() => quantityItemsSelected.value > 1 ?
-  'files' : 'file')
+  t('dashboard.files') : t('dashboard.file'))
 const clearItems: Ref<boolean> = ref(false)
 
 function itemsSelected(itemsSelected: File[]) {
@@ -114,10 +118,10 @@ function downloadFiles() {
 
 function deleteFiles() {
   modalService.open({
-    title: `Delete ${ quantityItemsSelected.value } ${ quantityFileName.value }`,
-    description: `Are you sure? Deleting ${ quantityItemsSelected.value } ${ quantityFileName.value } will be permanently removed from your inventory.`,
+    title: `${t('dashboard.delete')} ${ quantityItemsSelected.value } ${ quantityFileName.value }`,
+    description: `${t('dashboard.areYouSureText')} ${ quantityItemsSelected.value } ${ quantityFileName.value } ${t('dashboard.areYouSureTextContinued')}`,
     buttonAction: {
-      text: 'Delete',
+      text: t('dashboard.delete'),
       callback: () => {
         selectedFiles.value.forEach(file => {
           webSocketService.deleteFile(file.name)
@@ -140,18 +144,20 @@ watch(quantityItemsSelected, newValue => {
   if(!newValue) closeWidgetClicked.value = false
 })
 const filteredFiles: ShallowRef<File[]> = shallowRef([])
-const title: ShallowRef<string> = shallowRef('All files')
+const title: ShallowRef<string> = shallowRef(t('dashboard.allFiles'))
 
 const listOfCategoriesSelected: Ref<string[]> = ref([])
 
-function findFile(searchText: string, categories: Chips[]) {
-  title.value = 'Search results'
-
+function getChipsSelected(categories: Chips[]) {
   if(categories !== undefined){
     listOfCategoriesSelected.value = categories
       .filter((chips: Chips) => chips.clicked === true)
       .map((chips: Chips) => chips.name)
   }
+}
+
+function searchByTextAndCategory(searchText: string) {
+  title.value = 'Search results'
 
   if(searchText) {
     if(listOfCategoriesSelected.value.length) {
@@ -173,9 +179,17 @@ function findFile(searchText: string, categories: Chips[]) {
   }
 }
 
+function findFile(searchText: string, categories: Chips[]) {
+  getChipsSelected(categories)
+
+  if(!listOfCategoriesSelected.value.length  && !searchText) return  clearSearch()
+
+  searchByTextAndCategory(searchText)
+}
+
 function clearSearch() {
   filteredFiles.value = files.value
-  title.value = 'All files'
+  title.value = t('dashboard.allFiles')
 }
 
 const ASC = 'asc'
@@ -303,10 +317,10 @@ const isBurgerMenuOpen = ref(false)
       </div>
 
       <div
-        v-else-if="!filteredFiles.length && title === 'Search results'"
+        v-else-if="!filteredFiles.length && title === t('dashboard.searchResult')"
         class="dashboard-files__files dashboard-files__files--search"
       >
-        Oops, we didn't find any files matching your search criteria.
+        {{ $t("dashboard.filesNotFound") }}
       </div>
 
       <NoFilesSpace

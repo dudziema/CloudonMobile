@@ -1,6 +1,10 @@
 <script lang="ts" setup>
+import {ref} from 'vue'
 import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
 import Chips from '@/types/Chips'
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 interface Props {
   chipsList: Chips[]
@@ -15,6 +19,8 @@ const emit = defineEmits<{
 function selectChipsClicked(chipsName: string) {
   emit('selectChipsClicked', chipsName)
 }
+
+const icons = ref(iconForExtentionDictionary(t))
 </script>
 
 <template>
@@ -25,7 +31,7 @@ function selectChipsClicked(chipsName: string) {
     @click="selectChipsClicked(chips.name)"
   >
     <component
-      :is="iconForExtentionDictionary[chips.name]"
+      :is="icons[chips.name]"
       class="base-chips__icon"
     />
     <p
@@ -52,6 +58,7 @@ function selectChipsClicked(chipsName: string) {
 
   &__name {
     opacity: 0.6;
+    text-transform: capitalize;
 
     &--active {
       color: $color-text-dark;

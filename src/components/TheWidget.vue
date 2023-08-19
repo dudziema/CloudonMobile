@@ -20,7 +20,13 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
     <p class="widget__counter">
       <span class="widget__counter-number">{{ quantityItemsSelected }}</span>
       
-      <span class="widget__counter-text">files selected</span>
+      <span class="widget__counter-text">
+        {{ quantityItemsSelected > 4 ? $t('dashboard.filesMoreThan10')
+          : quantityItemsSelected > 1 ? $t('dashboard.files')
+            : $t('dashboard.file')
+        }}
+        {{ $t('dashboard.selectedFiles') }}
+      </span>
     </p>
 
     <div class="widget__buttons">
@@ -31,7 +37,7 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
       >
         <ImageDownload class="widget__button-image" />
         
-        Download
+        {{ $t('dashboard.download') }}
       </BaseButton>
       
       <BaseButton
@@ -41,7 +47,7 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
       >
         <ImageTrashSmall class="widget__button-image" />
         
-        Delete
+        {{ $t('dashboard.delete') }}
       </BaseButton>
       
       <button class="widget__button-close">

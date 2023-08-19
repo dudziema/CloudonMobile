@@ -15,7 +15,9 @@ const description2 = shallowRef('Please try again.')
   <div class="not-found">
     <NotFoundImage class="not-found__image" />
 
-    <h2 class="not-found__title">{{ title }}</h2>
+    <h2 class="not-found__title">
+      {{ title }}
+    </h2>
 
     <p class="not-found__description">
       <span>{{ description }}</span>

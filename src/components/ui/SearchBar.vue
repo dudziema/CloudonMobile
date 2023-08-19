@@ -5,6 +5,9 @@ import ImageX from '@/assets/images/modal/x.svg'
 import BaseChips from '@/components/ui/BaseChips.vue'
 import Chips from '@/types/Chips'
 
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const searchInput: Ref<string> = ref('')
 const emit = defineEmits<{
   (e: 'search', input: string, chipsList: Chips[]): void
@@ -25,11 +28,11 @@ function clearSearchInput() {
   clearChipsSelection()
 }
 
-const chipsList: Ref<Chips[]> = ref([
-  { name:'Pictures', clicked: false },
-  { name: 'Files', clicked: false  },
-  { name: 'Videos', clicked: false  },
-  { name: 'Sound files', clicked: false  },
+const chipsList= shallowRef<Chips[]>([
+  { name: t('dashboard.pictures'), clicked: false },
+  { name: t('dashboard.files'), clicked: false  },
+  { name: t('dashboard.videos'), clicked: false  },
+  { name: t('dashboard.soundFiles'), clicked: false  },
 ])
 
 function selectChipsClicked(chipsName: string) {
@@ -55,7 +58,7 @@ function clearChipsSelection() {
         v-model="searchInput"
         type="search"
         class="search-bar__input-field"
-        placeholder="Search for anything"
+        :placeholder="t('dashboard.search')"
         @keyup.prevent="search(searchInput, chipsList)"
         @click="isSearchBarClicked=true"
       />
