@@ -13,11 +13,13 @@ import { Buffer } from 'buffer'
 export class WebSocketService {
   fileList = [] as File[]
   wsOnMessageListeners: ((obj: MessageReceived) => void)[] = []
+  wsOnErrorListener: (() => void)[]= []
   private ws: WebSocket | undefined
   private passCode: number | undefined
   private isConnected = false
   private wsOnMessageListenersListFiles: ((listfiles: File[]) => void) | null = null
-  wsOnErrorListener!: () => void
+  private isMessageReceived = false
+  private errorTimeout: string | number | NodeJS.Timeout | undefined
 
   get isConnectedValue() {
     return this.isConnected
@@ -32,21 +34,25 @@ export class WebSocketService {
   }
 
   onMessage = (event: MessageEvent<string>) => {
+    this.isMessageReceived= true
     this.parseMessage(JSON.parse(event.data))
   }
 
   onError = (error: Event) => {
-    this.wsOnErrorListener()
+    this.wsOnErrorListener[0]()
     console.log(error)
     this.ws?.close()
+    clearTimeout(this.errorTimeout)
   }
 
   onClose = (event: Event) => {
     console.log('socket closed' + JSON.stringify(event))
+    clearTimeout(this.errorTimeout)
   }
   
   login(passCode: number, errorMethod: () => void) {
-    this.wsOnErrorListener = errorMethod
+    this.wsOnErrorListener = []
+    this.wsOnErrorListener.push(errorMethod)
     console.log('Starting connection to WebSocket Server')
     this.passCode = passCode
     this.ws = new WebSocket('wss://cloudon.cc:9292/')
@@ -73,7 +79,11 @@ export class WebSocketService {
     this.wsListFiles()
   }
 
-  sendFile(file: File) {
+  sendFile(file: File, errorMethod: () => void) {
+    this.executeErrorWhenNoResponseFromServer()
+    this.isMessageReceived = false
+    this.wsOnErrorListener = []
+    this.wsOnErrorListener.push(errorMethod)
     const reader: FileReader = new FileReader()
     const blob = new Blob([file as unknown as BlobPart], { type: ContentType.OCTET_STREAM })
     reader.readAsArrayBuffer(blob)
@@ -96,7 +106,20 @@ export class WebSocketService {
   }
 
   private sendMsgToWs(msg: MessageSent) {
+    this.executeErrorWhenNoResponseFromServer()
+    this.isMessageReceived = false
     this.ws?.send(JSON.stringify(msg))
+  }
+
+  private executeErrorWhenNoResponseFromServer(){
+    this.errorTimeout = setTimeout(() => {
+      if(!this.isMessageReceived) {
+        this.wsOnErrorListener[0]()
+      } else {
+        this.wsOnErrorListener[0]()
+        console.log(this.wsOnErrorListener[0])
+      }
+    }, 3000)
   }
 
   private getFileType(fileName: string) {

@@ -19,12 +19,24 @@ function isFileValid(file: File) {
 }
 
 const ctx = useContext()
-const { webSocketService } = ctx
+const { webSocketService, modalService } = ctx
+
+const showErrorModal = () => {
+  modalService.open({
+    title: 'Something went wrong  :(',
+    description: 'There was a problem with connection with the mobile app. Please try again later.',
+    buttonAction: {
+      text: 'Close',
+      callback: () => modalService.close()
+    },
+    isCancel: false
+  })
+}
 
 function addNewFile(event: { target: { files: File[] } }) {
   if (event.target.files && event.target.files[0]) {
     if (isFileValid(event.target.files[0])) {
-      webSocketService.sendFile(event.target.files[0])
+      webSocketService.sendFile(event.target.files[0], showErrorModal)
     } else {
       console.log('Invalid file')
     }
