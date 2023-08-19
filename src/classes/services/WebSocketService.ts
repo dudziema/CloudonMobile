@@ -104,7 +104,9 @@ export class WebSocketService {
   }
 
   private getFileType(fileName: string) {
-    const extension = fileName.split('.').pop() || ''
+    const extensionMatch = /\.([^.]+)$/.exec(fileName)
+
+    const extension = extensionMatch ? extensionMatch[1].toLowerCase() : ''
 
     for (const [type, extensions] of Object.entries(extensionsDict)) {
       if (extensions.includes(extension)) {

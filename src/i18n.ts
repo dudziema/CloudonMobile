@@ -1,4 +1,4 @@
-import { createI18n, LocaleMessages, VueMessageType } from 'vue-i18n'
+import { createI18n } from 'vue-i18n'
 import localePl from '@/locales/pl.json'
 import localeEng from '@/locales/en.json'
 
