@@ -57,10 +57,10 @@ const isCodeValid = computed(() => regexPattern.test(route.params.passcode as st
 onMounted(() => {
   if(!isCodeValid.value) {
     modalService.open({
-      title: 'Incorrect passcode  :(',
-      description: 'Check passcode if have 6 digits and provide correct input. Please, try again.',
+      title: t('dashboard.errorPasscodeTitle'),
+      description: t('dashboard.errorPasscodeDescription'),
       buttonAction: {
-        text: 'Close',
+        text: t('dashboard.close'),
         callback: () => {
           modalService.close()
           router.push('/')
@@ -157,7 +157,7 @@ function getChipsSelected(categories: Chips[]) {
 }
 
 function searchByTextAndCategory(searchText: string) {
-  title.value = 'Search results'
+  title.value = t('dashboard.searchResult')
 
   if(searchText) {
     if(listOfCategoriesSelected.value.length) {

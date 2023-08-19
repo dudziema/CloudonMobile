@@ -6,9 +6,6 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import Theme from '@/types/Theme'
 
 const router = useRouter()
-const title = shallowRef('Ooops!')
-const description = shallowRef('The page you are looking for is not here.')
-const description2 = shallowRef('Please try again.')
 </script>
 
 <template>
@@ -16,12 +13,12 @@ const description2 = shallowRef('Please try again.')
     <NotFoundImage class="not-found__image" />
 
     <h2 class="not-found__title">
-      {{ title }}
+      {{ $t('notFound.ops') }}
     </h2>
 
     <p class="not-found__description">
-      <span>{{ description }}</span>
-      <span>{{ description2 }}</span>
+      <span>{{ $t('notFound.isNotHere') }}</span>
+      <span>{{ $t('notFound.tryAgain') }}</span>
     </p>
 
     <BaseButton
@@ -29,7 +26,7 @@ const description2 = shallowRef('Please try again.')
       class="not-found__button"
       @click="router.push('/')"
     >
-      Go back
+      {{ $t('notFound.buttonText') }}
     </BaseButton>
   </div>
 </template>

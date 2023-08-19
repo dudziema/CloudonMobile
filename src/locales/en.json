@@ -21,6 +21,8 @@
     "search": "Search for anything",
     "errorModalTitle": "Something went wrong  :(",
     "errorModalDescription": "There was a problem with connection with the mobile app. Please try again later.",
+    "errorPasscodeTitle": "Incorrect passcode  :(",
+    "errorPasscodeDescription": "Check passcode if have 6 digits and provide correct input. Please, try again.",
     "close": "Close",
     "searchResult": "Search results",
     "file": "file",
@@ -34,6 +36,12 @@
     "disconnectAreYouSureText": "Are you sure you want to proceed?",
     "deleteFileTitle": "Delete file",
     "deleteAreYouSureText": "Are you sure? Deleting a file will permanently remove it from your inventory."
+  },
+  "notFound": {
+    "ops": "Ooops!",
+    "isNotHere": "The page you are looking for is not here.",
+    "tryAgain": "Please try again.",
+    "buttonText": "Go back"
   },
   "cloudOnMobile": "Cloud On Mobile"
 }
