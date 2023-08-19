@@ -163,18 +163,23 @@ function sortClass(headerLabel: string): string {
     &-name {
       text-overflow: ellipsis;
       flex: 1;
-      
-      @include devices(tablet) {
-        max-width:384px;
-      }
 
-      @include devices(desktop-small) {
-        max-width:384px;
+      @include devices(mobile) {
+        width: $widthColumnNameMobile;
+      }
+      @include devices(tablet-min) {
+        width: $widthColumnNameTabletMin;
+      }
+      @include devices(tablet) {
+        max-width: $widthColumnNameTablet;
       }
     }
 
     &-image {
       width: 40px;
+    }
+      &-time {
+        width: 174px
     }
 
     &-size {

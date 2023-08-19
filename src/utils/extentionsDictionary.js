@@ -3,16 +3,18 @@ import IconDoc from '@/assets/images/iconsFiles/IconDoc.svg'
 import IconFilm from '@/assets/images/iconsFiles/IconFilm.svg'
 import IconMusic from '@/assets/images/iconsFiles/IconMusic.svg'
 
-export const extentionsDictionary = {
-  'Pictures': ['jpg', 'jpeg', 'png', 'gif'],
-  'Files': ['doc', 'docx', 'pdf', 'xls', 'xlsx', 'ppt', 'pptx'],
-  'Videos': ['mp4', 'wmv', 'avi'],
-  'Sound files': ['mp3'],
-}
+import { markRaw } from 'vue'
 
-export const iconForExtentionDictionary = {
-  'Pictures': IconImage,
-  'Files': IconDoc,
-  'Videos': IconFilm,
-  'Sound files': IconMusic,
-}
+export const extentionsDictionary = t => ({
+  [t('dashboard.pictures')]: ['jpg', 'jpeg', 'png', 'gif', 'svg'],
+  [t('dashboard.files')]: ['doc', 'docx', 'pdf', 'xls', 'xlsx', 'ppt', 'pptx'],
+  [t('dashboard.videos')]: ['mp4', 'wmv', 'avi'],
+  [t('dashboard.soundFiles')]: ['mp3'],
+})
+
+export const iconForExtentionDictionary = t => ({
+  [t('dashboard.pictures')]: markRaw(IconImage),
+  [t('dashboard.files')]: markRaw(IconDoc),
+  [t('dashboard.videos')]: markRaw(IconFilm),
+  [t('dashboard.soundFiles')]: markRaw(IconMusic),
+})

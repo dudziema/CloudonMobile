@@ -107,11 +107,12 @@ function connect() {
     <div class="login-page__divider" />
 
     <div class="login-page__content">
-      <h1 class="login-page__title">Enter the access code</h1>
+      <h1 class="login-page__title">
+        {{ $t("login.enterCode") }}
+      </h1>
 
       <p class="login-page__details">
-        To connect with your device, please enter the access code displayed in
-        the mobile app.
+        {{ $t("login.enterCodeDescription") }}
       </p>
 
       <div>
@@ -140,12 +141,12 @@ function connect() {
           data-testid="login-button"
           @click="connect()"
         >
-          Connect
+          {{ $t("login.connect") }}
         </BaseButton>
       </div>
 
       <p class="login-page__download">
-        Download the mobile app
+        {{ $t("login.downloadApp") }}
       </p>
 
       <div class="login-page__stores">

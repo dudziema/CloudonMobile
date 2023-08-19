@@ -10,6 +10,10 @@ import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
 import { extentionsDictionary } from '@/utils/extentionsDictionary'
 import { Buffer } from 'buffer'
 
+import i18n from '@/i18n'
+const extensionsDict = extentionsDictionary(i18n.global.t)
+const defaultExtensionName = i18n.global.t('dashboard.files')
+
 export class WebSocketService {
   fileList = [] as File[]
   wsOnMessageListeners: ((obj: MessageReceived) => void)[] = []
@@ -100,15 +104,17 @@ export class WebSocketService {
   }
 
   private getFileType(fileName: string) {
-    const extension = fileName.split('.').pop() || ''
+    const extensionMatch = /\.([^.]+)$/.exec(fileName)
 
-    for (const [type, extensions] of Object.entries(extentionsDictionary)) {
+    const extension = extensionMatch ? extensionMatch[1].toLowerCase() : ''
+
+    for (const [type, extensions] of Object.entries(extensionsDict)) {
       if (extensions.includes(extension)) {
         return type
       }
     }
 
-    return 'Files'
+    return defaultExtensionName
   }
 
   private parseListFiles(obj: { payload: File[] }) {

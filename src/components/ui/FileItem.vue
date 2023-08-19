@@ -8,6 +8,9 @@ import File from '@/types/File'
 import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
 import BaseDropDown from '@/components/ui/BaseDropDown.vue'
 
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 interface ExtentionList {
   icon: string,
   extention: string[]
@@ -25,10 +28,10 @@ const { modalService } = ctx
 
 const openModalDeleteFile = () => {
   modalService.open({
-    title: 'Delete file',
-    description: 'Are you sure? Deleting a file will permamently remove it from your inventory.',
+    title: t('dashboard.deleteFileTitle'),
+    description: t('dashboard.deleteAreYouSureText'),
     buttonAction: {
-      text: 'Delete',
+      text: t('dashboard.delete'),
       callback: () => {
         webSocketService.deleteFile(props.file.name)
         modalService.close()
@@ -97,6 +100,9 @@ function toggleDropdown(){
     document.removeEventListener('click', handleClickOutside)
   }
 }
+
+const icon = ref(iconForExtentionDictionary(t))
+debugger
 </script>
 
 <template>
@@ -114,7 +120,7 @@ function toggleDropdown(){
       data-testid="file-icon"
     >
       <component
-        :is="iconForExtentionDictionary[file.type]"
+        :is="icon[file.type]"
       />
     </td>
     <td
@@ -291,16 +297,13 @@ function toggleDropdown(){
     flex: 1;
 
     @include devices(mobile) {
-      width:264px;
+      width: $widthColumnNameMobile;
     }
     @include devices(tablet-min) {
-      width:272px;
+      width: $widthColumnNameTabletMin;
     }
     @include devices(tablet) {
-      max-width:384px;
-    }
-    @include devices(desktop-small) {
-      max-width:384px;
+      max-width: $widthColumnNameTablet;
     }
   }
 
@@ -316,9 +319,8 @@ function toggleDropdown(){
   }
 
   &__time {
-    // width: 15%;
     opacity: 0.6;
-    width: 122px
+    width: 174px
   }
 
   &__size {

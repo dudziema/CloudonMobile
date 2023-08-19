@@ -9,10 +9,12 @@ import TheModal from '@/components/TheModal.vue'
 
 <style>
 body {
-  /* overflow: hidden; */
   margin: 0;
   height: 100vh;
-  display: flex;
-  justify-content: center;
+ 
+  @include devices(desktop) {
+    display: flex;
+    justify-content: center;
+  }
 }
 </style>

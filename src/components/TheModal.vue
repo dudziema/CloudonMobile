@@ -7,6 +7,9 @@ import { useContext } from '@/composables/context'
 import { computed } from 'vue'
 import Theme from '@/types/Theme'
 
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const ctx = useContext()
 const { modalService } = ctx
 const { modalConfig } = modalService
@@ -28,7 +31,7 @@ function closeModal() {
       <div class="modal__content">
         <div class="modal__title">
           <p class="modal__header">
-            <ImageWarning class="modal__header-icon"/>
+            <ImageWarning class="modal__header-icon" />
             {{ modalConfig.title }}
           </p>
           
@@ -39,7 +42,9 @@ function closeModal() {
             <ImageX />
           </button>
         </div>
-        <p class="modal__description">{{ modalConfig.description}}</p>
+        <p class="modal__description">
+          {{ modalConfig.description }}
+        </p>
         <div class="modal__buttons">
           <BaseButton
             v-if="modalConfig.isCancel"
@@ -55,7 +60,7 @@ function closeModal() {
             @click="modalConfig.buttonAction.callback()"
           >
             <ImageTrash
-              v-if="modalConfig.buttonAction.text === 'Delete'"
+              v-if="modalConfig.buttonAction.text === t('dashboard.delete')"
               class="modal__button-icon"
             />
             {{ modalConfig.buttonAction.text }}

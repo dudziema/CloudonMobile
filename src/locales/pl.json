@@ -1,0 +1,39 @@
+{
+  "login": {
+    "enterCode": "Wprowadź kod dostępu",
+    "enterCodeDescription": "Aby połączyć się z urządzeniem, wprowadź kod dostępu wyświetlony w Twojej aplikacji mobilnej.",
+    "connect": "Połącz",
+    "downloadApp": "Ściągnij aplikację mobilną na Twój telefon"
+  },
+  "dashboard": {
+    "filesNotFound": "Uups, nie znaleźliśmy pliku zgodnego z Twoim wyszukiwaniem.",
+    "fileName": "Nazwa",
+    "fileSize": "Rozmiar",
+    "fileTime": "Data modyfikacji",
+    "addNewFile": "+ Dodaj nowy plik",
+    "allFiles": "Wszystkie pliki",
+    "recentFiles": "Ostatnie pliki",
+    "disconnect": "Wyloguj",
+    "pictures": "Obrazy",
+    "files": "pliki",
+    "videos": "Wideo",
+    "soundFiles": "Muzyka",
+    "search": "Szukaj...",
+    "errorModalTitle": "Coś poszło nie tak :(",
+    "errorModalDescription": "Wystąpił problem w trakcie połączenia z Twoim urządzeniem. Spróbuj ponownie później",
+    "close": "Zamknij",
+    "searchResult": "Wyniki wyszukiwania",
+    "file": "plik",
+    "filesMoreThan10": "plików",
+    "download": "Pobierz",
+    "delete": "Usuń",
+    "areYouSureText": "Jesteś pewien? ",
+    "areYouSureTextContinued": "będą trwale usunięte z Twojej aplikacji.",
+    "selectedFiles": "zaznaczono",
+    "disconnectAccount": "Wyloguj",
+    "disconnectAreYouSureText": "Na pewno chcesz się wylogować?",
+    "deleteFileTitle": "Usuń plik",
+    "deleteAreYouSureText": "Na pewno chcesz trwale usunąć plik z Twojego urządzenia?"
+  },
+  "cloudOnMobile": "Cloud On Mobile"
+}
