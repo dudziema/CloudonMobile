@@ -2,6 +2,7 @@
 import { shallowRef, ShallowRef, onMounted, ref, Ref, computed, ComputedRef, watch } from 'vue'
 import { useContext } from '@/composables/context'
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 import TheWidget from '@/components/TheWidget.vue'
 import FileTable from '@/components/FileTable.vue'
@@ -15,8 +16,9 @@ import File from '@/types/File'
 import Chips from '@/types/Chips'
 import Message from '@/types/Message'
 
-const ctx = useContext()
 const route = useRoute()
+const router = useRouter()
+const ctx = useContext()
 const { webSocketService, modalService } = ctx
 
 const files: ShallowRef<File[]> = shallowRef([])
@@ -35,15 +37,37 @@ const ifErrorShowModal = () => {
     description: 'There was a problem with connection with the mobile app. Please try again later.',
     buttonAction: {
       text: 'Close',
-      callback: () => modalService.close()
+      callback: () => {
+        modalService.close()
+        router.push('/')
+      }
     },
     isCancel: false
   })
 }
 
 const isPasscodeCorrect =ref<boolean| null>(null) //@to-do Add handling wrong input in url
+const regexPattern = /^\d{6}$/
+const isCodeValid = computed(() => regexPattern.test(route.params.passcode as string))
 
 onMounted(() => {
+  if(!isCodeValid.value) {
+    modalService.open({
+      title: 'Incorrect passcode  :(',
+      description: 'Check passcode if have 6 digits and provide correct input. Please, try again.',
+      buttonAction: {
+        text: 'Close',
+        callback: () => {
+          modalService.close()
+          router.push('/')
+        }
+      },
+      isCancel: false
+    })
+
+    return
+  }
+
   if(!webSocketService.isConnectedValue){
     webSocketService.addWsOnMessageListener(function (messageFromServer: Message) {
       if(messageFromServer.result) {
