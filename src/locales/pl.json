@@ -21,6 +21,8 @@
     "search": "Szukaj...",
     "errorModalTitle": "Coś poszło nie tak :(",
     "errorModalDescription": "Wystąpił problem w trakcie połączenia z Twoim urządzeniem. Spróbuj ponownie później",
+    "errorPasscodeTitle": "Błedny kod dostępu :(",
+    "errorPasscodeDescription": "Wprowadź poprawny kod dostępu z Twojej aplikacji mobilnej.",
     "close": "Zamknij",
     "searchResult": "Wyniki wyszukiwania",
     "file": "plik",
@@ -34,6 +36,12 @@
     "disconnectAreYouSureText": "Na pewno chcesz się wylogować?",
     "deleteFileTitle": "Usuń plik",
     "deleteAreYouSureText": "Na pewno chcesz trwale usunąć plik z Twojego urządzenia?"
+  },
+  "notFound": {
+    "ops": "Uuups!",
+    "isNotHere": "Strona, której szukasz nie istnieje",
+    "tryAgain": "Spróbuj jeszcze raz.",
+    "buttonText": "Wróć do strony głównej"
   },
   "cloudOnMobile": "Cloud On Mobile"
 }

@@ -9,6 +9,7 @@ import Theme from '@/types/Theme'
 import Message from '@/types/Message'
 
 const PASSCODE_INPUTS: Ref<{ id: number, value: string }[]> = ref([])
+const IS_INPUT = 1
 const ctx = useContext()
 const { webSocketService , modalService} = ctx
 const router: Router = useRouter()
@@ -57,14 +58,14 @@ function pressKey(event: KeyboardEvent, inputId: number) {
   if(event.key === 'Backspace') {
     input.value = ''
 
-    if(previousSibling?.nodeType === 1) previousSibling?.focus()
+    if(previousSibling?.nodeType === IS_INPUT) previousSibling?.focus()
   } else {
-    if(nextSibling?.nodeType !== 1 && target.value !== '') {
+    if(nextSibling?.nodeType !== IS_INPUT && target.value !== '') {
       return
     } else if(isNumeric) {
       input.value= event.key
 
-      if(nextSibling?.nodeType === 1) nextSibling?.focus()
+      if(nextSibling?.nodeType === IS_INPUT) nextSibling?.focus()
     }
   }
 }

@@ -2,6 +2,7 @@
 import { shallowRef, ShallowRef, onMounted, ref, Ref, computed, ComputedRef, watch } from 'vue'
 import { useContext } from '@/composables/context'
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 import TheWidget from '@/components/TheWidget.vue'
 import FileTable from '@/components/FileTable.vue'
@@ -20,6 +21,7 @@ const { t } = useI18n()
 
 const ctx = useContext()
 const route = useRoute()
+const router = useRouter()
 const { webSocketService, modalService } = ctx
 
 const files: ShallowRef<File[]> = shallowRef([])
@@ -39,15 +41,37 @@ const ifErrorShowModal = () => {
     description: t('dashboard.errorModalDescription'),
     buttonAction: {
       text: t('dashboard.close'),
-      callback: () => modalService.close()
+      callback: () => {
+        modalService.close()
+        router.push('/')
+      }
     },
     isCancel: false
   })
 }
 
 const isPasscodeCorrect =ref<boolean| null>(null) //@to-do Add handling wrong input in url
+const regexPattern = /^\d{6}$/
+const isCodeValid = computed(() => regexPattern.test(route.params.passcode as string))
 
 onMounted(() => {
+  if(!isCodeValid.value) {
+    modalService.open({
+      title: t('dashboard.errorPasscodeTitle'),
+      description: t('dashboard.errorPasscodeDescription'),
+      buttonAction: {
+        text: t('dashboard.close'),
+        callback: () => {
+          modalService.close()
+          router.push('/')
+        }
+      },
+      isCancel: false
+    })
+
+    return
+  }
+
   if(!webSocketService.isConnectedValue){
     webSocketService.addWsOnMessageListener(function (messageFromServer: Message) {
       if(messageFromServer.result) {
@@ -133,7 +157,7 @@ function getChipsSelected(categories: Chips[]) {
 }
 
 function searchByTextAndCategory(searchText: string) {
-  title.value = 'Search results'
+  title.value = t('dashboard.searchResult')
 
   if(searchText) {
     if(listOfCategoriesSelected.value.length) {
