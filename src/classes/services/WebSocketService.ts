@@ -39,7 +39,7 @@ export class WebSocketService {
   }
 
   onError = (error: Event) => {
-    this.wsOnErrorListener[0]()
+    this.wsOnErrorListener.forEach(listener => listener())
     console.log(error)
     this.ws?.close()
     clearTimeout(this.errorTimeout)
@@ -114,10 +114,7 @@ export class WebSocketService {
   private executeErrorWhenNoResponseFromServer(){
     this.errorTimeout = setTimeout(() => {
       if(!this.isMessageReceived) {
-        this.wsOnErrorListener[0]()
-      } else {
-        this.wsOnErrorListener[0]()
-        console.log(this.wsOnErrorListener[0])
+        this.wsOnErrorListener.forEach(listener => listener())
       }
     }, 3000)
   }
