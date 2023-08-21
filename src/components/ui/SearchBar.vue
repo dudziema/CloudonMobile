@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, Ref, shallowRef } from 'vue'
+import { ref, Ref, shallowRef, watchEffect } from 'vue'
 import IconSearch from '@/assets/images/search/IconSearch.svg'
 import ImageX from '@/assets/images/modal/x.svg'
 import BaseChips from '@/components/ui/BaseChips.vue'
@@ -28,25 +28,25 @@ function clearSearchInput() {
   clearChipsSelection()
 }
 
-const chipsList= shallowRef<Chips[]>([
-  { name: t('dashboard.pictures'), clicked: false },
-  { name: t('dashboard.files'), clicked: false  },
-  { name: t('dashboard.videos'), clicked: false  },
-  { name: t('dashboard.soundFiles'), clicked: false  },
+const chipsList= ref<Chips[]>([
+  { chipsName: t('dashboard.pictures'), isClicked: false },
+  { chipsName: t('dashboard.files'), isClicked: false  },
+  { chipsName: t('dashboard.videos'), isClicked: false  },
+  { chipsName: t('dashboard.soundFiles'), isClicked: false  },
 ])
 
 function selectChipsClicked(chipsName: string) {
-  const chips = chipsList.value.find(chips => chips.name === chipsName)
+  const chips = chipsList.value.find(chips => chips.chipsName === chipsName)
 
   if(chips) {
-    chips.clicked = !chips.clicked
+    chips.isClicked = !chips.isClicked
     emit('search', searchInput.value, chipsList.value)
   }
 }
 
 function clearChipsSelection() {
   chipsList.value.forEach(chips => {
-    chips.clicked = false
+    chips.isClicked = false
   })
 }
 </script>
@@ -60,7 +60,6 @@ function clearChipsSelection() {
         class="search-bar__input-field"
         :placeholder="t('dashboard.search')"
         @keyup.prevent="search(searchInput, chipsList)"
-        @click="isSearchBarClicked=true"
       />
       <IconSearch class="search-bar__img" />
       <ImageX
@@ -73,7 +72,7 @@ function clearChipsSelection() {
     <div class="search-bar__chips">
       <BaseChips
         :chips-list="chipsList"
-        @selectChipsClicked="selectChipsClicked"
+        @select-chips-clicked="selectChipsClicked"
       />
     </div>
   </div>

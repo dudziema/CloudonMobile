@@ -1,6 +1,6 @@
 interface Chips {
-  name: string,
-  clicked: boolean
+  chipsName: string,
+  isClicked: boolean
 }
 
 export default Chips

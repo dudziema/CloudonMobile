@@ -9,6 +9,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits(['closeBurgerMenu', 'allFiles', 'sortRecentFiles'])
+
 </script>
 
 <template>

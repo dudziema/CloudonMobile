@@ -32,15 +32,17 @@ const showErrorModal = () => {
     isCancel: false
   })
 }
+const emit = defineEmits(['butonFileUploadClicked'])
 
 function addNewFile(event: { target: { files: File[] } }) {
   if (event.target.files && event.target.files[0]) {
     if (isFileValid(event.target.files[0])) {
       webSocketService.sendFile(event.target.files[0], showErrorModal)
     } else {
-      console.log('Invalid file')
+      showErrorModal()
     }
   }
+  emit('butonFileUploadClicked')
 }
 </script>
 

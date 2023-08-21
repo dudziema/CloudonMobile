@@ -151,8 +151,8 @@ const listOfCategoriesSelected: Ref<string[]> = ref([])
 function getChipsSelected(categories: Chips[]) {
   if(categories !== undefined){
     listOfCategoriesSelected.value = categories
-      .filter((chips: Chips) => chips.clicked === true)
-      .map((chips: Chips) => chips.name)
+      .filter((chips: Chips) => chips.isClicked === true)
+      .map((chips: Chips) => chips.chipsName)
   }
 }
 
@@ -231,7 +231,7 @@ function sortTable(headerName: string) {
   if (headerName === 'time') sortByEpochDate()
 }
 
-const isAllFilesBtnActive = ref(false)
+const isAllFilesBtnActive = ref(true)
 const isRecentFilesBtnActive = ref(false)
 
 function sortRecentFiles() {
@@ -239,15 +239,44 @@ function sortRecentFiles() {
   isAllFilesBtnActive.value = false
   sortDirections.value.time = DSC
   sortByEpochDate()
+  isBurgerMenuOpen.value = false
 }
 
 function allFiles() {
   isRecentFilesBtnActive.value = false
   isAllFilesBtnActive.value = true
   refreshFilesList()
+  isBurgerMenuOpen.value = false
+}
+
+function butonFileUploadClicked() {
+  isBurgerMenuOpen.value = false
 }
 
 const isBurgerMenuOpen = ref(false)
+
+function onDrop(ev: DragEvent) {
+  if(!ev?.dataTransfer?.items) return ifErrorShowModal()
+    
+  for (const item of ev.dataTransfer.items) {
+    if (item.kind === 'file') {
+      const file = item.getAsFile()
+      webSocketService.sendFile(file)
+    }else {
+      modalService.open({
+        title: t('dashboard.uploadModalTitle'),
+        description: '',
+        buttonAction: {
+          text: t('dashboard.close'),
+          callback: () => {
+            modalService.close()
+          }
+        },
+        isCancel: false
+      })
+    }
+  }
+}
 </script>
 
 <template>
@@ -258,6 +287,7 @@ const isBurgerMenuOpen = ref(false)
         :is-recent-files-btn-active="isRecentFilesBtnActive"
         @all-files="allFiles"
         @sort-recent-files="sortRecentFiles"
+        @buton-file-upload-clicked="butonFileUploadClicked"
       />
     </div>
 
@@ -268,7 +298,6 @@ const isBurgerMenuOpen = ref(false)
       :is-burger-menu-open="isBurgerMenuOpen"
       @all-files="allFiles"
       @sort-recent-files="sortRecentFiles"
-
       @close-burger-menu="isBurgerMenuOpen = false"
     />
     <div class="dashboard-files__main">
@@ -339,11 +368,9 @@ const isBurgerMenuOpen = ref(false)
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(9, 1fr);
   gap: 8px 8px;
-  // height: 100vh;
-  // overflow: hidden;
   max-width: 1520px;
   width: 100%;
-  // margin: 8px;
+  overflow: hidden; /* Hide the scrollbar for the whole table */
 
   &__title {
     margin: 12px 0;
@@ -376,7 +403,7 @@ const isBurgerMenuOpen = ref(false)
 
   &__main {
     position: relative;
-    padding: 15px;
+    padding: 15px 4px 15px 15px;
     width: 100%;
     grid-column-start: 3;
     grid-column-end: 11;
@@ -410,8 +437,7 @@ const isBurgerMenuOpen = ref(false)
 
   &__files {
     height: calc(100vh - 215px);
-    overflow: auto;
-
+  overflow-y: auto; /* Add vertical scrollbar for tbody */
     &--full {
       display: flex;
       flex-direction: column;
@@ -420,6 +446,9 @@ const isBurgerMenuOpen = ref(false)
       align-content: flex-start;
       flex-wrap: wrap;
       overflow: auto;
+      height: calc(100vh - 215px);
+  overflow-y: auto; /* Add vertical scrollbar for tbody */
+  overflow-x: hidden
     }
     &--search {
       font-weight: 200;
@@ -439,5 +468,36 @@ const isBurgerMenuOpen = ref(false)
     width: 100%;
     margin-top: 30px;
   }
+}
+/* Initially show the scrollbar */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar-track {
+  background: transparent; /* Background color of the track */
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: #888888; /* Color of the thumb */
+  border-radius: 5px; /* Rounded corners for the thumb */
+}
+
+/* Hide the scrollbar thumb by default */
+::-webkit-scrollbar-thumb {
+  width: 0;
+}
+
+/* Show the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  width: 10px; /* Width of the thumb when hovered */
+  background: #555; /* Color of the thumb on hover */
+}
+
+/* Style the scrollbar thumb when scrollbar is dragged */
+::-webkit-scrollbar-thumb:active {
+  background: #333; /* Color of the thumb when clicked/dragged */
 }
 </style>

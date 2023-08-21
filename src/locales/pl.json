@@ -35,7 +35,8 @@
     "disconnectAccount": "Wyloguj",
     "disconnectAreYouSureText": "Na pewno chcesz się wylogować?",
     "deleteFileTitle": "Usuń plik",
-    "deleteAreYouSureText": "Na pewno chcesz trwale usunąć plik z Twojego urządzenia?"
+    "deleteAreYouSureText": "Na pewno chcesz trwale usunąć plik z Twojego urządzenia?",
+    "uploadModalTitle": "Nie można załadować tego elementu."
   },
   "notFound": {
     "ops": "Uuups!",

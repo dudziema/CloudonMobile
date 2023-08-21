@@ -22,7 +22,7 @@ defineProps<{
   isRecentFilesBtnActive: boolean,
 }>()
 
-const emit = defineEmits(['allFiles', 'sortRecentFiles'])
+const emit = defineEmits(['allFiles', 'sortRecentFiles', 'butonFileUploadClicked'])
 
 const router = useRouter()
 const ctx = useContext()
@@ -57,6 +57,7 @@ function disconnect() {
       <BaseUpload
         class="left-menu__btn-new-file"
         :label="t('dashboard.addNewFile')"
+        @buton-file-upload-clicked="emit('butonFileUploadClicked')"
       />
       <BaseButton
         :class="isAllFilesBtnActive ? 'left-menu__button-all-files left-menu__button-all-files--active'

@@ -35,7 +35,9 @@
      "disconnectAccount": "Disconnect account",
     "disconnectAreYouSureText": "Are you sure you want to proceed?",
     "deleteFileTitle": "Delete file",
-    "deleteAreYouSureText": "Are you sure? Deleting a file will permanently remove it from your inventory."
+    "deleteAreYouSureText": "Are you sure? Deleting a file will permanently remove it from your inventory.",
+    "uploadModalTitle": "This file can't be uploaded"
+
   },
   "notFound": {
     "ops": "Ooops!",

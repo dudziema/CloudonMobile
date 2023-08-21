@@ -11,8 +11,10 @@ import TheModal from '@/components/TheModal.vue'
 body {
   margin: 0;
   height: 100vh;
- 
-  @include devices(desktop) {
+}
+
+@media only screen and (min-width: 1520px) {
+  body {
     display: flex;
     justify-content: center;
   }

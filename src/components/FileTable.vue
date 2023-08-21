@@ -101,6 +101,8 @@ function sortClass(headerLabel: string): string {
 
 <style lang="scss" scoped>
 .file-table {
+  height: calc(100vh - 215px);
+    overflow: auto;
   $self: &;
   width: 100%;
   position: relative;
@@ -109,7 +111,7 @@ function sortClass(headerLabel: string): string {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-    background-color: white; /* Set the background color */
+    background-color: #fff; /* Set the background color */
     opacity: 1;
     z-index: 1;
 
@@ -135,10 +137,6 @@ function sortClass(headerLabel: string): string {
     letter-spacing: 0.005em;
     text-transform: uppercase;
     color: $color-text-default;
-
-    &:not(&-button) {
-      // opacity: 0.6;
-    }
 
     input[type="checkbox"] {
       width: 16px;
@@ -181,6 +179,9 @@ function sortClass(headerLabel: string): string {
       @include devices(tablet) {
         max-width: $widthColumnNameTablet;
       }
+      @include devices(desktop-small) {
+        max-width: $widthColumnNameDesktop;
+      }
     }
 
     &-image {
@@ -195,14 +196,6 @@ function sortClass(headerLabel: string): string {
       @include devices(tablet-min) {
       display: none;
     }
-    }
-  }
-  #{ $self }, #{ $self }__body {
-   overflow: auto;
-   height: calc(100% - 270px);
-
-   @include devices(mobile) {
-    height: calc(100vh - 216px);
     }
   }
 

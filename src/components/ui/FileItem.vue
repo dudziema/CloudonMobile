@@ -304,6 +304,9 @@ const icon = ref(iconForExtentionDictionary(t))
     @include devices(tablet) {
       max-width: $widthColumnNameTablet;
     }
+    @include devices(desktop-small) {
+        max-width: $widthColumnNameDesktop;
+      }
   }
 
   &__image {

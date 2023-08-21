@@ -1,16 +1,14 @@
 <script lang="ts" setup>
-import {ref} from 'vue'
+import {ref, watchEffect} from 'vue'
 import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
 import Chips from '@/types/Chips'
 
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
-interface Props {
-  chipsList: Chips[]
-}
-
-const { chipsList } = defineProps<Props>()
+const props = defineProps<{
+  chipsList:Chips[]
+}>()
 
 const emit = defineEmits<{
   (e: 'selectChipsClicked', chipsName: string): void
@@ -26,18 +24,16 @@ const icons = ref(iconForExtentionDictionary(t))
 <template>
   <div
     v-for="chips in chipsList"
-    :key="chips.name"
-    :class="chips.clicked ? 'base-chips base-chips--active' :'base-chips'"
-    @click="selectChipsClicked(chips.name)"
+    :key="chips.chipsName"
+    :class="chips.isClicked ? 'base-chips base-chips--active' :'base-chips  base-chips--inactive'"
+    @click="selectChipsClicked(chips.chipsName)"
   >
     <component
-      :is="icons[chips.name]"
+      :is="icons[chips.chipsName]"
       class="base-chips__icon"
     />
-    <p
-      :class="chips.clicked ? 'base-chips__name base-chips__name--active' : 'base-chips__name'"
-    >
-      {{ chips.name }}
+    <p :class="chips.isClicked ? 'base-chips__name base-chips__name--active' : 'base-chips__name'">
+      {{ chips.chipsName }}
     </p>
   </div>
 </template>
