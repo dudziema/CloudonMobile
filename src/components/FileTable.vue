@@ -103,8 +103,15 @@ function sortClass(headerLabel: string): string {
 .file-table {
   $self: &;
   width: 100%;
+  position: relative;
 
   &__header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background-color: white; /* Set the background color */
+    opacity: 1;
+    z-index: 1;
 
     @include devices(mobile) {
       display: none;
@@ -119,6 +126,7 @@ function sortClass(headerLabel: string): string {
       flex-wrap: nowrap;
       margin: 12px 0;
       padding-right: 24px;
+
     }
   }
 
@@ -129,7 +137,7 @@ function sortClass(headerLabel: string): string {
     color: $color-text-default;
 
     &:not(&-button) {
-      opacity: 0.6;
+      // opacity: 0.6;
     }
 
     input[type="checkbox"] {

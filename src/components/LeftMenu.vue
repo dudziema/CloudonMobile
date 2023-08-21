@@ -9,8 +9,10 @@ import BaseUpload from '@/components/ui/BaseUpload.vue'
 
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
-import ButtonAllFiles from '@/assets/images/buttons/ButtonAllFiles.svg'
-import ButtonRecentFiles from '@/assets/images/buttons/ButtonRecentFiles.svg'
+import ButtonAllFilesIcon from '@/assets/images/buttons/ButtonAllFiles.svg'
+import ButtonAllFilesIconActive from '@/assets/images/buttons/ButtonAllFilesActive.svg'
+import ButtonRecentFilesIcon from '@/assets/images/buttons/ButtonRecentFiles.svg'
+import ButtonRecentFilesIconActive from '@/assets/images/buttons/ButtonRecentFilesActive.svg'
 
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -62,7 +64,10 @@ function disconnect() {
         :theme="Theme.SIMPLY"
         @click="emit('allFiles')"
       >
-        <ButtonAllFiles />{{ $t("dashboard.allFiles") }}
+        <ButtonAllFilesIconActive v-if="isAllFilesBtnActive" />
+        <ButtonAllFilesIcon v-else />
+
+        {{ $t("dashboard.allFiles") }}
       </BaseButton>
     
       <BaseButton
@@ -72,7 +77,10 @@ function disconnect() {
         :theme="Theme.SIMPLY"
         @click="emit('sortRecentFiles')"
       >
-        <ButtonRecentFiles />{{ $t("dashboard.recentFiles") }}
+        <ButtonRecentFilesIconActive v-if="isRecentFilesBtnActive" />
+        <ButtonRecentFilesIcon v-else />
+
+        {{ $t("dashboard.recentFiles") }}
       </BaseButton>
     </div>
     
@@ -96,6 +104,12 @@ function disconnect() {
   justify-content: space-between;
   height: 100%;
   padding: 15px;
+  
+  &__upper {
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+  }
   
   &__logo {
     display: flex;
@@ -123,19 +137,28 @@ function disconnect() {
   }
 
   &__button-all-files {
-    color: var(--primary-100, #0E70F1);
+    color: var(--black, #0C0C0C);
     font-feature-settings: 'clig' off, 'liga' off;
     font-size: 16px;
     font-style: normal;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 24px; /* 150% */
     letter-spacing: 0.048px;
     gap: 16px;
     padding: 0 8px;
     width: 100%;
+
+    &-icon {
+      filter: invert(0%) sepia(73%) saturate(362%) hue-rotate(320deg) brightness(98%) contrast(91%);
+      &--active {
+
+      }
+    }
     &--active {
       border-radius: 8px;
       background: var(--primary-10, #F5FAFF);
+      font-weight: 600;
+      color: var(--primary-100, #0E70F1);
     }
   }
 
@@ -152,10 +175,18 @@ function disconnect() {
     gap: 16px;
     padding: 0 8px;
     width: 100%;
+    &-icon {
+      &--active {
+      filter: invert(40%) sepia(94%) saturate(4827%) hue-rotate(206deg) brightness(97%) contrast(94%);
+      }
+    }
     &--active {
       border-radius: 8px;
       background: var(--primary-10, #F5FAFF);
+      font-weight: 600;
+      color: var(--primary-100, #0E70F1);
     }
   }
+
 }
 </style>

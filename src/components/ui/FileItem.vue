@@ -102,7 +102,6 @@ function toggleDropdown(){
 }
 
 const icon = ref(iconForExtentionDictionary(t))
-debugger
 </script>
 
 <template>

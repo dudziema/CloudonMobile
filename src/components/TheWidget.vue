@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref, defineProps } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ImageTrashSmall from '@/assets/images/modal/ImageTrashSmall.svg'
 import ImageDownload from '@/assets/images/modal/ImageDownload.svg'
@@ -76,6 +75,7 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
   justify-content: space-between;
   align-content: center;
   padding: 15px;
+  margin-bottom: 12px;
 
   &__counter {
     color: white;

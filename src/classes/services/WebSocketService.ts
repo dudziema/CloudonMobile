@@ -167,8 +167,6 @@ export class WebSocketService {
   }
 
   private onDownloadedFileFromPhone(message: MessageDownload) {
-    debugger
-
     if(message.payload) {
       if(this.isFileArray(message.payload)) {
         message.payload.forEach(file => {
