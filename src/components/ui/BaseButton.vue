@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { defineProps } from 'vue'
-
 import Theme from '@/types/Theme'
 
 interface Props {

@@ -38,9 +38,10 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
-, "src/composables/context.js"  ],
+    "tests/**/*.tsx",
+    "src/composables/context.js"  ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "files": ["shims-svg.d.ts"]
 }
