@@ -1,11 +1,6 @@
 <script setup lang="ts">
-import { useContext } from '@/composables/context'
 import { useRouter } from 'vue-router'
-
-import Theme from '@/types/Theme'
-
-import BaseButton from '@/components/ui/BaseButton.vue'
-import BaseUpload from '@/components/ui/BaseUpload.vue'
+import { useI18n } from 'vue-i18n'
 
 import ImageLogo from '@/assets/images/buttons/ImageLogo.svg'
 import ImageLogOut from '@/assets/images/buttons/ImageLogOut.svg'
@@ -14,7 +9,13 @@ import ButtonAllFilesIconActive from '@/assets/images/buttons/ButtonAllFilesActi
 import ButtonRecentFilesIcon from '@/assets/images/buttons/ButtonRecentFiles.svg'
 import ButtonRecentFilesIconActive from '@/assets/images/buttons/ButtonRecentFilesActive.svg'
 
-import { useI18n } from 'vue-i18n'
+import Theme from '@/types/Theme'
+
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseUpload from '@/components/ui/BaseUpload.vue'
+
+import { useContext } from '@/composables/context'
+
 const { t } = useI18n()
 
 defineProps<{
@@ -59,26 +60,26 @@ function disconnect() {
         :label="t('dashboard.addNewFile')"
         @buton-file-upload-clicked="emit('butonFileUploadClicked')"
       />
+
       <BaseButton
-        :class="isAllFilesBtnActive ? 'left-menu__button-all-files left-menu__button-all-files--active'
-          : 'left-menu__button-all-files'"
+        :class="['left-menu__button-all-files', {'left-menu__button-all-files--active' : isAllFilesBtnActive}]"
         :theme="Theme.SIMPLY"
         @click="emit('allFiles')"
       >
         <ButtonAllFilesIconActive v-if="isAllFilesBtnActive" />
+
         <ButtonAllFilesIcon v-else />
 
         {{ $t("dashboard.allFiles") }}
       </BaseButton>
     
       <BaseButton
-        :class="isRecentFilesBtnActive ?
-          'left-menu__button-recent-files left-menu__button-recent-files--active' :
-          'left-menu__button-recent-files'"
+        :class="['left-menu__button-recent-files', { 'left-menu__button-recent-files--active': isRecentFilesBtnActive }]"
         :theme="Theme.SIMPLY"
         @click="emit('sortRecentFiles')"
       >
         <ButtonRecentFilesIconActive v-if="isRecentFilesBtnActive" />
+
         <ButtonRecentFilesIcon v-else />
 
         {{ $t("dashboard.recentFiles") }}
@@ -104,12 +105,12 @@ function disconnect() {
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  padding: 15px;
+  padding: $spacing-horizontal-big;
   
   &__upper {
-    gap: 12px;
     display: flex;
     flex-direction: column;
+    gap: $gap-big;
   }
   
   &__logo {
@@ -125,69 +126,59 @@ function disconnect() {
     }
 
     &-disconnect {
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 24px;
       display: flex;
       align-content: center;
+      font-weight: $font-weight-regular;
+      font-size: $font-size-base;
+      line-height: $line-height-base;
 
       &-text {
-        margin: 12px;
+        margin: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
       }
     }
   }
 
   &__button-all-files {
-    color: var(--black, #0C0C0C);
+    color: $color-text-default;
     font-feature-settings: 'clig' off, 'liga' off;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 24px; /* 150% */
+    font-size: $font-size-base;
+    font-weight: $font-weight-regular;
+    line-height: $line-height-base;
     letter-spacing: 0.048px;
-    gap: 16px;
-    padding: 0 8px;
+    gap: calc( 2 * $gap-default);
+    padding: 0 $spacing-horizontal-small;
     width: 100%;
 
     &-icon {
       filter: invert(0%) sepia(73%) saturate(362%) hue-rotate(320deg) brightness(98%) contrast(91%);
-      &--active {
-
-      }
     }
+
     &--active {
-      border-radius: 8px;
-      background: var(--primary-10, #F5FAFF);
-      font-weight: 600;
-      color: var(--primary-100, #0E70F1);
+      border-radius: $radius-small;
+      background: $color-background-divider;
+      font-weight: $font-weight-semi-bold;
+      color: $color-text-dark;
     }
   }
 
   &__button-recent-files {
-    color: var(--black, #0C0C0C);
-    font-feature-settings: 'clig' off, 'liga' off;
-    /* Body/16/Regular */
-    font-family: Poppins;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 24px; /* 150% */
-    letter-spacing: 0.048px;
-    gap: 16px;
-    padding: 0 8px;
+    color: $color-text-default;
+    gap: calc(2 * $gap-default);
+    padding: 0 $spacing-horizontal-small;
     width: 100%;
+
     &-icon {
       &--active {
-      filter: invert(40%) sepia(94%) saturate(4827%) hue-rotate(206deg) brightness(97%) contrast(94%);
+        filter: invert(40%) sepia(94%) saturate(4827%) hue-rotate(206deg) brightness(97%) contrast(94%);
       }
     }
+
     &--active {
-      border-radius: 8px;
-      background: var(--primary-10, #F5FAFF);
-      font-weight: 600;
-      color: var(--primary-100, #0E70F1);
+      border-radius: $radius-small;
+      background: $color-background-divider;
+      font-weight: $font-weight-semi-bold;
+      color: $color-text-dark;
     }
   }
-
 }
 </style>

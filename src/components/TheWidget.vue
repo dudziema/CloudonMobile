@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ImageTrashSmall from '@/assets/images/modal/ImageTrashSmall.svg'
 import ImageDownload from '@/assets/images/modal/ImageDownload.svg'
@@ -12,6 +15,14 @@ interface Props {
 const { quantityItemsSelected } = defineProps<Props>()
 
 const emit = defineEmits(['download', 'delete', 'closeWidget'])
+
+const { t } = useI18n()
+
+const widgetText = computed(()=> {
+  return quantityItemsSelected > 4 ? t('dashboard.filesMoreThan10')
+    : quantityItemsSelected > 1 ? t('dashboard.files')
+      : t('dashboard.file')
+})
 </script>
 
 <template>
@@ -20,10 +31,8 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
       <span class="widget__counter-number">{{ quantityItemsSelected }}</span>
       
       <span class="widget__counter-text">
-        {{ quantityItemsSelected > 4 ? $t('dashboard.filesMoreThan10')
-          : quantityItemsSelected > 1 ? $t('dashboard.files')
-            : $t('dashboard.file')
-        }}
+        {{ widgetText }}
+        
         {{ $t('dashboard.selectedFiles') }}
       </span>
     </p>
@@ -61,51 +70,49 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
 
 <style lang="scss" scoped>
 .widget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  align-content: center;
   position: absolute;
   height: 66px;
   bottom: 0;
   left: 60px;
   right: 60px;
-  background: rgba(3, 14, 29, 0.7);
+  background: $color-background-widget;
   -webkit-backdrop-filter: blur(3.61119px);
   backdrop-filter: blur(3.61119px);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  align-content: center;
-  padding: 15px;
-  margin-bottom: 12px;
+  border-radius: $radius-default;
+  padding: $spacing-horizontal-big;
+  margin-bottom: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
 
   &__counter {
-    color: white;
     display: flex;
     flex-direction: row;
     align-content: center;
     align-items: center;
     justify-content: center;
+    color: $color-text-buttons;
 
     &-number {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 4px 8px;
-      gap: 10px;
+      padding: calc($spacing-vertical-small / 2) $spacing-horizontal-small;
+      gap: $gap-big;
       width: 30px;
       height: 32px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
+      background: $color-background-widget10;
+      border-radius: $radius-small;
     }
 
     &-text {
-      margin: 16px;
-      font-size: 16px;
-      line-height: 24px;
       display: flex;
       align-items: center;
+      margin: $spacing-vertical-default;
       letter-spacing: 0.003em;
-      color: #FFFFFF;
+      color: $color-text-buttons;
     }
   }
 
@@ -116,10 +123,9 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
   }
 
   &__button {
-    font-size: 14px;
-    line-height: 24px;
+    font-size: $font-size-small;
     height: 36px;
-    margin: 12px;
+    margin: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
 
     &-close {
       display: flex;
@@ -130,7 +136,7 @@ const emit = defineEmits(['download', 'delete', 'closeWidget'])
     }
 
     &-image {
-      margin:4px;
+      margin: calc($spacing-horizontal-small / 2);
     }
   }
 

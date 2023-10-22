@@ -1,9 +1,9 @@
 interface File {
-  type?: string
+  type: string
   name: string
   filename: string
   size: number
-  date_epoch?: number
+  date_epoch: number
   dir?: false
   bytes?: string
   filepath?: string

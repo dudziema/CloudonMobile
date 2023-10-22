@@ -1,15 +1,18 @@
 <script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import BaseButton from '@/components/ui/BaseButton.vue'
+
 import ImageTrash from '@/assets/images/modal/ImageTrash.svg'
 import ImageWarning from '@/assets/images/modal/ImageWarning.svg'
 import ImageX from '@/assets/images/modal/x.svg'
+
 import { useContext } from '@/composables/context'
-import { computed } from 'vue'
+
 import Theme from '@/types/Theme'
 
-import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-
 const ctx = useContext()
 const { modalService } = ctx
 const { modalConfig } = modalService
@@ -32,6 +35,7 @@ function closeModal() {
         <div class="modal__title">
           <p class="modal__header">
             <ImageWarning class="modal__header-icon" />
+
             {{ modalConfig.title }}
           </p>
           
@@ -42,9 +46,11 @@ function closeModal() {
             <ImageX />
           </button>
         </div>
+
         <p class="modal__description">
           {{ modalConfig.description }}
         </p>
+
         <div class="modal__buttons">
           <BaseButton
             v-if="modalConfig.isCancel"
@@ -52,7 +58,7 @@ function closeModal() {
             :theme="Theme.MODAL_SIMPLY"
             @click="closeModal()"
           >
-            Cancel
+            {{ $t('dashboard.cancel') }}
           </BaseButton>
           
           <BaseButton
@@ -63,6 +69,7 @@ function closeModal() {
               v-if="modalConfig.buttonAction.text === t('dashboard.delete')"
               class="modal__button-icon"
             />
+
             {{ modalConfig.buttonAction.text }}
           </BaseButton>
         </div>
@@ -78,7 +85,7 @@ function closeModal() {
   height: 100%;
   left: 0;
   top: 0;
-  background: rgba(12, 12, 12, 0.25);
+  background: $color-background-primary10;
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
@@ -91,43 +98,45 @@ function closeModal() {
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
-    background: #FFFFFF;
-    box-shadow: 0px 4px 24px rgba(92, 93, 126, 0.14);
-    border-radius: 12px;
-    padding: 24px;
+    background: $color-background-main;
+    box-shadow: $box-shadow-default;
+    border-radius: $radius-default;
+    padding: calc(3 * $spacing-horizontal-small);
     width: 546px;
-    margin:12px;
+    margin: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
   }
 
   &__header {
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 32px;
-    letter-spacing: -0.3px;
     display: flex;
     align-items: center;
     align-content: center;
     flex-wrap: wrap;
     flex-direction: row;
+    font-weight: $font-weight-semi-bold;
+    font-size: $font-size-title-sm;
+    line-height: $line-height-medium;
+    letter-spacing: -0.3px;
     width: 100%;
-    margin: 24px 0;
+    margin: calc(3 * $spacing-vertical-small) 0;
 
     @include devices(mobile) {
       justify-content: center;
-      font-size: 20px;
       flex-direction: column;
       text-align: center;
+      font-size: $font-size-base;
     }
+
     &-icon {
-      margin-right: 12px;
+      margin-right: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
       
       @include devices(mobile) {
-        margin: 18px;
+        margin: $spacing-vertical-default;
       }
     }
   }
+
   &__title {
-    width:100%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -142,34 +151,38 @@ function closeModal() {
     left: calc(100% - 36px);
     z-index: 1;
   }
+
   &__description {
-    opacity: 0.6;
+    opacity: $opacity-default;
     
     @include devices(mobile) {
-      // margin: 16px;
       text-align: center;
     }
   }
+
   &__buttons {
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
     width: 100%;
-    margin: 32px 0 0 0;
+    opacity: $opacity-default;
+    margin: calc($spacing-vertical-default * 2) 0 0 0;
       
     @include devices(mobile) {
-      margin: 16px 0;
+      margin: $spacing-vertical-default 0;
       align-items: center;
       justify-content: center;
     }
   }
+
   &__button {
 
     &-icon{
-      margin-right:8px;
+      margin-right: $spacing-horizontal-small;
     }
+    
     &-cancel {
-      margin-right: 8px;
+      margin-right: $spacing-horizontal-small;
     }
   }
 }

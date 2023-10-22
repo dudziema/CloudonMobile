@@ -1,14 +1,17 @@
 <script lang="ts" setup>
-import { ref, Ref, shallowRef, watchEffect } from 'vue'
+import { ref, Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import IconSearch from '@/assets/images/search/IconSearch.svg'
 import ImageX from '@/assets/images/modal/x.svg'
+
 import BaseChips from '@/components/ui/BaseChips.vue'
+
 import Chips from '@/types/Chips'
 
-import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-
 const searchInput: Ref<string> = ref('')
+
 const emit = defineEmits<{
   (e: 'search', input: string, chipsList: Chips[]): void
   (e: 'clearSearch'): void
@@ -61,7 +64,9 @@ function clearChipsSelection() {
         :placeholder="t('dashboard.search')"
         @keyup.prevent="search(searchInput, chipsList)"
       />
+
       <IconSearch class="search-bar__img" />
+
       <ImageX
         v-if="searchInput"
         class="search-bar__cancel"
@@ -83,57 +88,55 @@ function clearChipsSelection() {
   display: flex;
   flex-direction: column;
   width: calc(100vw - 74px);
-  @include devices(tablet-min) {
-
-  }
 
   &__input {
     position: relative;
-    max-width:750px;
+    max-width: 750px;
+
     &-field {
-      width:100%;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    padding: 9px 40px;
+    width: 100%;
+    border: $border-none;
+    border-radius: $radius-small;
+    padding: $spacing-vertical-small calc(4 * $spacing-horizontal-default);
+    margin-bottom: calc($spacing-vertical-small + ($spacing-vertical-small / 2));
     background: transparent;
-    border: 1px solid transparent;
 
-    margin-bottom: 12px;
+      &:hover, &:focus {
+        border: $border-dark;
+      }
 
-    &:hover, &:focus {
-      border: 1px solid $color-border-default;
+      &::placeholder {
+        opacity: $opacity-medium;
+      }
+
+      &:focus::placeholder {
+        opacity: $opacity-max;
+      }
+
+      &:focus ~ .search-bar__img {
+        opacity: $opacity-none;
+        filter: invert(18%) sepia(83%) saturate(3323%) hue-rotate(203deg) brightness(95%) contrast(108%);
+      }
     }
-
-    &::placeholder {
-      opacity: 0.4;
-    }
-
-    &:focus::placeholder {
-      opacity: 0;
-    }
-
-    &:focus ~ .search-bar__img {
-      opacity: 1;
-      filter: invert(18%) sepia(83%) saturate(3323%) hue-rotate(203deg) brightness(95%) contrast(108%);
-    }
-  }
   }
   &__img {
     position: absolute;
     left: 8px;
     top: 8px;
-    opacity: 0.4;
+    opacity: $opacity-medium;
   }
+
   &__cancel {
     position: absolute;
     right: 12px;
     top: 10px;
   }
+
   &__chips {
     display: flex;
     flex-direction: row;
     overflow: auto;
-    padding-bottom: 12px;
+    padding-bottom: calc($spacing-vertical-small + ($spacing-vertical-small / 2));
   }
 }
 

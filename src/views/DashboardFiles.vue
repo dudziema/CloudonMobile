@@ -1,31 +1,31 @@
 <script lang="ts" setup>
-import { shallowRef, ShallowRef, onMounted, ref, Ref, computed, ComputedRef, watch } from 'vue'
-import { useContext } from '@/composables/context'
-import { useRoute } from 'vue-router'
-import { useRouter } from 'vue-router'
+import { shallowRef, onMounted, ref, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
-import TheWidget from '@/components/TheWidget.vue'
-import FileTable from '@/components/FileTable.vue'
-import NoFilesSpace from '@/components/NoFilesSpace.vue'
-import SearchBar from '@/components/ui/SearchBar.vue'
-import LeftMenu from '@/components/LeftMenu.vue'
-import BurgerMenu from '@/components/BurgerMenu.vue'
 import ButtonMenu from '@/assets/images/buttons/ButtonMenu.svg'
 
-import File from '@/types/File'
+import BurgerMenu from '@/components/BurgerMenu.vue'
+import FileTable from '@/components/FileTable.vue'
+import LeftMenu from '@/components/LeftMenu.vue'
+import NoFilesSpace from '@/components/NoFilesSpace.vue'
+import TheWidget from '@/components/TheWidget.vue'
+import SearchBar from '@/components/ui/SearchBar.vue'
+
 import Chips from '@/types/Chips'
+import File from '@/types/File'
 import Message from '@/types/Message'
 
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { useContext } from '@/composables/context'
 
-const ctx = useContext()
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const ctx = useContext()
 const { webSocketService, modalService } = ctx
 
-const files: ShallowRef<File[]> = shallowRef([])
-const tableHeaders: ShallowRef = shallowRef([
+const files = shallowRef<File[]>([])
+const tableHeaders = shallowRef([
   { id: 0, label: 'image', field: '', sortable: false },
   { id: 1, label: 'name', field: t('dashboard.fileName'), sortable: true },
   { id: 2, label: 'size', field: t('dashboard.fileSize'), sortable: false },
@@ -50,7 +50,7 @@ const ifErrorShowModal = () => {
   })
 }
 
-const isPasscodeCorrect =ref<boolean| null>(null) //@to-do Add handling wrong input in url
+const isPasscodeCorrect = ref<boolean | null>(null)
 const regexPattern = /^\d{6}$/
 const isCodeValid = computed(() => regexPattern.test(route.params.passcode as string))
 
@@ -97,11 +97,11 @@ async function refreshFilesList() {
   })
 }
 
-const selectedFiles: Ref<File[]> = ref([])
-const quantityItemsSelected: ComputedRef<number> = computed(()=>selectedFiles.value.length)
-const quantityFileName: ComputedRef<string> = computed(() => quantityItemsSelected.value > 1 ?
+const selectedFiles = ref<File[]>([])
+const quantityItemsSelected = computed(()=>selectedFiles.value.length)
+const quantityFileName = computed(() => quantityItemsSelected.value > 1 ?
   t('dashboard.files') : t('dashboard.file'))
-const clearItems: Ref<boolean> = ref(false)
+const clearItems = ref(false)
 
 function itemsSelected(itemsSelected: File[]) {
   selectedFiles.value = itemsSelected
@@ -134,7 +134,7 @@ function deleteFiles() {
   })
 }
 
-const closeWidgetClicked: Ref<boolean> = ref(false)
+const closeWidgetClicked = ref(false)
 
 function closeWidget() {
   closeWidgetClicked.value = true
@@ -143,10 +143,10 @@ function closeWidget() {
 watch(quantityItemsSelected, newValue => {
   if(!newValue) closeWidgetClicked.value = false
 })
-const filteredFiles: ShallowRef<File[]> = shallowRef([])
-const title: ShallowRef<string> = shallowRef(t('dashboard.allFiles'))
+const filteredFiles = shallowRef<File[]>([])
+const title = ref<string>(t('dashboard.allFiles'))
 
-const listOfCategoriesSelected: Ref<string[]> = ref([])
+const listOfCategoriesSelected = ref<string[]>([])
 
 function getChipsSelected(categories: Chips[]) {
   if(categories !== undefined){
@@ -194,7 +194,7 @@ function clearSearch() {
 
 const ASC = 'asc'
 const DSC = 'dsc'
-const sortDirections: Ref<{ [key: string]: string }> = ref({'name': ASC, 'time': ASC })
+const sortDirections = ref<{ [key: string]: string }>({'name': ASC, 'time': ASC })
 
 function sortName() {
   sortDirections.value.name = sortDirections.value.name  === ASC ? DSC : ASC
@@ -215,8 +215,9 @@ function sortByEpochDate() {
   sortDirections.value.time = sortDirections.value.time  === ASC ? DSC : ASC
   
   filteredFiles.value.sort((a: File, b: File) => {
-    const dateA = a.date_epoch!
-    const dateB = b.date_epoch!
+    if(!a.date_epoch && !b.date_epoch) return 0
+    const dateA = a.date_epoch
+    const dateB = b.date_epoch
 
     if (sortDirections.value.time === ASC) {
       return dateA - dateB
@@ -367,13 +368,12 @@ function onDrop(ev: DragEvent) {
   grid-auto-rows: auto;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(9, 1fr);
-  gap: 8px 8px;
+  gap: $gap-default $gap-default;
   max-width: 1520px;
   width: 100%;
-  overflow: hidden; /* Hide the scrollbar for the whole table */
 
   &__title {
-    margin: 12px 0;
+    margin: $spacing-horizontal-medium 0;
   }
 
   &__left {
@@ -381,8 +381,8 @@ function onDrop(ev: DragEvent) {
     grid-column-end: 3;
     grid-row-start: 1;
     grid-row-end: 10;
-    padding-right: 20px;
-    margin-bottom: 12px;
+    padding-right: calc(2 * $spacing-horizontal-default);
+    margin-bottom: $spacing-horizontal-medium;
 
     @include devices(tablet) {
       display: none;
@@ -394,7 +394,7 @@ function onDrop(ev: DragEvent) {
     grid-column-end: 3;
     grid-row-start: 1;
     grid-row-end: 10;
-    padding-right: 20px;
+    padding-right: calc(2 * $spacing-horizontal-default);
 
     @include devices(only-desktop) {
       display: none;
@@ -403,7 +403,7 @@ function onDrop(ev: DragEvent) {
 
   &__main {
     position: relative;
-    padding: 15px 4px 15px 15px;
+    padding: $spacing-horizontal-big calc($spacing-horizontal-small / 2) $spacing-horizontal-big $spacing-horizontal-big;
     width: 100%;
     grid-column-start: 3;
     grid-column-end: 11;
@@ -417,16 +417,16 @@ function onDrop(ev: DragEvent) {
 
     &-search {
       display: flex;
-      gap: 4px;
+      gap: $gap-small;
 
       @include devices(only-desktop) {
-        gap: 24px;
-    }
+        gap: calc(2 * $gap-big);
+      }
 
       &-menu {
-        margin-top: 8px;
+        margin-top: $spacing-horizontal-small;
         min-height: 40px;
-    min-width: 40px;
+        min-width: 40px;
 
         @include devices(only-desktop) {
           display: none;
@@ -437,7 +437,8 @@ function onDrop(ev: DragEvent) {
 
   &__files {
     height: calc(100vh - 215px);
-  overflow-y: auto; /* Add vertical scrollbar for tbody */
+    overflow-y: auto;
+    
     &--full {
       display: flex;
       flex-direction: column;
@@ -447,11 +448,12 @@ function onDrop(ev: DragEvent) {
       flex-wrap: wrap;
       overflow: auto;
       height: calc(100vh - 215px);
-  overflow-y: auto; /* Add vertical scrollbar for tbody */
-  overflow-x: hidden
+      overflow-y: auto;
+      overflow-x: hidden
     }
+
     &--search {
-      font-weight: 200;
+      font-weight: $font-weight-thin;
     }
     
     &-content {
@@ -466,9 +468,10 @@ function onDrop(ev: DragEvent) {
 
   &__button {
     width: 100%;
-    margin-top: 30px;
+    margin-top: calc(3 * $spacing-horizontal-default);
   }
 }
+
 /* Initially show the scrollbar */
 ::-webkit-scrollbar {
   width: 8px; /* Width of the scrollbar */
@@ -482,7 +485,7 @@ function onDrop(ev: DragEvent) {
 /* Style the scrollbar thumb */
 ::-webkit-scrollbar-thumb {
   background: #888888; /* Color of the thumb */
-  border-radius: 5px; /* Rounded corners for the thumb */
+  border-radius: calc($radius-small / 2); /* Rounded corners for the thumb */
 }
 
 /* Hide the scrollbar thumb by default */

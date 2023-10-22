@@ -1,20 +1,25 @@
 <script lang="ts" setup>
-import { Ref, ref,onMounted, computed, ComputedRef } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { Router, useRouter } from 'vue-router'
-import { useContext } from '@/composables/context'
-import BaseButton from '@/components/ui/BaseButton.vue'
+import { useI18n } from 'vue-i18n'
+
 import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
 import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle.svg'
-import Theme from '@/types/Theme'
-import Message from '@/types/Message'
 
-const PASSCODE_INPUTS: Ref<{ id: number, value: string }[]> = ref([])
+import BaseButton from '@/components/ui/BaseButton.vue'
+
+import { useContext } from '@/composables/context'
+
+import Theme from '@/types/Theme'
+import MessageLogin from '@/types/message-received/MessageLogin'
+
+const PASSCODE_INPUTS = ref<{ id: number, value: string }[]> ([])
 const IS_INPUT = 1
 const ctx = useContext()
 const { webSocketService , modalService} = ctx
 const router: Router = useRouter()
-const isPasscodeCorrect: Ref<boolean> = ref(true)
-const passcode: Ref<number> | Ref<null> = ref(null)
+const isPasscodeCorrect = ref<boolean>(true)
+const passcode = ref<number | null>(null)
 
 onMounted(
   () => {
@@ -26,7 +31,9 @@ onMounted(
     }
   },
 
-  webSocketService.addWsOnMessageListener(function (messageFromServer: Message) {
+  webSocketService.addWsOnMessageListener(function (messageFromServer: MessageLogin) {
+    console.log(messageFromServer)
+
     if(messageFromServer.result) {
       // Wrong passcode
       isPasscodeCorrect.value = false
@@ -43,7 +50,7 @@ onMounted(
   })
 )
 
-const isAllValuesFilled: ComputedRef<boolean> = computed(() => PASSCODE_INPUTS.value.every(input => input.value))
+const isAllValuesFilled = computed(() => PASSCODE_INPUTS.value.every(input => input.value))
 
 function pressKey(event: KeyboardEvent, inputId: number) {
   const pressedKey = event.key
@@ -79,12 +86,14 @@ function getPasscodeInputs() {
   return code
 }
 
+const { t } = useI18n()
+
 const ifErrorShowModal = () => {
   modalService.open({
-    title: 'Something went wrong  :(',
-    description: 'There was a problem with connection with the mobile app. Please try again later.',
+    title: t('dashboard.errorModalTitle'),
+    description: t('dashboard.errorModalDescription'),
     buttonAction: {
-      text: 'Close',
+      text: t('dashboard.close'),
       callback: () => modalService.close()
     },
     isCancel: false
@@ -117,7 +126,11 @@ function connect() {
       </p>
 
       <div>
-        <form class="login-page__inputs">
+        <form
+          id="login-form"
+          name="login"
+          class="login-page__inputs"
+        >
           <input
             v-for="input in PASSCODE_INPUTS"
             :key="input.id"
@@ -129,8 +142,8 @@ function connect() {
             inputmode="numeric"
             maxlength="1"
             required
-            :class="isPasscodeCorrect ? `login-page__input login-page__input--correct` :
-              `login-page__input login-page__input--wrong`"
+            :class="['login-page__input', {'login-page__input--correct': isPasscodeCorrect},
+                     { 'login-page__input--wrong' : !isPasscodeCorrect}]"
             @keydown.prevent="pressKey($event, input.id)"
             @keyup.enter="connect()"
           />
@@ -165,11 +178,11 @@ function connect() {
   grid-auto-rows: auto;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  gap: 8px 8px;
-  overflow-y: hidden; /* Hide vertical scrollbar */
+  gap: $gap-default $gap-default;
+  overflow-y: hidden;
   overflow-x: hidden;
   height: 100vh;
-  width:100%;
+  width: 100%;
 
   &__divider {
     background-color: $color-background-divider;
@@ -182,6 +195,7 @@ function connect() {
       display: none;
     }
   }
+
   &__content {
     grid-column-start: 6;
     grid-column-end: 10;
@@ -200,6 +214,7 @@ function connect() {
       grid-column-start: 2;
     }
   }
+
   &__title {
     text-align: left;
 
@@ -207,10 +222,11 @@ function connect() {
       text-align: center;
     }
   }
+
   &__details {
-    margin: 16px 0 56px 0;
+    margin: $spacing-vertical-default 0 calc(7 * $spacing-vertical-small) 0;
     max-width: 390px;
-    opacity: 0.8;
+    opacity: $opacity-large;
     text-align: left;
     
     @include devices(desktop-small) {
@@ -218,6 +234,7 @@ function connect() {
       max-width: 100%;
     }
   }
+
   &__inputs {
     display: flex;
     justify-content: space-between;
@@ -229,17 +246,17 @@ function connect() {
     text-align: center;
     height: 64px;
     width: 61px;
-    border-radius: 8px;
+    border-radius: $radius-small;
     background-color: $color-background-inputs;
     font-size: calc($font-size-base * 2);
     
     &:focus {
-      border: 2px solid $color-border-default;
+      border: $border-dark20;
     }
 
     &--focused {
       background-color: $color-background-main;
-      border: 2px solid $color-border-default;
+      border: $border-dark20;
     }
    
     @include devices(mobile) {
@@ -251,20 +268,24 @@ function connect() {
     display: flex;
     justify-content: space-around;
   }
+
   &__store {
     width: 120px;
   }
+
   &__download {
     text-align: center;
-    margin: 60px 0 20px 0;
+    margin: calc(3 * $spacing-vertical-big) 0 $spacing-vertical-big 0;
   }
+
   &__button {
     width: 100%;
-    margin-top: 56px;
+    margin-top: calc(7 * $spacing-vertical-small);
   }
+  
   &__input {
     &--wrong{
-      border: solid 2px $color-border-error;
+      border: $border-error;
       animation: shake .5s linear;
     }
   }

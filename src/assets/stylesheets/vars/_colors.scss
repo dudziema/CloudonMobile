@@ -1,14 +1,18 @@
 $color-basic: #FFFFFF;
 $color-error: #D1405A;
 $color-primary: #0C0C0C;
+$color-primary10: #CCCCCC33;
 $color-secondary: #0E70F1;
 $color-accent1: #F5F6F6;
 $color-accent2: #F5FAFF;
 $color-accent3: #0e70f166;
+$color-accent4: #030E1DB3;
+$color-accent5: #FFFFFF33;
 
 $color-text-default: $color-primary;
 $color-text-buttons: $color-basic;
 $color-text-dark: $color-secondary;
+$color-text-error: $color-error;
 
 $color-background-main: $color-basic;
 $color-background-special: $color-secondary;
@@ -16,7 +20,11 @@ $color-background-inputs: $color-accent1;
 $color-background-divider: $color-accent2;
 $color-background-inactive: $color-accent3;
 $color-background-error: $color-error;
+$color-background-primary10: $color-primary10;
+$color-background-widget: $color-accent4;
+$color-background-widget10: $color-accent5;
 
 $color-border-default: $color-secondary;
 $color-border-error: $color-error;
 $color-border-primary: $color-primary;
+$color-border-primary10: $color-primary10;

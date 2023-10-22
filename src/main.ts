@@ -1,8 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import { createContext } from '@/composables/context'
 import i18n from './i18n'
+
+import { createContext } from '@/composables/context'
 
 type AvailableLanguage = 'pl' | 'en'
 

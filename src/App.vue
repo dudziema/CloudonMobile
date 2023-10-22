@@ -4,6 +4,7 @@ import TheModal from '@/components/TheModal.vue'
 
 <template>
   <router-view />
+  
   <TheModal />
 </template>
 

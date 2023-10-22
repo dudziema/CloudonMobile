@@ -7,17 +7,14 @@
 <style lang="scss" scoped>
 .base-drop-down {
   display: flex;
-  min-width: 180px;
-  padding: 8px;
   flex-direction: column;
   align-items: flex-start;
-  border-radius: 12px;
-  background: var(--white, #FFF);
+  min-width: 180px;
+  padding: $spacing-horizontal-small;
+  border-radius: $radius-default;
+  background: $color-background-main;
   transform:  translate(-165px, 2px);
-
-  /* menuShadow */
-  box-shadow: 0px 4px 24px 0px rgba(92, 93, 126, 0.14);
-
+  box-shadow: $box-shadow-default;
   position: absolute;
   z-index: 1;
 }

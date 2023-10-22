@@ -1,6 +1,10 @@
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
 import BaseButton from '@/components/ui/BaseButton.vue'
+
 import { useContext } from '@/composables/context'
+
 import File from '@/types/File'
 import Theme from '@/types/Theme'
 
@@ -15,18 +19,20 @@ const MB = 1024 * KB
 const MAX_SIZE_FILE_IN_BYTES = 100 * MB
 
 function isFileValid(file: File) {
-  return file.size < MAX_SIZE_FILE_IN_BYTES ? true : false
+  return file.size < MAX_SIZE_FILE_IN_BYTES
 }
 
 const ctx = useContext()
 const { webSocketService, modalService } = ctx
 
+const { t } = useI18n()
+
 const showErrorModal = () => {
   modalService.open({
-    title: 'Something went wrong  :(',
-    description: 'There was a problem with connection with the mobile app. Please try again later.',
+    title: t('dashboard.errorModalTitle'),
+    description: t('dashboard.errorModalDescription'),
     buttonAction: {
-      text: 'Close',
+      text: t('dashboard.close'),
       callback: () => modalService.close()
     },
     isCancel: false
@@ -70,7 +76,6 @@ function addNewFile(event: { target: { files: File[] } }) {
 
 <style lang="scss" scoped>
 .base-upload {
-
   &__label {
     width: 100%;
     height: 100%;

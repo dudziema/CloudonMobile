@@ -1,0 +1,12 @@
+@import 'colors';
+$border-primary: 1px solid $color-border-primary;
+$border-default: 1px solid $color-border-primary10;
+$border-dark: 1px solid $color-border-default;
+$border-dark20: 2px solid $color-border-default;
+$border-dashed: 1px dashed $color-border-default;
+$border-error: solid 2px $color-border-error;
+$border-none: 1px solid transparent;
+
+$radius-small: 8px;
+$radius-default: 12px;
+$radius-big: 16px;

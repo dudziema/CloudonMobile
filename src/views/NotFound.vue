@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
+
 import NotFoundImage from '@/assets/images/NotFoundImage.svg'
+
 import BaseButton from '@/components/ui/BaseButton.vue'
+
 import Theme from '@/types/Theme'
 
 const router = useRouter()
@@ -55,7 +57,7 @@ const router = useRouter()
     align-items: center;
     flex-direction: column;
     font-weight: $font-weight-thin;
-    opacity: 0.8;
+    opacity: $opacity-large;
   }
 
   &__button {

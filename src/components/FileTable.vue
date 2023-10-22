@@ -1,7 +1,10 @@
 <script lang="ts" setup>
-import { computed, Ref, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
+
 import ButtonSort from '@/assets/images/buttons/ButtonSort.svg'
+
 import FileItem from '@/components/ui/FileItem.vue'
+
 import File from '@/types/File'
 
 const props = defineProps<{
@@ -12,7 +15,7 @@ const props = defineProps<{
   sortDirections: { [key: string]: string }
 }>()
 
-const itemsSelected: Ref<File[]> = ref([])
+const itemsSelected = ref<File[]> ([])
 
 const emit = defineEmits(['itemsSelected', 'sortTable'])
 
@@ -30,7 +33,7 @@ function isSelected(file: File, isSelected: boolean) {
   emit('itemsSelected', itemsSelected.value)
 }
 
-const allItemsButtonSelected: Ref<boolean>= ref(false)
+const allItemsButtonSelected = ref(false)
 
 watch(props, newValue => {
   if (newValue.clearItems) {
@@ -101,18 +104,16 @@ function sortClass(headerLabel: string): string {
 
 <style lang="scss" scoped>
 .file-table {
-  height: calc(100vh - 215px);
-    overflow: auto;
-  $self: &;
-  width: 100%;
   position: relative;
+  height: calc(100vh - 215px);
+  overflow: auto;
+  width: 100%;
 
   &__header {
-    position: -webkit-sticky;
     position: sticky;
     top: 0;
-    background-color: #fff; /* Set the background color */
-    opacity: 1;
+    background-color: $color-background-main;
+    opacity: $opacity-none;
     z-index: 1;
 
     @include devices(mobile) {
@@ -126,29 +127,27 @@ function sortClass(headerLabel: string): string {
       align-items: center;
       align-content: center;
       flex-wrap: nowrap;
-      margin: 12px 0;
-      padding-right: 24px;
-
+      margin: calc($spacing-vertical-small + ($spacing-vertical-small / 2)) 0;
+      padding-right: calc($spacing-horizontal-small * 3);
     }
   }
 
   &__line {
     font-weight: $font-weight-semi-bold;
-    letter-spacing: 0.005em;
-    text-transform: uppercase;
     color: $color-text-default;
+    text-transform: uppercase;
 
     input[type="checkbox"] {
       width: 16px;
       height: 16px;
-      opacity: 0.2 !important;
-      border: 1px solid $color-border-primary;
-      border-radius: 4px;
-      margin: 12px;
+      opacity: $opacity-small !important;
+      border: $border-primary;
+      border-radius: calc($radius-small / 2);
+      margin: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
     }
 
     input[type="checkbox"]:checked {
-      opacity: 1 !important;
+      opacity: $opacity-none !important;
     }
 
     &-button {
@@ -159,13 +158,14 @@ function sortClass(headerLabel: string): string {
       }
 
       &-more {
-        width:20px;
+        width: 20px;
 
         @include devices(only-desktop) {
           display: none !important;
         }
       }
     }
+
     &-name {
       text-overflow: ellipsis;
       flex: 1;
@@ -173,12 +173,15 @@ function sortClass(headerLabel: string): string {
       @include devices(mobile) {
         width: $widthColumnNameMobile;
       }
+
       @include devices(tablet-min) {
         width: $widthColumnNameTabletMin;
       }
+
       @include devices(tablet) {
         max-width: $widthColumnNameTablet;
       }
+
       @include devices(desktop-small) {
         max-width: $widthColumnNameDesktop;
       }
@@ -192,10 +195,11 @@ function sortClass(headerLabel: string): string {
     }
 
     &-size {
-      width:100px;
+      width: 100px;
+      
       @include devices(tablet-min) {
-      display: none;
-    }
+        display: none;
+      }
     }
   }
 

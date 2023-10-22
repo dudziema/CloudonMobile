@@ -1,20 +1,21 @@
 <script lang="ts" setup>
-import { ShallowRef, Ref, shallowRef, ref, watch, onBeforeUnmount } from 'vue'
-import { useContext } from '@/composables/context'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import IconTrash from '@/assets/images/iconsFiles/IconTrash.svg'
 import IconDownload from '@/assets/images/iconsFiles/IconDownload.svg'
 import IconMore from '@/assets/images/iconsFiles/IconMore.svg'
-import File from '@/types/File'
-import { iconForExtentionDictionary } from '@/utils/extentionsDictionary'
+
 import BaseDropDown from '@/components/ui/BaseDropDown.vue'
 
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { useContext } from '@/composables/context'
 
-interface ExtentionList {
-  icon: string,
-  extention: string[]
-}
+import { iconForExtensionDictionary } from '@/utils/extensionsDictionary'
+
+import File from '@/types/File'
+
+const ZERO = 0
+const ONE_SECOND = 1000
 
 const props = defineProps<{
   file: File,
@@ -24,7 +25,9 @@ const props = defineProps<{
 }>()
 
 const ctx = useContext()
-const { modalService } = ctx
+const { modalService, webSocketService } = ctx
+
+const { t } = useI18n()
 
 const openModalDeleteFile = () => {
   modalService.open({
@@ -40,40 +43,31 @@ const openModalDeleteFile = () => {
   })
 }
 
-const { webSocketService } = ctx
-
 function formatBytes(bytes: number) {
-  if (bytes === 0) return '0 Bytes'
-  if(!Number.isFinite(bytes) || bytes < 0) return 'Invalid input'
+  if (bytes === ZERO) return '0 Bytes'
+  if(!Number.isFinite(bytes) || bytes < ZERO) return t('dashboard.invalidInput')
   const sizes = ['Bytes', 'KB', 'MB']
   const k = 1024
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-  return `${(bytes / Math.pow(k, i)).toFixed(0)} ${sizes[i]}`
+  return `${(bytes / Math.pow(k, i)).toFixed(ZERO)} ${sizes[i]}`
 }
 
 function formatTime(epochTime: number) {
-  const date = new Date(epochTime * 1000)
+  const date = new Date(epochTime * ONE_SECOND)
   const formattedDate = date.toLocaleDateString()
 
   return formattedDate.replace(/\//g, '.')
 }
 
-function getIcon(fileName: string) {
-  let extention = fileName.split('.').pop().split(/[?#]/)[0]
-  let extentionListItem: ExtentionList = extentionsList.value.find(item => item.extention.includes(extention)) ||
-    extentionsList.value[1]
-
-  return extentionListItem.icon
-}
-
-const isSelected: Ref<boolean> = ref(false)
+const isSelected = ref(false)
 const emit = defineEmits(['isSelected'])
 
 watch(props, newValue => {
   if(newValue.allItemsButtonSelected !== undefined) isSelected.value = newValue.allItemsButtonSelected
   if(newValue.closeWidgetClicked || newValue.clearItems) isSelected.value = false
 })
+
 watch(isSelected, newValue => {
   emit('isSelected', props.file, newValue)
 })
@@ -82,26 +76,23 @@ const isDropdownActive = ref(false)
 const buttonMore = ref<HTMLElement | null>(null)
 
 function handleClickOutside(event: MouseEvent) {
-
   if(buttonMore.value && !buttonMore.value.contains(event.target as Node)) {
     isDropdownActive.value = false
     document.removeEventListener('click', handleClickOutside)
   }
-
 }
 
 function toggleDropdown(){
   isDropdownActive.value = !isDropdownActive.value
 
   if(isDropdownActive.value) {
-    console.log('active')
     document.addEventListener('click', handleClickOutside)
   } else {
     document.removeEventListener('click', handleClickOutside)
   }
 }
 
-const icon = ref(iconForExtentionDictionary(t))
+const icon = ref(iconForExtensionDictionary(t))
 </script>
 
 <template>
@@ -111,9 +102,9 @@ const icon = ref(iconForExtentionDictionary(t))
         v-model="isSelected"
         type="checkbox"
         class="file-item-field file-item-field__checkbox"
-        @click="toggleSelection"
       >
     </td>
+
     <td
       class="file-item-field file-item-field__image"
       data-testid="file-icon"
@@ -122,43 +113,59 @@ const icon = ref(iconForExtentionDictionary(t))
         :is="icon[file.type]"
       />
     </td>
+
     <td
       class="file-item-field file-item-field__name"
       data-testid="file-name"
     >
       {{ file.name }}
     </td>
+
     <td
       class="file-item-field file-item-field__size"
       data-testid="file-size"
     >
-      {{ formatBytes(file.size, 0) }}
+      {{ formatBytes(file.size) }}
     </td>
+
     <td
       class="file-item-field file-item-field__time"
       data-testid="file-date_epoch"
     >
       {{ formatTime(file.date_epoch) }}
     </td>
+
     <td class="file-item-field file-item-field__button">
-      <button class="file-item-field__button">
+      <button
+        name="download"
+        type="button"
+        class="file-item-field__button"
+      >
         <IconDownload
           class="file-item-field__download-icon"
           @click="webSocketService.downloadFile(file.name)"
         />
       </button>
     </td>
+
     <td class="file-item-field file-item-field__button">
-      <button class="file-item-field__button">
+      <button
+        name="delete"
+        type="button"
+        class="file-item-field__button"
+      >
         <IconTrash
           class="file-item-field__delete-icon"
           @click="openModalDeleteFile"
         />
       </button>
     </td>
+
     <td class="file-item-field file-item-field__button--more">
       <button
         ref="buttonMore"
+        name="more"
+        type="button"
         class="file-item-field__button--more"
       >
         <IconMore
@@ -166,6 +173,7 @@ const icon = ref(iconForExtentionDictionary(t))
           @click="toggleDropdown"
         />
       </button>
+
       <BaseDropDown v-if="isDropdownActive">
         <div class="file-item-field__dropdown-content">
           <button
@@ -175,7 +183,7 @@ const icon = ref(iconForExtentionDictionary(t))
             <IconDownload
               class="file-item-field__dropdown-content-download-icon"
             />
-            Download File
+            {{ $t('dashboard.downloadFile') }}
           </button>
 
           <button
@@ -185,7 +193,10 @@ const icon = ref(iconForExtentionDictionary(t))
             <IconTrash
               class="file-item-field__dropdown-content-delete-icon"
             />
-            <span class="file-item-field__dropdown-content-delete-icon-text">Delete File</span>
+
+            <span class="file-item-field__dropdown-content-delete-icon-text">
+              {{ $t('dashboard.deleteFileTitle') }}
+            </span>
           </button>
         </div>
       </BaseDropDown>
@@ -202,18 +213,19 @@ const icon = ref(iconForExtentionDictionary(t))
   align-items: center;
   align-content: center;
   flex-wrap: nowrap;
-  padding-right: 8px;
+  padding-right: $spacing-horizontal-small;
+
   @include devices(mobile) {
     max-width: 545px;
-    }
+  }
 
   &:hover {
     background: $color-background-divider;
-    border-radius: 8px;
+    border-radius: $radius-small;
   }
 }
 .file-item-field {
-  margin-right: 4px;
+  margin-right: calc($spacing-horizontal-small / 2);
 
   &__checkbox {
     @include devices(mobile) {
@@ -225,52 +237,51 @@ const icon = ref(iconForExtentionDictionary(t))
     @include devices(mobile) {
       display: none;
     }
+
     @include devices(tablet-min) {
       display: none;
     }
   }
+
   &__time {
     @include devices(mobile) {
       display: none;
     }
   }
+
   &__download-icon {
-    opacity: 0.6;
+    opacity: $opacity-default;
   }
 
   &__delete-icon {
-    opacity: 0.6;
+    opacity: $opacity-default;
   }
 
   &__more-icon {
-    opacity: 0.6;
+    opacity: $opacity-default;
   }
 
   &__dropdown-content {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: 8px;
-
-    // &-download-icon {
-      
-    // }
+    gap: $gap-default;
 
     &-delete-icon {
       filter: invert(38%) sepia(23%) saturate(3992%) hue-rotate(319deg) brightness(85%) contrast(90%);
+
       &-text {
-        color: #D1405A
+        color: $color-text-error;
       }
     }
 
     &-btn {
       display: flex;
-      gap: 8px;
+      gap: $gap-default;
 
       &:hover {
         background: $color-background-divider;
       }
-
     }
   }
 
@@ -288,8 +299,7 @@ const icon = ref(iconForExtentionDictionary(t))
   }
 
   &__name {
-
-    padding-right: 12px;
+    padding-right: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
     overflow: hidden;
     text-overflow: ellipsis;
     height: 24px;
@@ -298,50 +308,52 @@ const icon = ref(iconForExtentionDictionary(t))
     @include devices(mobile) {
       width: $widthColumnNameMobile;
     }
+
     @include devices(tablet-min) {
       width: $widthColumnNameTabletMin;
     }
+
     @include devices(tablet) {
       max-width: $widthColumnNameTablet;
     }
+
     @include devices(desktop-small) {
-        max-width: $widthColumnNameDesktop;
-      }
+      max-width: $widthColumnNameDesktop;
+    }
   }
 
   &__image {
-    // width: 5%;
-    border-radius: 8px;
     display: flex;
     align-content: center;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     flex-wrap: nowrap;
+    border-radius: $gap-default;
   }
 
   &__time {
-    opacity: 0.6;
+    opacity: $opacity-default;
     width: 174px
   }
 
   &__size {
+    opacity: $opacity-default;
     width: 100px;
-    opacity: 0.6;
   }
 }
 
 input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  opacity: 0.2;
-  border: 1px solid $color-border-primary;
-  border-radius: 4px;
-  margin: 12px;
+  opacity: $opacity-small;
+  border: $border-primary;
+  border-radius: calc($radius-small / 2);
+  margin: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
 }
 
 input[type="checkbox"]:checked {
-  opacity: 1;
+  opacity: $opacity-none;
 }
 
 @include devices(tablet) {

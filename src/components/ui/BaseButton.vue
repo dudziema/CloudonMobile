@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
+
 import Theme from '@/types/Theme'
 
 interface Props {
@@ -11,8 +12,8 @@ const { theme } = defineProps<Props>()
 
 <template>
   <button
-    :class="`base-button base-button--${theme}`"
-    :disabled="theme === Theme.INACTIVE ? true : false"
+    :class="['base-button', `base-button--${theme}`]"
+    :disabled="theme === Theme.INACTIVE"
   >
     <slot />
   </button>
@@ -24,9 +25,9 @@ const { theme } = defineProps<Props>()
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 16px 24px;
+  padding: $spacing-vertical-default calc(3 * $spacing-horizontal-small);
   height: 56px;
-  border-radius: 12px;
+  border-radius: $radius-default;
   color: $color-text-buttons;
 
   &--active {
@@ -39,7 +40,7 @@ const { theme } = defineProps<Props>()
 
   &--new-file {
     background-color: $color-background-special;
-    padding: 0px;
+    padding: 0;
   }
   &--modal-action {
     background-color: $color-background-error;

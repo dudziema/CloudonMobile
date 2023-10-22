@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import ImageFiles from '@/assets/images/buttons/ImageFiles.svg'
+
 import BaseUpload from '@/components/ui/BaseUpload.vue'
+
 import { useContext } from '@/composables/context'
 
 const ctx = useContext()
@@ -37,13 +39,17 @@ function onDrop(event: DragEvent) {
     @drop.prevent="onDrop"
   >
     <ImageFiles />
-    <h1>There are no items here!</h1>
+
+    <h1>{{ $t('dashboard.noItemsHere') }}</h1>
+
     <p class="no-files-space__text">
-      Drag & drop your file here to start uploading
+      {{ $t('dashboard.dragAndDrop') }}
     </p>
+
     <p class="no-files-space__text">
-      - or -
+      {{ $t('dashboard.or') }}
     </p>
+
     <BaseUpload
       label="Browse Files"
       class="no-files-space__button-new-file"
@@ -53,23 +59,23 @@ function onDrop(event: DragEvent) {
 
 <style lang="scss" scoped>
 .no-files-space {
-  width: 100%;
-  grid-column-start: 3;
-  grid-column-end: 11;
-  grid-row-start: 2;
-  grid-row-end: 9;
-  border: 1px dashed $color-border-default;
-  border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   align-content: center;
   flex-wrap: wrap;
-  gap: 16px;
+  width: 100%;
+  grid-column-start: 3;
+  grid-column-end: 11;
+  grid-row-start: 2;
+  grid-row-end: 9;
+  border: $border-dashed;
+  border-radius: $radius-small;
+  gap: calc( 2 * $gap-default);
 
   &__text {
-    opacity: 0.6;
+    opacity: $opacity-default;
     display: none;
 
     @include devices(only-desktop) {

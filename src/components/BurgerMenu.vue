@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ImageX from '@/assets/images/modal/x.svg'
+
 import LeftMenu from '@/components/LeftMenu.vue'
 
 defineProps<{
@@ -9,7 +10,6 @@ defineProps<{
 }>()
 
 const emit = defineEmits(['closeBurgerMenu', 'allFiles', 'sortRecentFiles'])
-
 </script>
 
 <template>
@@ -39,7 +39,7 @@ const emit = defineEmits(['closeBurgerMenu', 'allFiles', 'sortRecentFiles'])
 .burger-menu {
   position: relative;
   background: $color-basic;
-  box-shadow: 0px 4px 24px 0px rgba(92, 93, 126, 0.14);
+  box-shadow: $box-shadow-default;
   width: 240px;
   height: 100%;
   z-index: 1;

@@ -36,7 +36,13 @@
     "disconnectAreYouSureText": "Na pewno chcesz się wylogować?",
     "deleteFileTitle": "Usuń plik",
     "deleteAreYouSureText": "Na pewno chcesz trwale usunąć plik z Twojego urządzenia?",
-    "uploadModalTitle": "Nie można załadować tego elementu."
+    "uploadModalTitle": "Nie można załadować tego elementu.",
+    "invalidInput": "Błąd",
+    "downloadFile": "Pobierz plik",
+    "noItemsHere": "Brak plików!",
+    "dragAndDrop": "Przeciągnij plik na te pole jeśli chcesz zacząć przesyłać pliki",
+    "or": "- lub -",
+    "cancel": "Anuluj"
   },
   "notFound": {
     "ops": "Uuups!",

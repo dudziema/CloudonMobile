@@ -32,12 +32,17 @@
     "areYouSureText": "Are you sure? Deleting ",
     "areYouSureTextContinued": "will be permanently removed from your inventory.",
     "selectedFiles": "selected",
-     "disconnectAccount": "Disconnect account",
+    "disconnectAccount": "Disconnect account",
     "disconnectAreYouSureText": "Are you sure you want to proceed?",
     "deleteFileTitle": "Delete file",
     "deleteAreYouSureText": "Are you sure? Deleting a file will permanently remove it from your inventory.",
-    "uploadModalTitle": "This file can't be uploaded"
-
+    "uploadModalTitle": "This file can't be uploaded",
+    "invalidInput": "Invalid input",
+    "downloadFile": "Download file",
+    "noItemsHere": "There are no items here!",
+    "dragAndDrop": "Drag & drop your file here to start uploading",
+    "or": "- or -",
+    "cancel": "Cancel"
   },
   "notFound": {
     "ops": "Ooops!",

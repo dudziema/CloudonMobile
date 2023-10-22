@@ -1,5 +1,5 @@
 enum MessageTypes {
-  LOGING_WITH_CODE = 'web-loging-with-code',
+  LOGGING_WITH_CODE = 'web-loging-with-code',
   FORWARD = 'forward'
 }
 
