@@ -38,6 +38,8 @@
     "deleteAreYouSureText": "Are you sure? Deleting a file will permanently remove it from your inventory.",
     "uploadModalTitle": "This file can't be uploaded",
     "invalidInput": "Invalid input",
+    "areNotRecentFiles": "No files uploaded in the last 30 days were found.",
+    "areNotRecentFilesSubtitle": "You may not have uploaded any files during this period or they might have been deleted.",
     "downloadFile": "Download file",
     "noItemsHere": "There are no items here!",
     "dragAndDrop": "Drag & drop your file here to start uploading",

@@ -24,7 +24,11 @@ const router = useRouter()
 const ctx = useContext()
 const { webSocketService, modalService } = ctx
 
-const files = shallowRef<File[]>([])
+const files = shallowRef<File[]>([]) // All files
+const recentFiles = shallowRef<File[]>([]) //Recent files
+
+const filteredFiles = shallowRef<File[]>([])
+
 const tableHeaders = shallowRef([
   { id: 0, label: 'image', field: '', sortable: false },
   { id: 1, label: 'name', field: t('dashboard.fileName'), sortable: true },
@@ -98,7 +102,7 @@ async function refreshFilesList() {
 }
 
 const selectedFiles = ref<File[]>([])
-const quantityItemsSelected = computed(()=>selectedFiles.value.length)
+const quantityItemsSelected = computed(()=> selectedFiles.value.length)
 const quantityFileName = computed(() => quantityItemsSelected.value > 1 ?
   t('dashboard.files') : t('dashboard.file'))
 const clearItems = ref(false)
@@ -143,8 +147,14 @@ function closeWidget() {
 watch(quantityItemsSelected, newValue => {
   if(!newValue) closeWidgetClicked.value = false
 })
-const filteredFiles = shallowRef<File[]>([])
-const title = ref<string>(t('dashboard.allFiles'))
+
+const title = computed(()=>
+  isRecentFilesBtnActive.value
+    ? t('dashboard.recentFiles')
+    : isDuringSearch.value
+      ? t('dashboard.searchResult')
+      : t('dashboard.allFiles')
+)
 
 const listOfCategoriesSelected = ref<string[]>([])
 
@@ -156,25 +166,28 @@ function getChipsSelected(categories: Chips[]) {
   }
 }
 
+const isDuringSearch = ref(false)
+const baseFiles = computed(() => isRecentFilesBtnActive.value ? recentFiles.value : files.value)
+
 function searchByTextAndCategory(searchText: string) {
-  title.value = t('dashboard.searchResult')
+  isDuringSearch.value = true
 
   if(searchText) {
     if(listOfCategoriesSelected.value.length) {
-      const filteredValues = files.value.filter((file: File) =>
+      const filteredValues = baseFiles.value.filter((file: File) =>
         listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
       filteredFiles.value = filteredValues.filter((file: File) =>
         file.name.toLowerCase().includes(searchText.toLowerCase()))
     } else {
-      filteredFiles.value = files.value.filter((file: File) =>
+      filteredFiles.value = baseFiles.value.filter((file: File) =>
         file.name.toLowerCase().includes(searchText.toLowerCase()))
     }
   } else {
     if(listOfCategoriesSelected.value.length) {
-      filteredFiles.value = files.value.filter((file: File) =>
+      filteredFiles.value = baseFiles.value.filter((file: File) =>
         listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
     } else {
-      filteredFiles.value = files.value
+      filteredFiles.value = baseFiles.value
     }
   }
 }
@@ -188,8 +201,8 @@ function findFile(searchText: string, categories: Chips[]) {
 }
 
 function clearSearch() {
-  filteredFiles.value = files.value
-  title.value = t('dashboard.allFiles')
+  filteredFiles.value = baseFiles.value
+  isDuringSearch.value = false
 }
 
 const ASC = 'asc'
@@ -238,9 +251,20 @@ const isRecentFilesBtnActive = ref(false)
 function sortRecentFiles() {
   isRecentFilesBtnActive.value = true
   isAllFilesBtnActive.value = false
-  sortDirections.value.time = DSC
-  sortByEpochDate()
+  filterDataByRecentFiles()
   isBurgerMenuOpen.value = false
+}
+
+const SECONDS_PER_DAY = 86400
+const DAYS_IN_MONTH = 30
+
+function filterDataByRecentFiles() {
+  const currentTimestampInSeconds = Math.floor(Date.now() / 1000)
+  const monthAgoTimestamp = currentTimestampInSeconds - SECONDS_PER_DAY * DAYS_IN_MONTH
+
+  recentFiles.value = files.value.filter(file => file.date_epoch > monthAgoTimestamp)
+
+  filteredFiles.value =  recentFiles.value
 }
 
 function allFiles() {
@@ -353,6 +377,15 @@ function onDrop(ev: DragEvent) {
         {{ $t("dashboard.filesNotFound") }}
       </div>
 
+      <div
+        v-else-if="!filteredFiles.length && isRecentFilesBtnActive"
+        class="dashboard-files__files dashboard-files__files--recent"
+      >
+        {{ $t("dashboard.areNotRecentFiles") }}
+        <br />
+        {{ $t("dashboard.areNotRecentFilesSubtitle") }}
+      </div>
+
       <NoFilesSpace
         v-else-if="!files.length"
         class="dashboard-files__files"
@@ -453,6 +486,10 @@ function onDrop(ev: DragEvent) {
     }
 
     &--search {
+      font-weight: $font-weight-thin;
+    }
+
+    &--recent {
       font-weight: $font-weight-thin;
     }
     
