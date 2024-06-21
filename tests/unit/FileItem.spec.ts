@@ -1,7 +1,7 @@
 import { shallowMount, VueWrapper } from '@vue/test-utils'
 import { createContext } from '@/composables/context'
 import FileItem from '@/components/ui/FileItem.vue'
-import File from '@/types/File'
+
 const { context } = createContext()
 
 describe('FileItem', () => {

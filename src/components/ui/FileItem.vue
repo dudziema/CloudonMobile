@@ -12,7 +12,7 @@ import { useContext } from '@/composables/context'
 
 import { iconForExtensionDictionary } from '@/utils/extensionsDictionary'
 
-import File from '@/types/File'
+import { File } from '@/types/File'
 
 const ZERO = 0
 const ONE_SECOND = 1000
@@ -346,14 +346,13 @@ const icon = ref(iconForExtensionDictionary(t))
 input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  opacity: $opacity-small;
-  border: $border-primary;
+  border: $border-dark !important;
   border-radius: calc($radius-small / 2);
   margin: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
 }
 
 input[type="checkbox"]:checked {
-  opacity: $opacity-none;
+  border: $color-border-default;
 }
 
 @include devices(tablet) {

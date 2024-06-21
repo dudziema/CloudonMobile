@@ -5,7 +5,7 @@ import ButtonSort from '@/assets/images/buttons/ButtonSort.svg'
 
 import FileItem from '@/components/ui/FileItem.vue'
 
-import File from '@/types/File'
+import type { File } from '@/types/File'
 
 const props = defineProps<{
   files: File[]
@@ -140,14 +140,14 @@ function sortClass(headerLabel: string): string {
     input[type="checkbox"] {
       width: 16px;
       height: 16px;
-      opacity: $opacity-small !important;
-      border: $border-primary;
+
+      border: $border-default;
       border-radius: calc($radius-small / 2);
       margin: calc($spacing-horizontal-small + ($spacing-horizontal-small / 2));
     }
 
     input[type="checkbox"]:checked {
-      opacity: $opacity-none !important;
+      border: $border-primary !important;
     }
 
     &-button {
@@ -169,6 +169,7 @@ function sortClass(headerLabel: string): string {
     &-name {
       text-overflow: ellipsis;
       flex: 1;
+      cursor: pointer;
 
       @include devices(mobile) {
         width: $widthColumnNameMobile;
@@ -200,6 +201,10 @@ function sortClass(headerLabel: string): string {
       @include devices(tablet-min) {
         display: none;
       }
+    }
+
+    &-time {
+      cursor: pointer;
     }
   }
 

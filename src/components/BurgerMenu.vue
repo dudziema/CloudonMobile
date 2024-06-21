@@ -42,7 +42,7 @@ const emit = defineEmits(['closeBurgerMenu', 'allFiles', 'sortRecentFiles'])
   box-shadow: $box-shadow-default;
   width: 240px;
   height: 100%;
-  z-index: 1;
+  z-index: 3;
 
   &__close {
     position: absolute;

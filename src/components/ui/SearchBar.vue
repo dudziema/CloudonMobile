@@ -95,7 +95,7 @@ function clearChipsSelection() {
 
     &-field {
     width: 100%;
-    border: $border-none;
+    border: $border-default;
     border-radius: $radius-small;
     padding: $spacing-vertical-small calc(4 * $spacing-horizontal-default);
     margin-bottom: calc($spacing-vertical-small + ($spacing-vertical-small / 2));
@@ -137,6 +137,10 @@ function clearChipsSelection() {
     flex-direction: row;
     overflow: auto;
     padding-bottom: calc($spacing-vertical-small + ($spacing-vertical-small / 2));
+    
+    @include devices(tablet) {
+      margin-left: -48px;
+    }
   }
 }
 

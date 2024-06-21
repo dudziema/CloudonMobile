@@ -1,6 +1,6 @@
 import MessageCommands from '@/types/MessageCommands'
 import MessageTypes from './MessageTypes'
-import File from '@/types/File'
+import { File } from '@/types/File'
 interface MessageSent {
   type: MessageTypes
   code?: number

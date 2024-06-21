@@ -1,4 +1,4 @@
-interface File {
+export interface File {
   type?: string
   name: string
   filename: string
@@ -9,5 +9,3 @@ interface File {
   filepath?: string
   path?: string
 }
-
-export default File

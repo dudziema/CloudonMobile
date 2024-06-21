@@ -12,8 +12,8 @@ import NoFilesSpace from '@/components/NoFilesSpace.vue'
 import TheWidget from '@/components/TheWidget.vue'
 import SearchBar from '@/components/ui/SearchBar.vue'
 
-import Chips from '@/types/Chips'
-import File from '@/types/File'
+import useSearchAndFilter from '@/composables/searchAndFilter'
+
 import Message from '@/types/Message'
 
 import { useContext } from '@/composables/context'
@@ -24,10 +24,10 @@ const router = useRouter()
 const ctx = useContext()
 const { webSocketService, modalService } = ctx
 
-const files = shallowRef<File[]>([]) // All files
-const recentFiles = shallowRef<File[]>([]) //Recent files
+const {turnOnRecentFiles, baseFiles,turnOnAllFiles, allFiles, findFile, filteredAndSortedFiles, sortDirections, sortTable, clearSearch, filteredFiles, isDuringSearch, searchText, searchByTextAndCategory, mainFilters } = useSearchAndFilter()
 
-const filteredFiles = shallowRef<File[]>([])
+const isAllFilesBtnActive =  computed(()=> mainFilters.value.isAllFiles)
+const isRecentFilesBtnActive = computed(()=> mainFilters.value.isRecentFiles)
 
 const tableHeaders = shallowRef([
   { id: 0, label: 'image', field: '', sortable: false },
@@ -95,10 +95,11 @@ onMounted(() => {
 })
 
 async function refreshFilesList() {
-  await webSocketService.wsListFiles((listFiles: File[]) => {
-    files.value = listFiles
-    filteredFiles.value = files.value
+  if(!isDuringSearch.value)await webSocketService.wsListFiles((listFiles: File[]) => {
+    allFiles.value = listFiles
+    filteredFiles.value = allFiles.value
   })
+  if(isDuringSearch.value)searchByTextAndCategory()
 }
 
 const selectedFiles = ref<File[]>([])
@@ -150,129 +151,11 @@ watch(quantityItemsSelected, newValue => {
 
 const title = computed(()=>
   isRecentFilesBtnActive.value
-    ? t('dashboard.recentFiles')
+    ? t('dashboard.recentFilesDetails')
     : isDuringSearch.value
       ? t('dashboard.searchResult')
       : t('dashboard.allFiles')
 )
-
-const listOfCategoriesSelected = ref<string[]>([])
-
-function getChipsSelected(categories: Chips[]) {
-  if(categories !== undefined){
-    listOfCategoriesSelected.value = categories
-      .filter((chips: Chips) => chips.isClicked === true)
-      .map((chips: Chips) => chips.chipsName)
-  }
-}
-
-const isDuringSearch = ref(false)
-const baseFiles = computed(() => isRecentFilesBtnActive.value ? recentFiles.value : files.value)
-
-function searchByTextAndCategory(searchText: string) {
-  isDuringSearch.value = true
-
-  if(searchText) {
-    if(listOfCategoriesSelected.value.length) {
-      const filteredValues = baseFiles.value.filter((file: File) =>
-        listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
-      filteredFiles.value = filteredValues.filter((file: File) =>
-        file.name.toLowerCase().includes(searchText.toLowerCase()))
-    } else {
-      filteredFiles.value = baseFiles.value.filter((file: File) =>
-        file.name.toLowerCase().includes(searchText.toLowerCase()))
-    }
-  } else {
-    if(listOfCategoriesSelected.value.length) {
-      filteredFiles.value = baseFiles.value.filter((file: File) =>
-        listOfCategoriesSelected.value.some((category: string) => file.type?.includes(category)))
-    } else {
-      filteredFiles.value = baseFiles.value
-    }
-  }
-}
-
-function findFile(searchText: string, categories: Chips[]) {
-  getChipsSelected(categories)
-
-  if(!listOfCategoriesSelected.value.length  && !searchText) return  clearSearch()
-
-  searchByTextAndCategory(searchText)
-}
-
-function clearSearch() {
-  filteredFiles.value = baseFiles.value
-  isDuringSearch.value = false
-}
-
-const ASC = 'asc'
-const DSC = 'dsc'
-const sortDirections = ref<{ [key: string]: string }>({'name': ASC, 'time': ASC })
-
-function sortName() {
-  sortDirections.value.name = sortDirections.value.name  === ASC ? DSC : ASC
-
-  filteredFiles.value.sort((a: File, b: File) => {
-    const nameA = a.name.toUpperCase()
-    const nameB = b.name.toUpperCase()
-
-    if (sortDirections.value.name === ASC) {
-      return nameA.localeCompare(nameB )
-    } else {
-      return nameB.localeCompare(nameA)
-    }
-  })
-}
-
-function sortByEpochDate() {
-  sortDirections.value.time = sortDirections.value.time  === ASC ? DSC : ASC
-  
-  filteredFiles.value.sort((a: File, b: File) => {
-    if(!a.date_epoch && !b.date_epoch) return 0
-    const dateA = a.date_epoch
-    const dateB = b.date_epoch
-
-    if (sortDirections.value.time === ASC) {
-      return dateA - dateB
-    } else {
-      return dateB - dateA
-    }
-  })
-}
-
-function sortTable(headerName: string) {
-  if (headerName === 'name') sortName()
-  if (headerName === 'time') sortByEpochDate()
-}
-
-const isAllFilesBtnActive = ref(true)
-const isRecentFilesBtnActive = ref(false)
-
-function sortRecentFiles() {
-  isRecentFilesBtnActive.value = true
-  isAllFilesBtnActive.value = false
-  filterDataByRecentFiles()
-  isBurgerMenuOpen.value = false
-}
-
-const SECONDS_PER_DAY = 86400
-const DAYS_IN_MONTH = 30
-
-function filterDataByRecentFiles() {
-  const currentTimestampInSeconds = Math.floor(Date.now() / 1000)
-  const monthAgoTimestamp = currentTimestampInSeconds - SECONDS_PER_DAY * DAYS_IN_MONTH
-
-  recentFiles.value = files.value.filter(file => file.date_epoch > monthAgoTimestamp)
-
-  filteredFiles.value =  recentFiles.value
-}
-
-function allFiles() {
-  isRecentFilesBtnActive.value = false
-  isAllFilesBtnActive.value = true
-  refreshFilesList()
-  isBurgerMenuOpen.value = false
-}
 
 function butonFileUploadClicked() {
   isBurgerMenuOpen.value = false
@@ -310,8 +193,8 @@ function onDrop(ev: DragEvent) {
       <LeftMenu
         :is-all-files-btn-active="isAllFilesBtnActive"
         :is-recent-files-btn-active="isRecentFilesBtnActive"
-        @all-files="allFiles"
-        @sort-recent-files="sortRecentFiles"
+        @all-files="turnOnAllFiles"
+        @sort-recent-files="turnOnRecentFiles"
         @buton-file-upload-clicked="butonFileUploadClicked"
       />
     </div>
@@ -321,8 +204,8 @@ function onDrop(ev: DragEvent) {
       :is-all-files-btn-active="isAllFilesBtnActive"
       :is-recent-files-btn-active="isRecentFilesBtnActive"
       :is-burger-menu-open="isBurgerMenuOpen"
-      @all-files="allFiles"
-      @sort-recent-files="sortRecentFiles"
+      @all-files="turnOnAllFiles"
+      @sort-recent-files="turnOnRecentFiles"
       @close-burger-menu="isBurgerMenuOpen = false"
     />
     <div class="dashboard-files__main">
@@ -344,7 +227,7 @@ function onDrop(ev: DragEvent) {
       </h1>
 
       <div
-        v-if="filteredFiles.length"
+        v-if="filteredAndSortedFiles.length"
         class="dashboard-files__files dashboard-files__files--full"
         @dragover.prevent
         @dragenter.prevent
@@ -352,7 +235,7 @@ function onDrop(ev: DragEvent) {
         @drop.prevent="onDrop"
       >
         <FileTable
-          :files="filteredFiles"
+          :files="filteredAndSortedFiles"
           :table-headers="tableHeaders"
           :clear-items="clearItems"
           :close-widget-clicked="closeWidgetClicked"
@@ -371,14 +254,14 @@ function onDrop(ev: DragEvent) {
       </div>
 
       <div
-        v-else-if="!filteredFiles.length && title === t('dashboard.searchResult')"
+        v-else-if="!filteredAndSortedFiles.length && isDuringSearch && !isRecentFilesBtnActive"
         class="dashboard-files__files dashboard-files__files--search"
       >
         {{ $t("dashboard.filesNotFound") }}
       </div>
 
       <div
-        v-else-if="!filteredFiles.length && isRecentFilesBtnActive"
+        v-else-if="!filteredAndSortedFiles.length && isDuringSearch && isRecentFilesBtnActive"
         class="dashboard-files__files dashboard-files__files--recent"
       >
         {{ $t("dashboard.areNotRecentFiles") }}
@@ -387,7 +270,7 @@ function onDrop(ev: DragEvent) {
       </div>
 
       <NoFilesSpace
-        v-else-if="!files.length"
+        v-else-if="!baseFiles.length"
         class="dashboard-files__files"
       />
     </div>
@@ -491,6 +374,10 @@ function onDrop(ev: DragEvent) {
 
     &--recent {
       font-weight: $font-weight-thin;
+
+      @include devices(tablet) {
+        font-size: $font-size-small;
+      }
     }
     
     &-content {

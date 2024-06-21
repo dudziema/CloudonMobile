@@ -5,7 +5,7 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 
 import { useContext } from '@/composables/context'
 
-import File from '@/types/File'
+import { File } from '@/types/File'
 import Theme from '@/types/Theme'
 
 interface Props {

@@ -1,7 +1,7 @@
 import { shallowMount, VueWrapper } from '@vue/test-utils'
 import FileTable from '@/components/FileTable.vue'
 import FileItem from '@/components/ui/FileItem.vue'
-import File from '@/types/File'
+import type { File } from '@/types/File'
 
 describe('FileTable', () => {
   let wrapper: VueWrapper<any>

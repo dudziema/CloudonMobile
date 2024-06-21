@@ -1,5 +1,5 @@
 import ContentType from '@/types/ContentType'
-import File from '@/types/File'
+import type { File } from '@/types/File'
 import MessageCommands from '@/types/MessageCommands'
 import MessageDownload from '@/types/message-received/MessageDownload'
 import MessageListFiles from '@/types/message-received/MessageListFiles'
