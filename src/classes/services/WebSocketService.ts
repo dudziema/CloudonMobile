@@ -1,17 +1,18 @@
-import ContentType from '@/types/ContentType'
-import type { File } from '@/types/File'
-import MessageCommands from '@/types/MessageCommands'
-import MessageDownload from '@/types/message-received/MessageDownload'
-import MessageListFiles from '@/types/message-received/MessageListFiles'
-import MessageReceived from '@/types/message-received/MessageReceived'
-import MessageSent from '@/types/MessageSent'
-import MessageTypes from '@/types/MessageTypes'
+import { Buffer } from 'buffer'
+import i18n from '@/i18n'
 
 import { extensionsDictionary } from '@/utils/extensionsDictionary'
 import base64ToArrayBuffer from '@/utils/helpers/base64ToArrayBuffer'
 
-import { Buffer } from 'buffer'
-import i18n from '@/i18n'
+import ContentType from '@/types/ContentType'
+import MessageCommands from '@/types/MessageCommands'
+import MessageSent from '@/types/MessageSent'
+import MessageTypes from '@/types/MessageTypes'
+
+import type { File } from '@/types/File'
+import type { MessageDownload } from '@/types/message-received/MessageDownload'
+import type { MessageListFiles } from '@/types/message-received/MessageListFiles'
+import type { MessageReceived } from '@/types/message-received/MessageReceived'
 
 const extensionsDict = extensionsDictionary(i18n.global.t)
 const defaultExtensionName = i18n.global.t('dashboard.files')

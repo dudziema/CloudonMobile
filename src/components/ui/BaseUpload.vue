@@ -8,11 +8,12 @@ import { useContext } from '@/composables/context'
 import { File } from '@/types/File'
 import Theme from '@/types/Theme'
 
-interface Props {
-  label: string
-}
-
-const { label } = defineProps<Props>()
+defineProps({
+  label: {
+    type: String,
+    required: true
+  }
+})
 
 const KB = 1024
 const MB = 1024 * KB

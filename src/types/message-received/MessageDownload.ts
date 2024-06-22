@@ -1,8 +1,6 @@
-import { File } from '@/types/File'
-import MessageReceived from './MessageReceived'
+import type { File } from '@/types/File'
+import type { MessageReceived } from './MessageReceived'
 
-interface MessageDownload extends MessageReceived {
+export interface MessageDownload extends MessageReceived {
   payload: File
 }
-
-export default MessageDownload

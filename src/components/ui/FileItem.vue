@@ -14,15 +14,28 @@ import { iconForExtensionDictionary } from '@/utils/extensionsDictionary'
 
 import { File } from '@/types/File'
 
+const props = defineProps({
+  file: {
+    type: Object as () => File,
+    required: true
+  },
+  allItemsButtonSelected: {
+    type: Boolean,
+    default: false
+  },
+  closeWidgetClicked: {
+    type: Boolean,
+    default: false
+  },
+  clearItems: {
+    type: Boolean,
+    default: false
+  }
+
+})
+
 const ZERO = 0
 const ONE_SECOND = 1000
-
-const props = defineProps<{
-  file: File,
-  allItemsButtonSelected: boolean,
-  closeWidgetClicked:boolean,
-  clearItems: boolean,
-}>()
 
 const ctx = useContext()
 const { modalService, webSocketService } = ctx
@@ -109,9 +122,12 @@ const icon = ref(iconForExtensionDictionary(t))
       class="file-item-field file-item-field__image"
       data-testid="file-icon"
     >
-      <component
-        :is="icon[file.type]"
-      />
+      <template v-if="file.type">
+        <component
+        
+          :is="icon[file.type]"
+        />
+      </template>
     </td>
 
     <td

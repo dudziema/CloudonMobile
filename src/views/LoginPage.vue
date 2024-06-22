@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue'
-import { Router, useRouter } from 'vue-router'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 import ButtonAppstore from '@/assets/images/buttons/ButtonAppstore.svg'
 import ButtonGoogle from '@/assets/images/buttons/ButtonGoogle.svg'
@@ -11,13 +11,17 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import { useContext } from '@/composables/context'
 
 import Theme from '@/types/Theme'
-import MessageLogin from '@/types/message-received/MessageLogin'
+
+import type { MessageLogin } from '@/types/message-received/MessageLogin'
 
 const PASSCODE_INPUTS = ref<{ id: number, value: string }[]> ([])
 const IS_INPUT = 1
+
 const ctx = useContext()
 const { webSocketService , modalService} = ctx
-const router: Router = useRouter()
+
+const router = useRouter()
+
 const isPasscodeCorrect = ref<boolean>(true)
 const passcode = ref<number | null>(null)
 

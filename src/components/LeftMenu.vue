@@ -18,10 +18,17 @@ import { useContext } from '@/composables/context'
 
 const { t } = useI18n()
 
-defineProps<{
-  isAllFilesBtnActive: boolean,
-  isRecentFilesBtnActive: boolean,
-}>()
+defineProps({
+  isAllFilesBtnActive: {
+    type: Boolean,
+    required: true
+  },
+  isRecentFilesBtnActive: {
+    type: Boolean,
+    required: true
+  }
+
+})
 
 const emit = defineEmits(['allFiles', 'sortRecentFiles', 'butonFileUploadClicked'])
 

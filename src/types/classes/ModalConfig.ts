@@ -1,4 +1,4 @@
-interface ModalConfig {
+export interface ModalConfig {
   title: string,
   description: string,
   buttonAction: {
@@ -6,5 +6,3 @@ interface ModalConfig {
     callback: () => void,
   }
 }
-
-export default ModalConfig

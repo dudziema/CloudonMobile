@@ -3,11 +3,21 @@ import ImageX from '@/assets/images/modal/x.svg'
 
 import LeftMenu from '@/components/LeftMenu.vue'
 
-defineProps<{
-  isBurgerMenuOpen: boolean,
-  isAllFilesBtnActive: boolean,
-  isRecentFilesBtnActive: boolean
-}>()
+defineProps({
+  isBurgerMenuOpen: {
+    type: Boolean,
+    required: true
+  },
+  isAllFilesBtnActive: {
+    type: Boolean,
+    required: true
+  },
+  isRecentFilesBtnActive: {
+    type: Boolean,
+    required: true
+  }
+
+})
 
 const emit = defineEmits(['closeBurgerMenu', 'allFiles', 'sortRecentFiles'])
 </script>

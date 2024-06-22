@@ -6,14 +6,31 @@ import ButtonSort from '@/assets/images/buttons/ButtonSort.svg'
 import FileItem from '@/components/ui/FileItem.vue'
 
 import type { File } from '@/types/File'
+import type { SortDirections } from '@/types/search-and-filter/SortDirections'
 
-const props = defineProps<{
-  files: File[]
-  tableHeaders: { id: number, label: string; field: string, sortable: boolean }[],
-  clearItems: boolean,
-  closeWidgetClicked: boolean,
-  sortDirections: { [key: string]: string }
-}>()
+const props = defineProps({
+  files: {
+    type: Array as () => File[],
+    required: true
+  },
+  tableHeaders: {
+    type: Array as () => { id: number, label: string; field: string, sortable: boolean }[],
+    required: true
+  },
+  clearItems: {
+    type: Boolean,
+    required: true
+  },
+  closeWidgetClicked: {
+    type: Boolean,
+    required: true
+  },
+  sortDirections: {
+    type: Object as () => SortDirections,
+    required: true
+  }
+
+})
 
 const itemsSelected = ref<File[]> ([])
 

@@ -4,14 +4,19 @@ import { useI18n } from 'vue-i18n'
 
 import { iconForExtensionDictionary } from '@/utils/extensionsDictionary'
 
-import Chips from '@/types/Chips'
+import type { Chips } from '@/types/Chips'
 
-defineProps<{
-  chipsList:Chips[]
-}>()
+defineProps({
+  chipsList: {
+    type: Array as () => Chips[],
+    required: true
+  }
+})
 
 const { t } = useI18n()
+
 const icons = ref(iconForExtensionDictionary(t))
+
 const emit = defineEmits<{
   (e: 'selectChipsClicked', chipsName: string): void
 }>()

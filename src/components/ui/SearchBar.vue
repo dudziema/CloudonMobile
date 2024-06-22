@@ -7,7 +7,7 @@ import ImageX from '@/assets/images/modal/x.svg'
 
 import BaseChips from '@/components/ui/BaseChips.vue'
 
-import Chips from '@/types/Chips'
+import type { Chips } from '@/types/Chips'
 
 const { t } = useI18n()
 const searchInput: Ref<string> = ref('')

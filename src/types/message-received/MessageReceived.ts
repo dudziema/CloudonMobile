@@ -1,9 +1,8 @@
 import MessageCommands from '@/types/MessageCommands'
 import MessageTypes from '@/types/MessageTypes'
 
-interface MessageReceived {
+export interface MessageReceived {
   type: MessageTypes
   command: MessageCommands
+  result?: number
 }
-
-export default MessageReceived

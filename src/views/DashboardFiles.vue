@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { shallowRef, onMounted, ref, computed, watch } from 'vue'
+import { computed, onMounted, ref,shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-
-import ButtonMenu from '@/assets/images/buttons/ButtonMenu.svg'
 
 import BurgerMenu from '@/components/BurgerMenu.vue'
 import FileTable from '@/components/FileTable.vue'
@@ -12,22 +10,59 @@ import NoFilesSpace from '@/components/NoFilesSpace.vue'
 import TheWidget from '@/components/TheWidget.vue'
 import SearchBar from '@/components/ui/SearchBar.vue'
 
-import useSearchAndFilter from '@/composables/searchAndFilter'
-
-import Message from '@/types/Message'
-
 import { useContext } from '@/composables/context'
+import { useDragAndDrop } from '@/composables/useDragAndDrop'
+import { useFilesActions } from '@/composables/useFilesActions'
+import { useSearchAndFilter } from '@/composables/useSearchAndFilter'
+
+import ButtonMenu from '@/assets/images/buttons/ButtonMenu.svg'
+
+import type { File } from '@/types/File'
+import type { MessageReceived } from '@/types/message-received/MessageReceived'
 
 const { t } = useI18n()
+
 const route = useRoute()
 const router = useRouter()
+
 const ctx = useContext()
 const { webSocketService, modalService } = ctx
 
-const {turnOnRecentFiles, baseFiles,turnOnAllFiles, allFiles, findFile, filteredAndSortedFiles, sortDirections, sortTable, clearSearch, filteredFiles, isDuringSearch, searchText, searchByTextAndCategory, mainFilters } = useSearchAndFilter()
+const { ifErrorShowModal,onDrop } = useDragAndDrop()
 
-const isAllFilesBtnActive =  computed(()=> mainFilters.value.isAllFiles)
-const isRecentFilesBtnActive = computed(()=> mainFilters.value.isRecentFiles)
+const {
+  clearItems,
+  closeWidgetClicked,
+  quantityItemsSelected,
+  closeWidget,
+  deleteFiles,
+  downloadFiles,
+  itemsSelected
+} = useFilesActions()
+
+const {
+  allFiles,
+  baseFiles,
+  isDuringSearch,
+  filteredFiles,
+  mainFilters,
+  sortDirections,
+  clearSearch,
+  findFile,
+  sortTable,
+  turnOnAllFiles,
+  turnOnRecentFiles
+} = useSearchAndFilter()
+
+onMounted(() => {
+  if(!isCodeValid.value) {
+    handleInvalidCode()
+  } else if(!webSocketService.isConnectedValue){
+    handleServerConnection()
+  } else {
+    handleRefreshList()
+  }
+})
 
 const tableHeaders = shallowRef([
   { id: 0, label: 'image', field: '', sortable: false },
@@ -39,10 +74,29 @@ const tableHeaders = shallowRef([
   { id: 6, label: 'button-more', field: '', sortable: false }
 ])
 
-const ifErrorShowModal = () => {
+const isAllFilesBtnActive =  computed(()=> mainFilters.value.isAllFiles)
+const isRecentFilesBtnActive = computed(()=> mainFilters.value.isRecentFiles)
+
+const title = computed(()=>
+  isDuringSearch.value
+    ? t('dashboard.searchResult')
+    : isRecentFilesBtnActive.value
+      ? t('dashboard.recentFilesDetails')
+      : t('dashboard.allFiles'))
+
+const isBurgerMenuOpen = ref(false)
+
+function butonFileUploadClicked() {
+  isBurgerMenuOpen.value = false
+}
+const isPasscodeCorrect = ref<boolean | null>(null)
+const regexPattern = /^\d{6}$/
+const isCodeValid = computed(() => regexPattern.test(route.params.passcode as string))
+
+const handleInvalidCode = () => {
   modalService.open({
-    title: t('dashboard.errorModalTitle'),
-    description: t('dashboard.errorModalDescription'),
+    title: t('dashboard.errorPasscodeTitle'),
+    description: t('dashboard.errorPasscodeDescription'),
     buttonAction: {
       text: t('dashboard.close'),
       callback: () => {
@@ -54,137 +108,32 @@ const ifErrorShowModal = () => {
   })
 }
 
-const isPasscodeCorrect = ref<boolean | null>(null)
-const regexPattern = /^\d{6}$/
-const isCodeValid = computed(() => regexPattern.test(route.params.passcode as string))
+const handleServerConnection = () => {
+  webSocketService.addWsOnMessageListener(function (messageFromServer: MessageReceived) {
+    if(messageFromServer?.result) {
+      // Wrong passcode
+      isPasscodeCorrect.value = false
+    } else if(!messageFromServer?.result) {
+      // Correct passcode
+      isPasscodeCorrect.value = true
+      handleRefreshList()
+    }
+  })
+  const passcode = parseInt(route.params.passcode as string)
+  webSocketService.login(passcode, ifErrorShowModal)
+}
 
-onMounted(() => {
-  if(!isCodeValid.value) {
-    modalService.open({
-      title: t('dashboard.errorPasscodeTitle'),
-      description: t('dashboard.errorPasscodeDescription'),
-      buttonAction: {
-        text: t('dashboard.close'),
-        callback: () => {
-          modalService.close()
-          router.push('/')
-        }
-      },
-      isCancel: false
-    })
+const handleRefreshList = async () => {
+  if(isDuringSearch.value) return
 
-    return
-  }
-
-  if(!webSocketService.isConnectedValue){
-    webSocketService.addWsOnMessageListener(function (messageFromServer: Message) {
-      if(messageFromServer.result) {
-        // Wrong passcode
-        isPasscodeCorrect.value = false
-      } else if(!messageFromServer.result) {
-        // Correct passcode
-        isPasscodeCorrect.value = true
-        refreshFilesList()
-      }
-    })
-    const passcode = parseInt(route.params.passcode as string)
-    webSocketService.login(passcode, ifErrorShowModal)
-  } else {
-    refreshFilesList()
-  }
-})
-
-async function refreshFilesList() {
-  if(!isDuringSearch.value)await webSocketService.wsListFiles((listFiles: File[]) => {
+  await webSocketService.wsListFiles((listFiles: File[]) => {
     allFiles.value = listFiles
-    filteredFiles.value = allFiles.value
   })
-  if(isDuringSearch.value)searchByTextAndCategory()
-}
-
-const selectedFiles = ref<File[]>([])
-const quantityItemsSelected = computed(()=> selectedFiles.value.length)
-const quantityFileName = computed(() => quantityItemsSelected.value > 1 ?
-  t('dashboard.files') : t('dashboard.file'))
-const clearItems = ref(false)
-
-function itemsSelected(itemsSelected: File[]) {
-  selectedFiles.value = itemsSelected
-}
-
-function downloadFiles() {
-  clearItems.value = true
-  selectedFiles.value.forEach(file => {
-    webSocketService.downloadFile(file.name)
-  })
-  clearItems.value = false
-  closeWidgetClicked.value = true
-}
-
-function deleteFiles() {
-  modalService.open({
-    title: `${t('dashboard.delete')} ${ quantityItemsSelected.value } ${ quantityFileName.value }`,
-    description: `${t('dashboard.areYouSureText')} ${ quantityItemsSelected.value } ${ quantityFileName.value } ${t('dashboard.areYouSureTextContinued')}`,
-    buttonAction: {
-      text: t('dashboard.delete'),
-      callback: () => {
-        selectedFiles.value.forEach(file => {
-          webSocketService.deleteFile(file.name)
-        })
-        clearItems.value = false
-        closeWidgetClicked.value = true
-        modalService.close()
-      },
-    },
-  })
-}
-
-const closeWidgetClicked = ref(false)
-
-function closeWidget() {
-  closeWidgetClicked.value = true
 }
 
 watch(quantityItemsSelected, newValue => {
   if(!newValue) closeWidgetClicked.value = false
 })
-
-const title = computed(()=>
-  isRecentFilesBtnActive.value
-    ? t('dashboard.recentFilesDetails')
-    : isDuringSearch.value
-      ? t('dashboard.searchResult')
-      : t('dashboard.allFiles')
-)
-
-function butonFileUploadClicked() {
-  isBurgerMenuOpen.value = false
-}
-
-const isBurgerMenuOpen = ref(false)
-
-function onDrop(ev: DragEvent) {
-  if(!ev?.dataTransfer?.items) return ifErrorShowModal()
-    
-  for (const item of ev.dataTransfer.items) {
-    if (item.kind === 'file') {
-      const file = item.getAsFile()
-      webSocketService.sendFile(file)
-    }else {
-      modalService.open({
-        title: t('dashboard.uploadModalTitle'),
-        description: '',
-        buttonAction: {
-          text: t('dashboard.close'),
-          callback: () => {
-            modalService.close()
-          }
-        },
-        isCancel: false
-      })
-    }
-  }
-}
 </script>
 
 <template>
@@ -227,7 +176,7 @@ function onDrop(ev: DragEvent) {
       </h1>
 
       <div
-        v-if="filteredAndSortedFiles.length"
+        v-if="filteredFiles.length"
         class="dashboard-files__files dashboard-files__files--full"
         @dragover.prevent
         @dragenter.prevent
@@ -235,7 +184,7 @@ function onDrop(ev: DragEvent) {
         @drop.prevent="onDrop"
       >
         <FileTable
-          :files="filteredAndSortedFiles"
+          :files="filteredFiles"
           :table-headers="tableHeaders"
           :clear-items="clearItems"
           :close-widget-clicked="closeWidgetClicked"
@@ -254,14 +203,14 @@ function onDrop(ev: DragEvent) {
       </div>
 
       <div
-        v-else-if="!filteredAndSortedFiles.length && isDuringSearch && !isRecentFilesBtnActive"
+        v-else-if="!filteredFiles.length && isDuringSearch && !isRecentFilesBtnActive"
         class="dashboard-files__files dashboard-files__files--search"
       >
         {{ $t("dashboard.filesNotFound") }}
       </div>
 
       <div
-        v-else-if="!filteredAndSortedFiles.length && isDuringSearch && isRecentFilesBtnActive"
+        v-else-if="!filteredFiles.length && isDuringSearch && isRecentFilesBtnActive"
         class="dashboard-files__files dashboard-files__files--recent"
       >
         {{ $t("dashboard.areNotRecentFiles") }}

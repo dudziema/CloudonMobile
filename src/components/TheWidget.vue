@@ -8,19 +8,20 @@ import ImageDownload from '@/assets/images/modal/ImageDownload.svg'
 import ImageX from '@/assets/images/modal/x.svg'
 import Theme from '@/types/Theme'
 
-interface Props {
-  quantityItemsSelected: number
-}
-
-const { quantityItemsSelected } = defineProps<Props>()
+const props = defineProps({
+  quantityItemsSelected: {
+    type: Number,
+    required: true
+  }
+})
 
 const emit = defineEmits(['download', 'delete', 'closeWidget'])
 
 const { t } = useI18n()
 
 const widgetText = computed(()=> {
-  return quantityItemsSelected > 4 ? t('dashboard.filesMoreThan10')
-    : quantityItemsSelected > 1 ? t('dashboard.files')
+  return props.quantityItemsSelected > 4 ? t('dashboard.filesMoreThan10')
+    : props.quantityItemsSelected > 1 ? t('dashboard.files')
       : t('dashboard.file')
 })
 </script>
