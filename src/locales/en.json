@@ -5,6 +5,10 @@
     "connect": "Connect",
     "downloadApp": "Download the mobile app"
   },
+  "loading": {
+    "loading": "Loading...",
+    "loadingDescription": "Please wait, connecting to your device."
+  },
   "dashboard": {
     "filesNotFound": "Oops, we didn't find any files matching your search criteria.",
     "fileName": "Name",

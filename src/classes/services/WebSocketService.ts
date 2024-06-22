@@ -1,3 +1,4 @@
+import { computed, ShallowRef, shallowRef } from 'vue'
 import { Buffer } from 'buffer'
 import i18n from '@/i18n'
 
@@ -28,6 +29,16 @@ export class WebSocketService {
   private wsOnMessageListenersListFiles: ((listFiles: File[]) => void) | null = null
   private isMessageReceived = false
   private errorTimeout: string | number | NodeJS.Timeout | undefined
+  private _isPending: ShallowRef<boolean>
+
+  constructor() {
+    this._isPending = shallowRef(false)
+
+  }
+
+  get isPending() {
+    return computed(() => this._isPending.value)
+  }
 
   get isConnectedValue() {
     return this.isConnected
@@ -59,6 +70,7 @@ export class WebSocketService {
   }
   
   login(passCode: number, errorMethod: () => void) {
+    this._isPending.value = true
     this.wsOnErrorListener = []
     this.wsOnErrorListener.push(errorMethod)
     this.passCode = passCode
@@ -211,6 +223,7 @@ export class WebSocketService {
       if(messageListFiles) {
         this.parseListFiles(messageListFiles)
       }
+      this._isPending.value = false
       break
     }
   }

@@ -5,6 +5,10 @@
     "connect": "Połącz",
     "downloadApp": "Ściągnij aplikację mobilną na Twój telefon"
   },
+  "loading": {
+    "loading": "Ładowanie...",
+    "loadingDescription": "Proszę czekać, trwa łączenie z Twoim urządzeniem."
+  },
   "dashboard": {
     "filesNotFound": "Uups, nie znaleźliśmy pliku zgodnego z Twoim wyszukiwaniem.",
     "fileName": "Nazwa",

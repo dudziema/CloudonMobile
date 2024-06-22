@@ -55,6 +55,8 @@ const {
 } = useSearchAndFilter()
 
 onMounted(() => {
+  if(webSocketService.isConnectedValue) return
+  
   if(!isCodeValid.value) {
     handleInvalidCode()
   } else if(!webSocketService.isConnectedValue){
