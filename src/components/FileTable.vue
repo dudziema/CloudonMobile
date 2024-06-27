@@ -187,6 +187,7 @@ function sortClass(headerLabel: string): string {
       text-overflow: ellipsis;
       flex: 1;
       cursor: pointer;
+      margin-left: -28px;
 
       @include devices(mobile) {
         width: $widthColumnNameMobile;

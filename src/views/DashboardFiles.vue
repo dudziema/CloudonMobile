@@ -55,8 +55,6 @@ const {
 } = useSearchAndFilter()
 
 onMounted(() => {
-  if(webSocketService.isConnectedValue) return
-  
   if(!isCodeValid.value) {
     handleInvalidCode()
   } else if(!webSocketService.isConnectedValue){
@@ -270,7 +268,7 @@ watch(quantityItemsSelected, newValue => {
 
   &__main {
     position: relative;
-    padding: $spacing-horizontal-big calc($spacing-horizontal-small / 2) $spacing-horizontal-big $spacing-horizontal-big;
+    padding: $spacing-horizontal-big 32px $spacing-horizontal-big $spacing-horizontal-big;
     width: 100%;
     grid-column-start: 3;
     grid-column-end: 11;

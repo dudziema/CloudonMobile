@@ -165,7 +165,6 @@ function closeModal() {
     align-items: flex-end;
     justify-content: flex-end;
     width: 100%;
-    opacity: $opacity-default;
     margin: calc($spacing-vertical-default * 2) 0 0 0;
       
     @include devices(mobile) {
