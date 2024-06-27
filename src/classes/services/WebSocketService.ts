@@ -193,6 +193,12 @@ export class WebSocketService {
 
   private parseMessage(receivedMessage: MessageReceived ) {
     if (receivedMessage.type === MessageTypes.LOGGING_WITH_CODE) {
+      if (receivedMessage.result === -1) {
+        this._isPending.value = false
+        this.isConnected = false
+        this.ws?.close()
+      }
+
       if (this.wsOnMessageListeners) {
         this.isConnected = true
         this.wsOnMessageListeners.forEach(listener => {
@@ -200,8 +206,6 @@ export class WebSocketService {
         })
       }
     }
-
-    this._isPending.value = false
 
     const messageCommand: MessageCommands | undefined = receivedMessage.command
 
@@ -222,6 +226,7 @@ export class WebSocketService {
       if(messageListFiles) {
         this.parseListFiles(messageListFiles)
       }
+      this._isPending.value = false
       break
     }
   }

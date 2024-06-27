@@ -36,8 +36,6 @@ onMounted(
   },
 
   webSocketService.addWsOnMessageListener(function (messageFromServer: MessageLogin) {
-    console.log(messageFromServer)
-
     if(messageFromServer.result) {
       // Wrong passcode
       isPasscodeCorrect.value = false
