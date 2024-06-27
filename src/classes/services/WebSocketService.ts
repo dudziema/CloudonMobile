@@ -15,9 +15,6 @@ import type { MessageDownload } from '@/types/message-received/MessageDownload'
 import type { MessageListFiles } from '@/types/message-received/MessageListFiles'
 import type { MessageReceived } from '@/types/message-received/MessageReceived'
 
-const extensionsDict = extensionsDictionary(i18n.global.t)
-const defaultExtensionName = i18n.global.t('dashboard.files')
-
 export class WebSocketService {
   fileList = [] as File[]
   wsOnMessageListeners: ((obj: MessageReceived) => void)[] = []
@@ -45,7 +42,6 @@ export class WebSocketService {
   }
 
   onOpen = () => {
-    console.log('WS opened')
     this.sendMsgToWs({
       type: MessageTypes.LOGGING_WITH_CODE,
       code: this.passCode,
@@ -57,15 +53,14 @@ export class WebSocketService {
     this.parseMessage(JSON.parse(event.data))
   }
 
-  onError = (error: Event) => {
+  onError = () => {
     this.wsOnErrorListener.forEach(listener => listener())
-    console.log(error)
     this.ws?.close()
+    this._isPending.value = false
     clearTimeout(this.errorTimeout)
   }
 
-  onClose = (event: Event) => {
-    console.log('socket closed' + JSON.stringify(event))
+  onClose = () => {
     clearTimeout(this.errorTimeout)
   }
   
@@ -141,6 +136,8 @@ export class WebSocketService {
   }
 
   private getFileType(fileName: string) {
+    const extensionsDict = extensionsDictionary(i18n.global.t)
+    const defaultExtensionName = i18n.global.t('dashboard.files')
     const extensionMatch = /\.([^.]+)$/.exec(fileName)
     const extension = extensionMatch ? extensionMatch[1].toLowerCase() : ''
 
@@ -204,6 +201,8 @@ export class WebSocketService {
       }
     }
 
+    this._isPending.value = false
+
     const messageCommand: MessageCommands | undefined = receivedMessage.command
 
     switch (messageCommand) {
@@ -223,7 +222,6 @@ export class WebSocketService {
       if(messageListFiles) {
         this.parseListFiles(messageListFiles)
       }
-      this._isPending.value = false
       break
     }
   }
