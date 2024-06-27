@@ -5,8 +5,6 @@ import localeEng from '@/locales/en.json'
 export default createI18n({
   legacy: false,
   globalInjection: true,
-  locale: 'pl',
-  fallbackLocale: 'pl',
   messages: {
     en: localeEng,
     pl: localePl
